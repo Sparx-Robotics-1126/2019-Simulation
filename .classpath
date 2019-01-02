@@ -39,7 +39,6 @@
 	<classpathentry kind="lib" path="lib/jme3-niftygui.jar"/>
 	<classpathentry kind="lib" path="lib/jme3-plugins.jar"/>
 	<classpathentry kind="lib" path="lib/jme3-terrain.jar"/>
-	<classpathentry kind="lib" path="lib/jme3-testdata.jar"/>
 	<classpathentry kind="lib" path="lib/joal-main.jar"/>
 	<classpathentry kind="lib" path="lib/joal-natives-android-aarch64.jar"/>
 	<classpathentry kind="lib" path="lib/joal-natives-android-armv6.jar"/>
