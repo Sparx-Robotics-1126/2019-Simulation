@@ -1,4 +1,4 @@
-package hello;
+package simulator;
 
 import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.FlyCamAppState;
@@ -10,9 +10,9 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.shape.Box;
 import com.jme3.math.ColorRGBA;
 
-public class MyGame extends SimpleApplication {
+public class SimMain extends SimpleApplication {
 	
-	public MyGame() {
+	public SimMain() {
 		super(new Robot(),
 				new StatsAppState(), 
 				new FlyCamAppState(), 
@@ -26,7 +26,7 @@ public class MyGame extends SimpleApplication {
 	}
 
 	public static void main(String[] args) {
-		MyGame app = new MyGame();
+		SimMain app = new SimMain();
 		app.start();
 	}
 
