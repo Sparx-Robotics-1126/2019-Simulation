@@ -15,9 +15,9 @@ public class SimMain extends SimpleApplication {
 	public SimMain() {
 		super(new Robot(),
 				new StatsAppState(), 
-				new FlyCamAppState(), 
 				new AudioListenerState(), 
-				new DebugKeysAppState());
+				new DebugKeysAppState(),
+				new CameraControl());
 	}
 
 	@Override
@@ -29,5 +29,7 @@ public class SimMain extends SimpleApplication {
 		SimMain app = new SimMain();
 		app.start();
 	}
+	
+	
 
 }

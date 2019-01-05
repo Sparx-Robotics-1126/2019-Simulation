@@ -1,6 +1,6 @@
 package simulator;
 
-import com.jme3.app.Application;
+import com.jme3.app.Application; 
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
@@ -15,12 +15,15 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.blender.BlenderLoader;
+import com.jme3.input.KeyInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.KeyTrigger;
 
 public class Robot extends BaseAppState {
-
+	Spatial robotBase;
 	@Override
 	public void update(float tpf) {
-		
+        
 	}
 
 	@Override
@@ -30,14 +33,14 @@ public class Robot extends BaseAppState {
 
 	@Override
 	protected void initialize(Application _app) {
-		app = (SimpleApplication) _app;
+		SimpleApplication app = (SimpleApplication) _app;
 		Node rootNode = app.getRootNode();
 
 		AssetManager assetManager = app.getAssetManager();
 		assetManager.registerLocator("assets.zip", ZipLocator.class);
 		assetManager.registerLoader(BlenderLoader.class, "blend");
 		
-		Spatial robotBase = assetManager.loadModel("assets/Models/RobotBase/RobotBase.blend");
+		robotBase = assetManager.loadModel("assets/Models/RobotBase/RobotBase.blend");
 		rootNode.attachChild(robotBase);
 		robotBase.rotate(FastMath.PI / 2, 0, 0);
 		
@@ -62,6 +65,9 @@ public class Robot extends BaseAppState {
         DirectionalLight sun3 = new DirectionalLight();
         sun3.setDirection(new Vector3f(0.1f, 0.7f, 1.0f));
         sun3.setColor(new ColorRGBA(.3f,.3f,.3f,1));
+       
+        
+        
         rootNode.addLight(sun);
         rootNode.addLight(sun2);
         rootNode.addLight(sun3);
@@ -80,7 +86,6 @@ public class Robot extends BaseAppState {
 		// TODO Auto-generated method stub
 
 	}
-
-	private SimpleApplication app;
-	private Node robotPivot;
+	
+	
 }
