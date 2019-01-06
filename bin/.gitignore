@@ -1,1 +1,16 @@
-/simulator/
+/build.properties
+/.classpath
+
+/bin/
+*.class
+
+*.jar
+*.war
+*.ear
+
+.classpath
+
+.settings/
+
+sysProps.xml
+/bin/
