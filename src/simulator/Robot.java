@@ -71,7 +71,6 @@ public class Robot extends BaseAppState {
         rootNode.addLight(sun);
         rootNode.addLight(sun2);
         rootNode.addLight(sun3);
-        rootNode.rotate(-FastMath.PI/2, 0, 0);
         
 	}
 

@@ -24,7 +24,9 @@ import com.jme3.renderer.Camera;
 
 public class CameraControl extends BaseAppState {
 	private Camera cam;
-	private boolean middlePressed = false;
+	private boolean leftPressed = false;
+	Vector3f center = new Vector3f(0,0,0);
+	
 	@Override
 	public void update(float tpf) {
         
@@ -39,26 +41,31 @@ public class CameraControl extends BaseAppState {
 	protected void initialize(Application _app) {
 		SimpleApplication app = (SimpleApplication) _app;
 		cam = app.getCamera();
+		cam.setLocation(new Vector3f(1,-10,1));
+		cam.lookAt(center, Vector3f.UNIT_Z);
 		InputManager manager = app.getInputManager();
 		
-		manager.addMapping("middleButton",  new MouseButtonTrigger(MouseInput.BUTTON_MIDDLE));
+		manager.addMapping("leftButtonMouse",  new MouseButtonTrigger(MouseInput.BUTTON_LEFT));
 		
-		manager.addMapping("up", new MouseAxisTrigger(MouseInput.AXIS_Y, true));
-		manager.addMapping("down", new MouseAxisTrigger(MouseInput.AXIS_Y, false));
+		manager.addMapping("upMouse", new MouseAxisTrigger(MouseInput.AXIS_Y, true));
+		manager.addMapping("downMouse", new MouseAxisTrigger(MouseInput.AXIS_Y, false));
 		
-		manager.addMapping("right", new MouseAxisTrigger(MouseInput.AXIS_X, true));
-		manager.addMapping("left", new MouseAxisTrigger(MouseInput.AXIS_X, false));
+		manager.addMapping("rightMouse", new MouseAxisTrigger(MouseInput.AXIS_X, true));
+		manager.addMapping("leftMouse", new MouseAxisTrigger(MouseInput.AXIS_X, false));
 		
-		manager.addListener(analogListener, "up", "down", "right", "left");
-		manager.addListener(actionListener, "middleButton");
+		manager.addMapping("wheelUp", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, true));
+		manager.addMapping("wheelDown", new MouseAxisTrigger(MouseInput.AXIS_WHEEL, false));
+		
+		manager.addListener(analogListener, "upMouse", "downMouse", "rightMouse", "leftMouse", "wheelUp", "wheelDown");
+		manager.addListener(actionListener, "leftButtonMouse");
 		       
 	}
 	
 	private final ActionListener actionListener = new ActionListener() {
         @Override
         public void onAction(String name, boolean keyPressed, float tpf) {
-            if (name.equals("middleButton")) {
-            	middlePressed = keyPressed;
+            if (name.equals("leftButtonMouse")) {
+            	leftPressed = keyPressed;
             }
         }
     };
@@ -67,25 +74,43 @@ public class CameraControl extends BaseAppState {
 	private final AnalogListener analogListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float value, float tpf) {
-        	if(middlePressed)
+        	if(leftPressed)
         	{
             	float rotateAmount = FastMath.PI * value;
-        		Vector3f center = new Vector3f(0,0,0);
+        		
         		Vector3f location = cam.getLocation();
         		Quaternion amount = new Quaternion();
+        		float direction = 1;
         		
-            	if(name.equals("up")) {
-            		amount.fromAngleAxis(-rotateAmount, Vector3f.UNIT_X);
-            	} else if(name.equals("down")) {
-            		amount.fromAngleAxis(rotateAmount, Vector3f.UNIT_X);
-            	} else if(name.equals("left")) {
-            		amount.fromAngleAxis(-rotateAmount, Vector3f.UNIT_Y);
-            	} else if(name.equals("right")) {
-            		amount.fromAngleAxis(rotateAmount, Vector3f.UNIT_Y);    		
+        		if(location.y < 0)
+        		{
+        			direction = -1;
+        		}
+        		
+            	if(name.equals("upMouse")) {
+            		amount.fromAngleAxis(direction * rotateAmount, Vector3f.UNIT_X);
+            	} else if(name.equals("downMouse")) {
+            		amount.fromAngleAxis(direction * -rotateAmount, Vector3f.UNIT_X);
+            	} else if(name.equals("leftMouse")) {
+            		amount.fromAngleAxis(-rotateAmount, Vector3f.UNIT_Z);
+            	} else if(name.equals("rightMouse")) {
+            		amount.fromAngleAxis(rotateAmount, Vector3f.UNIT_Z);    		
             	}
+            	
         		Vector3f newLocation = amount.mult(location);
         		cam.setLocation(center.add(newLocation));
-        		cam.lookAt(center, Vector3f.UNIT_Y);
+        		cam.lookAt(center, Vector3f.UNIT_Z);
+        	}
+        	else if(name.equals("wheelUp") || name.equals("wheelDown"))
+        	{
+        		Vector3f location = cam.getLocation();
+            	if(name.equals("wheelUp")) {
+            		location.multLocal(0.9f); 		
+            	} else if(name.equals("wheelDown")) {
+            		location.multLocal(1.1f);  		
+            	}
+        		cam.setLocation(location);
+        		cam.lookAt(center, Vector3f.UNIT_Z);
         	}
 
         }
