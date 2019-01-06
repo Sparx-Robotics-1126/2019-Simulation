@@ -82,15 +82,41 @@ public class CameraControl extends BaseAppState {
         		Quaternion amount = new Quaternion();
         		float direction = 1;
         		
-        		if(location.y < 0)
-        		{
-        			direction = -1;
-        		}
-        		
+       		
             	if(name.equals("upMouse")) {
-            		amount.fromAngleAxis(direction * rotateAmount, Vector3f.UNIT_X);
+            		if(Math.abs(location.y) < Math.abs(location.x))
+            		{
+                		if(location.x < 0)
+                		{
+                			direction = -1;
+                		}
+            			amount.fromAngleAxis(direction * -rotateAmount, Vector3f.UNIT_Y);
+            		}
+            		else
+            		{
+                  		if(location.y < 0)
+                		{
+                			direction = -1;
+                		}
+                		amount.fromAngleAxis(direction * rotateAmount, Vector3f.UNIT_X);
+            		}
             	} else if(name.equals("downMouse")) {
-            		amount.fromAngleAxis(direction * -rotateAmount, Vector3f.UNIT_X);
+            		if(Math.abs(location.y) < Math.abs(location.x))
+            		{
+                		if(location.x < 0)
+                		{
+                			direction = -1;
+                		}
+            			amount.fromAngleAxis(direction * rotateAmount, Vector3f.UNIT_Y);
+            		}
+            		else
+            		{
+                		if(location.y < 0)
+                		{
+                			direction = -1;
+                		}
+                		amount.fromAngleAxis(direction * -rotateAmount, Vector3f.UNIT_X);
+            		}
             	} else if(name.equals("leftMouse")) {
             		amount.fromAngleAxis(-rotateAmount, Vector3f.UNIT_Z);
             	} else if(name.equals("rightMouse")) {
@@ -105,9 +131,9 @@ public class CameraControl extends BaseAppState {
         	{
         		Vector3f location = cam.getLocation();
             	if(name.equals("wheelUp")) {
-            		location.multLocal(0.9f); 		
+            		location.multLocal(1.1f); 		
             	} else if(name.equals("wheelDown")) {
-            		location.multLocal(1.1f);  		
+            		location.multLocal(0.9f);  		
             	}
         		cam.setLocation(location);
         		cam.lookAt(center, Vector3f.UNIT_Z);
