@@ -8,6 +8,7 @@ import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Box;
@@ -15,15 +16,25 @@ import com.jme3.light.DirectionalLight;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.blender.BlenderLoader;
+import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
+import com.jme3.input.MouseInput;
 import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.input.controls.MouseAxisTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 
 public class Robot extends BaseAppState {
-	Spatial robotBase;
+	private Spatial robotBase;
+	private SimpleApplication app;
+	float horizVelocity = 0f;
+	float vertVelocity = 0f;
 	@Override
-	public void update(float tpf) {
-        
+	public void update(float tpf) {      
+    	robotBase.move(horizVelocity, vertVelocity, 0f);
+    	horizVelocity *= 0.95f;
+    	vertVelocity *= 0.95f;
 	}
 
 	@Override
@@ -33,7 +44,7 @@ public class Robot extends BaseAppState {
 
 	@Override
 	protected void initialize(Application _app) {
-		SimpleApplication app = (SimpleApplication) _app;
+		app = (SimpleApplication) _app;
 		Node rootNode = app.getRootNode();
 
 		AssetManager assetManager = app.getAssetManager();
@@ -71,8 +82,39 @@ public class Robot extends BaseAppState {
         rootNode.addLight(sun);
         rootNode.addLight(sun2);
         rootNode.addLight(sun3);
-        
+        getControls();
+     }
+	
+	private void getControls() {
+		InputManager manager = app.getInputManager();
+		
+		manager.addMapping("forwardMove", new KeyTrigger(KeyInput.KEY_W));
+		manager.addMapping("backwardMove", new KeyTrigger(KeyInput.KEY_S));
+		manager.addMapping("rightMove", new KeyTrigger(KeyInput.KEY_D));
+		manager.addMapping("leftMove", new KeyTrigger(KeyInput.KEY_A));
+		
+		manager.addListener(analogListener, "forwardMove", "backwardMove", "rightMove", "leftMove");
+
 	}
+	
+	private final AnalogListener analogListener = new AnalogListener() {
+        @Override
+        public void onAnalog(String name, float value, float tpf) {
+        	final float movementSpeed = 0.007f;
+            if (name.equals("forwardMove")) {
+            	vertVelocity -= movementSpeed;
+            } else if(name.equals("backwardMove")) {
+            	vertVelocity += movementSpeed;
+            } else if(name.equals("leftMove")) {
+            	horizVelocity += movementSpeed;
+            } else if(name.equals("rightMove")) {
+            	horizVelocity -= movementSpeed;
+            }
+        }
+    };
+
+
+	
 
 	@Override
 	protected void onDisable() {
