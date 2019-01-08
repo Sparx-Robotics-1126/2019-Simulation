@@ -5,6 +5,8 @@ import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.ZipLocator;
+import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
+import com.jme3.bullet.control.CharacterControl;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.AnalogListener;
@@ -27,8 +29,8 @@ public class Robot extends BaseAppState {
 	float rotate = 0f;
 	@Override
 	public void update(float tpf) {      
-    	Vector3f forward = robotBase.getLocalRotation().mult(Vector3f.UNIT_Z).mult(vertVelocity);
-    	robotBase.rotate(0f, rotate, 0f);
+    	Vector3f forward = robotBase.getLocalRotation().mult(Vector3f.UNIT_Z).multLocal(vertVelocity).multLocal(tpf);
+    	robotBase.rotate(0f, rotate * tpf, 0f);
     	robotBase.move(forward);
     	rotate *= 0.5f;
     	vertVelocity *= 0.95f;
@@ -50,7 +52,11 @@ public class Robot extends BaseAppState {
 		
 		robotBase = assetManager.loadModel("assets/Models/RobotBase/RobotBase.blend");
 		rootNode.attachChild(robotBase);
-		robotBase.rotate(FastMath.PI / 2, 0, 0);		
+		robotBase.rotate(FastMath.PI / 2, 0, 0);
+		
+		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
+		CharacterControl myCharacter = new CharacterControl(capsuleShape, 0.01f);
+		
 		
 		Box floor = new Box(6f,10f, 0.1f);
         Geometry floorGeom = new Geometry("Floor", floor);
@@ -96,16 +102,16 @@ public class Robot extends BaseAppState {
 	private final AnalogListener analogListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float value, float tpf) {
-        	final float movementSpeed = 0.007f;
+        	final float movementSpeed = 0.75f;
             if (name.equals("forwardMove")) {
             	vertVelocity += movementSpeed;
             } else if(name.equals("backwardMove")) {
             	vertVelocity -= movementSpeed;
             } else if(name.equals("leftMove")) {
-            	rotate += 0.05f;
+            	rotate += 3f;
             	//horizVelocity += movementSpeed;
             } else if(name.equals("rightMove")) {
-            	rotate -= 0.05f;
+            	rotate -= 3f;
             	//horizVelocity -= movementSpeed;
             }
         }
