@@ -41,7 +41,7 @@ public class CameraControl extends BaseAppState {
 	protected void initialize(Application _app) {
 		SimpleApplication app = (SimpleApplication) _app;
 		cam = app.getCamera();
-		cam.setLocation(new Vector3f(1,-10,1));
+		cam.setLocation(new Vector3f(5,-15,10));
 		cam.lookAt(center, Vector3f.UNIT_Z);
 		InputManager manager = app.getInputManager();
 		
