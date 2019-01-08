@@ -56,6 +56,10 @@ public class Robot extends BaseAppState {
 		
 		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
 		CharacterControl myCharacter = new CharacterControl(capsuleShape, 0.01f);
+<<<<<<< HEAD
+=======
+		
+>>>>>>> branch 'master' of https://github.com/Sparx-Robotics-1126/2019-Simulation.git
 		
 		
 //		Box floor = new Box(6f,10f, 0.1f);
