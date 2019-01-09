@@ -14,7 +14,6 @@ public class SimMain extends SimpleApplication {
 	
 	public SimMain() {
 		super(new Robot(),
-				new FieldAppState(),
 				new StatsAppState(), 
 				new AudioListenerState(), 
 				new DebugKeysAppState(),
