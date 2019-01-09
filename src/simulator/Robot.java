@@ -6,9 +6,10 @@ import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
-import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
@@ -85,6 +86,8 @@ public class Robot extends BaseAppState {
 //        floorGeom.setMaterial(floorMat);
 //        rootNode.attachChild(floorGeom);
        
+		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
+		CharacterControl myCharacter = new CharacterControl(capsuleShape, 0.01f);
         
      // You must add a light to make the model visible
         DirectionalLight sun = new DirectionalLight();
