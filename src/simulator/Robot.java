@@ -56,16 +56,6 @@ public class Robot extends BaseAppState {
 		
 		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
 		CharacterControl myCharacter = new CharacterControl(capsuleShape, 0.01f);
-		
-//		Box floor = new Box(6f,10f, 0.1f);
-//        Geometry floorGeom = new Geometry("Floor", floor);
-//        Material floorMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-//        floorMat.setBoolean("UseMaterialColors",true);
-//        floorMat.setColor("Diffuse", new ColorRGBA(0f,0.6f,0f,1));
-//        floorMat.setColor("Specular", ColorRGBA.White);
-//        floorGeom.setMaterial(floorMat);
-//        rootNode.attachChild(floorGeom);
-       
         
      // You must add a light to make the model visible
         DirectionalLight sun = new DirectionalLight();
