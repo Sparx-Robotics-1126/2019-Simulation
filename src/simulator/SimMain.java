@@ -1,23 +1,24 @@
 package simulator;
 
 import com.jme3.app.DebugKeysAppState;
-import com.jme3.app.FlyCamAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.audio.AudioListenerState;
-import com.jme3.material.Material;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.shape.Box;
-import com.jme3.math.ColorRGBA;
+import com.jme3.bullet.BulletAppState;
+import com.jme3.bullet.PhysicsSpace;
 
 public class SimMain extends SimpleApplication {
+	private BulletAppState bulletAppState;
 	
 	public SimMain() {
 		super(new Robot(),
+				new FieldAppState(),
 				new StatsAppState(), 
 				new AudioListenerState(), 
 				new DebugKeysAppState(),
 				new CameraControl());
+		bulletAppState = new BulletAppState();
+		getStateManager().attach(bulletAppState);
 	}
 
 	@Override
@@ -25,6 +26,10 @@ public class SimMain extends SimpleApplication {
 
 	}
 
+	public PhysicsSpace getPhysicsSpace() {
+		return bulletAppState.getPhysicsSpace();
+	}
+	
 	public static void main(String[] args) {
 		SimMain app = new SimMain();
 		app.start();

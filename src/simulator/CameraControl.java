@@ -1,25 +1,17 @@
 package simulator;
 
-import com.jme3.app.Application;  
+import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
-import com.jme3.asset.AssetManager;
-import com.jme3.asset.plugins.ZipLocator;
-import com.jme3.material.Material;
-import com.jme3.math.ColorRGBA;
+import com.jme3.input.InputManager;
+import com.jme3.input.MouseInput;
+import com.jme3.input.controls.ActionListener;
+import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.MouseAxisTrigger;
+import com.jme3.input.controls.MouseButtonTrigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
-import com.jme3.scene.Geometry;
-import com.jme3.scene.Node;
-import com.jme3.scene.shape.Box;
-import com.jme3.light.DirectionalLight;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Spatial;
-import com.jme3.scene.plugins.blender.BlenderLoader;
-import com.jme3.input.InputManager;
-import com.jme3.input.KeyInput;
-import com.jme3.input.MouseInput;
-import com.jme3.input.controls.*;
 import com.jme3.renderer.Camera;
 
 public class CameraControl extends BaseAppState {

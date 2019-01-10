@@ -1,15 +1,10 @@
 package simulator;
 
 import com.jme3.app.Application;
-import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.ZipLocator;
-import com.jme3.bullet.BulletAppState;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
-import com.jme3.bullet.collision.shapes.MeshCollisionShape;
-import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.InputManager;
@@ -26,8 +21,7 @@ import com.jme3.scene.plugins.blender.BlenderLoader;
 
 public class Robot extends BaseAppState {
 	private Spatial robotBase;
-	private SimpleApplication app;
-	private BulletAppState bulletAppState;
+	private SimMain app;
 	private RigidBodyControl ctrl1;
 	float vertVelocity = 0f;
 	float rotate = 0f;
@@ -54,44 +48,26 @@ public class Robot extends BaseAppState {
 
 	@Override
 	protected void initialize(Application _app) {
-		bulletAppState = new BulletAppState();
 
-		app = (SimpleApplication) _app;
+		app = (SimMain) _app;
 		Node rootNode = app.getRootNode();
 
-		app.getStateManager().attach(bulletAppState);
-		bulletAppState.getPhysicsSpace().setGravity(new Vector3f(0f, 0f, -9.81f));
+		app.getPhysicsSpace().setGravity(new Vector3f(0f, 0f, -9.81f));
 		AssetManager assetManager = app.getAssetManager();
 		assetManager.registerLocator("assets.zip", ZipLocator.class);
 		assetManager.registerLoader(BlenderLoader.class, "blend");
-		
-		Spatial field = assetManager.loadModel("assets/Models/Field/FullField.blend");
-		rootNode.attachChild(field);
-		field.rotate(FastMath.PI / 2, 0, 0); 
-		
+				
 		robotBase = assetManager.loadModel("assets/Models/RobotBase/RobotBase.blend");
 		rootNode.attachChild(robotBase);
 		robotBase.rotate(FastMath.PI / 2, 0, 0);
 		
 		CollisionShape robotShape = CollisionShapeFactory.createDynamicMeshShape(robotBase);
-		CollisionShape fieldShape = CollisionShapeFactory.createMeshShape(field);
 				
 		ctrl1 = new RigidBodyControl(robotShape);
-		RigidBodyControl ctrl2 = new RigidBodyControl(fieldShape);
-		ctrl2.setKinematic(true);
 		robotBase.addControl(ctrl1);
-		field.addControl(ctrl2);
+		
 		ctrl1.setPhysicsLocation(new Vector3f(0f, 2.5f, 0.5f));
-		bulletAppState.getPhysicsSpace().add(robotBase);
-		bulletAppState.getPhysicsSpace().add(field);
-//		Box floor = new Box(6f,10f, 0.1f);
-//        Geometry floorGeom = new Geometry("Floor", floor);
-//        Material floorMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-//        floorMat.setBoolean("UseMaterialColors",true);
-//        floorMat.setColor("Diffuse", new ColorRGBA(0f,0.6f,0f,1));
-//        floorMat.setColor("Specular", ColorRGBA.White);
-//        floorGeom.setMaterial(floorMat);
-//        rootNode.attachChild(floorGeom);
+		app.getPhysicsSpace().add(robotBase);
        
      // You must add a light to make the model visible
         DirectionalLight sun = new DirectionalLight();
