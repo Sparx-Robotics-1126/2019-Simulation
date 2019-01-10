@@ -8,6 +8,7 @@ import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.MeshCollisionShape;
 import com.jme3.bullet.control.CharacterControl;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
@@ -27,15 +28,23 @@ public class Robot extends BaseAppState {
 	private Spatial robotBase;
 	private SimpleApplication app;
 	private BulletAppState bulletAppState;
+	private RigidBodyControl ctrl1;
 	float vertVelocity = 0f;
 	float rotate = 0f;
 	@Override
 	public void update(float tpf) {      
     	Vector3f forward = robotBase.getLocalRotation().mult(Vector3f.UNIT_Z).multLocal(vertVelocity).multLocal(tpf);
-    	robotBase.rotate(0f, rotate * tpf, 0f);
-    	robotBase.move(forward);
+    	//robotBase.rotate(0f, rotate * tpf, 0f);
+    	ctrl1.setLinearVelocity(ctrl1.getLinearVelocity().add(forward));
+    	ctrl1.setAngularVelocity(ctrl1.getAngularVelocity().add(new Vector3f(0f, 0f, rotate * tpf)));
     	rotate *= 0.5f;
-    	vertVelocity *= 0.95f;
+    	if(rotate < 0.01f) {
+    		rotate = 0f;
+    	}
+    	vertVelocity *= 0.75f;
+    	if(vertVelocity < 0.01f) {
+    		vertVelocity = 0;
+    	}
 	}
 
 	@Override
@@ -62,21 +71,19 @@ public class Robot extends BaseAppState {
 		
 		robotBase = assetManager.loadModel("assets/Models/RobotBase/RobotBase.blend");
 		rootNode.attachChild(robotBase);
-		robotBase.move(0f, 2.5f, 0.5f);
 		robotBase.rotate(FastMath.PI / 2, 0, 0);
 		
-		CollisionShape robotShape = CollisionShapeFactory.createBoxShape(robotBase);
+		CollisionShape robotShape = CollisionShapeFactory.createDynamicMeshShape(robotBase);
 		CollisionShape fieldShape = CollisionShapeFactory.createMeshShape(field);
 				
-		RigidBodyControl ctrl1 = new RigidBodyControl(robotShape);
+		ctrl1 = new RigidBodyControl(robotShape);
 		RigidBodyControl ctrl2 = new RigidBodyControl(fieldShape);
 		ctrl2.setKinematic(true);
-		
 		robotBase.addControl(ctrl1);
 		field.addControl(ctrl2);
+		ctrl1.setPhysicsLocation(new Vector3f(0f, 2.5f, 0.5f));
 		bulletAppState.getPhysicsSpace().add(robotBase);
 		bulletAppState.getPhysicsSpace().add(field);
-		
 //		Box floor = new Box(6f,10f, 0.1f);
 //        Geometry floorGeom = new Geometry("Floor", floor);
 //        Material floorMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
@@ -86,9 +93,6 @@ public class Robot extends BaseAppState {
 //        floorGeom.setMaterial(floorMat);
 //        rootNode.attachChild(floorGeom);
        
-		CapsuleCollisionShape capsuleShape = new CapsuleCollisionShape(1.5f, 6f, 1);
-		CharacterControl myCharacter = new CharacterControl(capsuleShape, 0.01f);
-        
      // You must add a light to make the model visible
         DirectionalLight sun = new DirectionalLight();
         sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
@@ -121,7 +125,7 @@ public class Robot extends BaseAppState {
 	private final AnalogListener analogListener = new AnalogListener() {
         @Override
         public void onAnalog(String name, float value, float tpf) {
-        	final float movementSpeed = 0.75f;
+        	final float movementSpeed = 1f;
             if (name.equals("forwardMove")) {
             	vertVelocity += movementSpeed;
             } else if(name.equals("backwardMove")) {
