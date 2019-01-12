@@ -5,11 +5,12 @@ import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.bullet.collision.shapes.CollisionShape;
+import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
-import com.jme3.input.controls.AnalogListener;
+import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
@@ -28,32 +29,35 @@ public class Robot extends BaseAppState {
 	private Node robotNode;
 	private Spatial robotBase;
 	private VehicleControl robotControl;
+	//	private CompoundCollisionShape robotShape;
+	private CollisionShape robotShape;
 	float accelerationValue = 0f;
 	float steeringValue = 0f;
 
-	private final float robotAcceleration = 2f;
+	private final float robotAcceleration = 400f;
 
-	private final AnalogListener analogListener = new AnalogListener() {
+	private final ActionListener actionListener = new ActionListener() {
+
 		@Override
-		public void onAnalog(String name, float value, float tpf) {
+		public void onAction(String name, boolean pressed, float tpf) {
 			if (name.equals("forwardMove")) {
-				accelerationValue += robotAcceleration;
-			} else if(name.equals("backwardMove")) {
-				accelerationValue -= robotAcceleration;
-			} 
-			if(name.equals("leftMove")) {
-				steeringValue += 5f;
-			} else if(name.equals("rightMove")) {
-				steeringValue -= 5f;
+				if(pressed) {
+					accelerationValue = robotAcceleration;
+				}
+			} else if(name.equals("backwardMove") && pressed) {
+				if(pressed) {
+					accelerationValue = -robotAcceleration;
+				}
+			}
+			if(name.equals("leftMove") && pressed) {
+					steeringValue += .3f;
+			} else if(name.equals("rightMove") && pressed){
+				steeringValue -= .3f;			
 			}
 			if(name.equals("pause")) {
-				if(app.isPaused()) {
-					app.resume();
-					System.out.println("Unpausing");
-				} else{
-					app.pause();
-					System.out.println("Pausing");
-				}
+				app.pause();
+			} else if(name.equals("resume")){
+				app.resume();
 			}
 		}
 	};
@@ -72,24 +76,26 @@ public class Robot extends BaseAppState {
 
 		robotNode = new Node("vehicleNode");
 		robotBase = assetManager.loadModel("assets/Models/RobotBase/RobotBase.blend");
-		CollisionShape robotShape = CollisionShapeFactory.createMeshShape(robotBase);
-		robotControl = new VehicleControl(robotShape);
+		robotShape = new CompoundCollisionShape();
+		//		robotShape.addChildShape(new BoxCollisionShape(new Vector3f(.4f, .5f, .4f)), new Vector3f(0, .1f, 0));
+		robotShape = CollisionShapeFactory.createDynamicMeshShape(robotBase);
+		robotControl = new VehicleControl(robotShape, 30);
 		robotNode.attachChild(robotBase);
 
 		robotBase.addControl(robotControl);
 
-		float stiffness = 15.0f;
-		float compValue = .5f;
-		float dampValue = .7f;
+		float stiffness = 150.0f;
+		float compValue = .4f;
+		float dampValue = .5f;
 		robotControl.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
 		robotControl.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
 		robotControl.setSuspensionStiffness(stiffness);
-		robotControl.setMaxSuspensionForce(10000.0f);		
+		robotControl.setMaxSuspensionForce(1000.0f);		
 
-		robotControl.setPhysicsLocation(new Vector3f(6f, 2f, 5f));
-//		robotControl.setPhysicsRotation(new Quaternion(5, 0, 5, 3));
+		robotControl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
+		robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
 		addWheels();
-
+		robotBase.rotate(FastMath.HALF_PI, 0f, 0f);
 		rootNode.attachChild(robotBase);
 		app.getPhysicsSpace().add(robotBase);
 
@@ -109,6 +115,7 @@ public class Robot extends BaseAppState {
 		rootNode.addLight(sun2);
 		rootNode.addLight(sun3);
 		getControls();
+		app.pause();
 	}
 
 	@Override
@@ -120,15 +127,9 @@ public class Robot extends BaseAppState {
 
 		robotControl.accelerate(accelerationValue);
 		robotControl.steer(steeringValue);
-
-		steeringValue *= 0.5f;
-		if(steeringValue < 0.01f && steeringValue > -0.01f) {
-			steeringValue = 0f;
-		}
-		accelerationValue *= 0.75f;
-		if(accelerationValue < 0.01f && accelerationValue > -.01f) {
-			accelerationValue = 0;
-		}
+		
+		accelerationValue *= .7;
+		steeringValue *= .1;
 	}
 
 	@Override
@@ -149,13 +150,14 @@ public class Robot extends BaseAppState {
 		int sideWheel;
 		int backWheel;
 		for(int i = 0; i < 4; i++) {
-			Node wheelNode = new Node("wheel 1 node");
-			Geometry wheel = new Geometry("wheel 1", wheelMesh);
-			wheelNode.attachChild(wheel);
-			//			wheel.rotate(0f, FastMath.HALF_PI, 0f);
-			//			wheel.setMaterial(mat);
-
+			Node wheelNode = new Node("wheel " + i + " node");
+			Spatial wheel; // = new Geometry("wheel " + i, wheelMesh);
+			wheel = app.getAssetManager().loadModel("assets/Models/RobotBase/BadWheel.blend");
 			robotNode.attachChild(wheelNode);
+			wheelNode.attachChild(wheel);
+			wheel.rotate(0f, FastMath.HALF_PI, 0f);
+			
+			
 			if(i%2 == 0) {
 				sideWheel = 1;
 			} else {
@@ -166,7 +168,8 @@ public class Robot extends BaseAppState {
 			} else {
 				backWheel = 1;
 			}
-			robotControl.addWheel(wheelNode, new Vector3f(sideWheel*xOff, yOff, backWheel*zOff), wheelDirection, wheelAxle, restLength, radius, backWheel == 1);
+			Vector3f position = new Vector3f(sideWheel*xOff, yOff, backWheel*zOff);
+			robotControl.addWheel(wheelNode, position, wheelDirection, wheelAxle, restLength, radius, backWheel == 1);
 		}
 	}
 
@@ -177,9 +180,10 @@ public class Robot extends BaseAppState {
 		manager.addMapping("backwardMove", new KeyTrigger(KeyInput.KEY_S));
 		manager.addMapping("rightMove", new KeyTrigger(KeyInput.KEY_D));
 		manager.addMapping("leftMove", new KeyTrigger(KeyInput.KEY_A));
-		manager.addMapping("pause", new KeyTrigger(KeyInput.KEY_0));
+		manager.addMapping("pause", new KeyTrigger(KeyInput.KEY_P));
+		manager.addMapping("resume", new KeyTrigger(KeyInput.KEY_SPACE));
 
-		manager.addListener(analogListener, "forwardMove", "backwardMove", "rightMove", "leftMove");
+		manager.addListener(actionListener, "forwardMove", "backwardMove", "rightMove", "leftMove", "pause", "resume");
 
 	}
 

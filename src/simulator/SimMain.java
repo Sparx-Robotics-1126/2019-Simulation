@@ -20,6 +20,7 @@ public class SimMain extends SimpleApplication {
 		bulletAppState = new BulletAppState();
 		getStateManager().attach(bulletAppState);
 		bulletAppState.setDebugEnabled(true);
+		bulletAppState.getPhysicsSpace().setAccuracy(1f/300f);
 	}
 
 	@Override
