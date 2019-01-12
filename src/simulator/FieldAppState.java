@@ -22,6 +22,10 @@ public class FieldAppState extends BaseAppState {
 	private SimMain app;
 	private AssetManager assetManager;
 	private Node rootNode;
+//	final float CARGO_RADIUS = 0.3302f; (actual cargo radius but causes issues with physics)
+	final float CARGO_RADIUS = 0.35f;
+	final float CARGO_X_POS = 6.85f;
+	final float CARGO_Y_POS = 3.35f;
 	
 	@Override
 	public void update(float tpf) {
@@ -48,10 +52,10 @@ public class FieldAppState extends BaseAppState {
 		field.rotate(FastMath.PI / 2, 0, 0); 
 		
 		
-		createSet(7.2517f,2.393f,0.3302f);
-		createSet(-7.9102f,2.7295f,0.3302f);
-		createSet(7.2517f,-2.393f,0.3302f);
-		createSet(-7.9102f,-2.7295f,0.3302f);
+		createSet(CARGO_X_POS,CARGO_Y_POS,CARGO_RADIUS);
+		createSet(-CARGO_X_POS,CARGO_Y_POS,CARGO_RADIUS);
+		createSet(CARGO_X_POS,-CARGO_Y_POS,CARGO_RADIUS);
+		createSet(-CARGO_X_POS,-CARGO_Y_POS,CARGO_RADIUS);
 				
 
 		CollisionShape fieldShape = CollisionShapeFactory.createMeshShape(field);
@@ -77,12 +81,12 @@ public class FieldAppState extends BaseAppState {
 		for(int a=0;a<3;a++) 
 		{
 			/*for x values*/
-			float x = startX + a * 0.3302f;
+			float x = startX + a * CARGO_RADIUS;
 			
 			for(int b=0;b<2;b++) 
 			{
 				/*			for y values	*/	
-				float y = startY + b * 0.3302f;
+				float y = startY + b * CARGO_RADIUS;
 				createCargo(x, y);
 			}
 		}
@@ -100,7 +104,7 @@ public class FieldAppState extends BaseAppState {
 		cargoMat.setColor("Diffuse", ColorRGBA.Orange);
 		cargoGeom.setMaterial(cargoMat);
 		rootNode.attachChild(cargoGeom);
-		cargoGeom.move(x, y, cargo.radius + 0.02f);
+		cargoGeom.move(x, y, cargo.radius);
 		RigidBodyControl cargoCtrl = new RigidBodyControl(cargo.radius);
 		/*cargoCtrl.setMass(1f);*/
 //		cargoCtrl.setFriction(0.1f);

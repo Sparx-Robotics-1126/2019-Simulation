@@ -14,6 +14,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
@@ -39,6 +40,7 @@ public class Robot extends BaseAppState {
     	if(vertVelocity < 0.01f) {
     		vertVelocity = 0;
     	}
+    	
 	}
 
 	@Override
@@ -68,7 +70,7 @@ public class Robot extends BaseAppState {
 		
 		ctrl1.setPhysicsLocation(new Vector3f(0f, 2.5f, 0.5f));
 		app.getPhysicsSpace().add(robotBase);
-       
+	
      // You must add a light to make the model visible
         DirectionalLight sun = new DirectionalLight();
         sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
@@ -93,8 +95,9 @@ public class Robot extends BaseAppState {
 		manager.addMapping("backwardMove", new KeyTrigger(KeyInput.KEY_S));
 		manager.addMapping("rightMove", new KeyTrigger(KeyInput.KEY_D));
 		manager.addMapping("leftMove", new KeyTrigger(KeyInput.KEY_A));
+		manager.addMapping("reset", new KeyTrigger(KeyInput.KEY_R));
 		
-		manager.addListener(analogListener, "forwardMove", "backwardMove", "rightMove", "leftMove");
+		manager.addListener(analogListener, "forwardMove", "backwardMove", "rightMove", "leftMove", "reset");
 
 	}
 	
@@ -112,6 +115,11 @@ public class Robot extends BaseAppState {
             } else if(name.equals("rightMove")) {
             	rotate -= 3f;
             	//horizVelocity -= movementSpeed;
+            } else if(name.equals("reset")) {
+            	ctrl1.setPhysicsLocation(new Vector3f(0f, 2.5f, 0.5f));
+            	ctrl1.setPhysicsRotation(new Quaternion(FastMath.PI / 2 - 0.6f,0f,0f,1f));
+            	ctrl1.setLinearVelocity(new Vector3f(0f,0f,0f));
+            	ctrl1.setAngularVelocity(new Vector3f(0f,0f,0f));
             }
         }
     };
