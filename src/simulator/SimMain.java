@@ -19,6 +19,7 @@ public class SimMain extends SimpleApplication {
 				new CameraControl());
 		bulletAppState = new BulletAppState();
 		getStateManager().attach(bulletAppState);
+		bulletAppState.setDebugEnabled(true);
 	}
 
 	@Override
@@ -28,6 +29,14 @@ public class SimMain extends SimpleApplication {
 
 	public PhysicsSpace getPhysicsSpace() {
 		return bulletAppState.getPhysicsSpace();
+	}
+	
+	public void pause() {
+		bulletAppState.setSpeed(0);
+	}
+	
+	public void resume() {
+		bulletAppState.setSpeed(1);
 	}
 	
 	public static void main(String[] args) {
