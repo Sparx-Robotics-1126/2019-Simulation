@@ -13,6 +13,7 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
@@ -23,6 +24,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.scene.shape.Cylinder;
+import com.jme3.texture.Texture;
 
 public class Robot extends BaseAppState {
 	private SimMain app;
@@ -151,12 +153,13 @@ public class Robot extends BaseAppState {
 		int backWheel;
 		for(int i = 0; i < 4; i++) {
 			Node wheelNode = new Node("wheel " + i + " node");
-			Spatial wheel; // = new Geometry("wheel " + i, wheelMesh);
-			wheel = app.getAssetManager().loadModel("assets/Models/RobotBase/BadWheel.blend");
-			robotNode.attachChild(wheelNode);
-			wheelNode.attachChild(wheel);
+			Spatial wheel = new Geometry("wheel " + i, wheelMesh);
+//			wheel = app.getAssetManager().loadModel("assets/Models/RobotBase/BadWheel.blend");
+			Material cube = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+			Texture texture = app.getAssetManager().loadTexture("assets/Models/RobotBase/BlueMat.jpg");
+			cube.setTexture("ColorMap", texture);			
+			wheel.setMaterial(cube);
 			wheel.rotate(0f, FastMath.HALF_PI, 0f);
-			
 			
 			if(i%2 == 0) {
 				sideWheel = 1;
@@ -170,6 +173,8 @@ public class Robot extends BaseAppState {
 			}
 			Vector3f position = new Vector3f(sideWheel*xOff, yOff, backWheel*zOff);
 			robotControl.addWheel(wheelNode, position, wheelDirection, wheelAxle, restLength, radius, backWheel == 1);
+			wheelNode.attachChild(wheel);
+			robotNode.attachChild(wheelNode);
 		}
 	}
 

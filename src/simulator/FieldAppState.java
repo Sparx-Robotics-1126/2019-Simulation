@@ -51,7 +51,7 @@ public class FieldAppState extends BaseAppState {
 		rootNode.attachChild(field);
 		field.rotate(FastMath.HALF_PI, 0, 0);
 		CollisionShape fieldShape = CollisionShapeFactory.createMeshShape(field);
-		RigidBodyControl ctrl2 = new RigidBodyControl(fieldShape);
+		RigidBodyControl ctrl2 = new RigidBodyControl(fieldShape, 0);
 		ctrl2.setKinematic(false);
 		field.addControl(ctrl2);
 		app.getPhysicsSpace().add(field);
