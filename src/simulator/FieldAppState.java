@@ -25,7 +25,7 @@ public class FieldAppState extends BaseAppState {
 	private final float CARGO_VARIANCE = 0.0254f; // +- .5 inch for a total of 1 inch.
 	private final float CARGO_RADIUS  = 0.3302f/2f - CARGO_VARIANCE; // 
 
-	private final float CARGO_SPACEING = 0.35f;
+	private final float CARGO_SPACING = 0.35f;
 	private final float CARGO_SET_X_POS = 7.35f;
 	private final float CARGO_SET_Y_POS = 2.0f;
 	
@@ -53,10 +53,13 @@ public class FieldAppState extends BaseAppState {
 		rootNode.attachChild(field);
 		field.rotate(FastMath.PI / 2, 0, 0); 
 		
-		createSet(CARGO_SET_X_POS,CARGO_SET_Y_POS,CARGO_SPACEING);
-		createSet(-CARGO_SET_X_POS,CARGO_SET_Y_POS,CARGO_SPACEING);
-		createSet(CARGO_SET_X_POS,-CARGO_SET_Y_POS,CARGO_SPACEING);
-		createSet(-CARGO_SET_X_POS,-CARGO_SET_Y_POS,CARGO_SPACEING);
+		createCargo(2.4f, CARGO_SPACING/2, 2);
+		
+		
+		createSet(CARGO_SET_X_POS,CARGO_SET_Y_POS,CARGO_SPACING);
+		createSet(-CARGO_SET_X_POS,CARGO_SET_Y_POS,CARGO_SPACING);
+		createSet(CARGO_SET_X_POS,-CARGO_SET_Y_POS,CARGO_SPACING);
+		createSet(-CARGO_SET_X_POS,-CARGO_SET_Y_POS,CARGO_SPACING);
 				
 
 		CollisionShape fieldShape = CollisionShapeFactory.createMeshShape(field);
@@ -92,6 +95,11 @@ public class FieldAppState extends BaseAppState {
 	
 	private void createCargo(float x, float y)
 	{
+		createCargo(x, y, 0.0f);
+	}
+	
+	private void createCargo(float x, float y, float z)
+	{
 		Random rand = new Random();
 		Sphere cargo = new Sphere(10,10, CARGO_RADIUS + CARGO_VARIANCE*rand.nextFloat());
 		//Box cargo = new Box(1,1,1);
@@ -102,7 +110,7 @@ public class FieldAppState extends BaseAppState {
 		cargoMat.setColor("Diffuse", ColorRGBA.Orange);
 		cargoGeom.setMaterial(cargoMat);
 		rootNode.attachChild(cargoGeom);
-		cargoGeom.move(x, y, cargo.radius);
+		cargoGeom.move(x, y, cargo.radius + 0.01f + z);
 		RigidBodyControl cargoCtrl = new RigidBodyControl(cargo.radius);
 		cargoGeom.addControl(cargoCtrl);
 		app.getPhysicsSpace().add(cargoGeom);
