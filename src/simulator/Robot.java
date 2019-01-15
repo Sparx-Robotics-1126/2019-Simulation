@@ -26,6 +26,10 @@ public class Robot extends BaseAppState {
 	private RigidBodyControl ctrl1;
 	float vertVelocity = 0f;
 	float rotate = 0f;
+	public Spatial getRobotBase ()
+	{
+		return robotBase;
+	}
 	@Override
 	public void update(float tpf) {      
     	Vector3f forward = robotBase.getLocalRotation().mult(Vector3f.UNIT_Z).multLocal(vertVelocity).multLocal(tpf);
