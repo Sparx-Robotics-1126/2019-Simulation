@@ -31,31 +31,32 @@ public class Robot extends BaseAppState {
 	private Node robotNode;
 	private Spatial robotBase;
 	private VehicleControl robotControl;
-	//	private CompoundCollisionShape robotShape;
 	private CollisionShape robotShape;
-	float accelerationValue = 0f;
-	float steeringValue = 0f;
+	float accelerationValueLeft = 0f;
+	float accelerationValueRight = 0f;
 
-	private final float robotAcceleration = 100f;
+	private final float robotAcceleration = 200f;
 
 	private final ActionListener actionListener = new ActionListener() {
 
 		@Override
 		public void onAction(String name, boolean pressed, float tpf) {
-			if (name.equals("forwardMove")) {
-				if(pressed) {
-					accelerationValue = robotAcceleration;
-				}
-			} else if(name.equals("backwardMove") && pressed) {
-				if(pressed) {
-					accelerationValue = -robotAcceleration;
-				}
+			if (name.equals("leftDrivesForward") && pressed) {
+				accelerationValueLeft = robotAcceleration;
+			} else if(name.equals("leftDrivesBackward") && pressed) {
+				accelerationValueLeft = -robotAcceleration;
+			} else if(name.indexOf("leftDrives") != -1 && !pressed){
+				accelerationValueLeft = 0;
 			}
-			if(name.equals("leftMove") && pressed) {
-					steeringValue += .2f;
-			} else if(name.equals("rightMove") && pressed){
-				steeringValue -= .2f;			
+
+			if(name.equals("rightDrivesForward") && pressed) {
+				accelerationValueRight = robotAcceleration;
+			} else if(name.equals("rightDrivesBackward") && pressed){
+				accelerationValueRight = -robotAcceleration;			
+			} else if(name.indexOf("rightDrives") != -1 && !pressed){
+				accelerationValueRight = 0;
 			}
+
 			if(name.equals("pause")) {
 				app.pause();
 			} else if(name.equals("resume")){
@@ -79,7 +80,7 @@ public class Robot extends BaseAppState {
 		robotNode = new Node("vehicleNode");
 		robotBase = assetManager.loadModel("assets/Models/RobotBase/RobotBase.blend");
 		robotShape = new CompoundCollisionShape();
-//		robotShape.addChildShape(new BoxCollisionShape(new Vector3f(.4f, .5f, .4f)), new Vector3f(0, .1f, 0));
+		//		robotShape.addChildShape(new BoxCollisionShape(new Vector3f(.4f, .5f, .4f)), new Vector3f(0, .1f, 0));
 		robotShape = CollisionShapeFactory.createDynamicMeshShape(robotBase);
 		robotControl = new VehicleControl(robotShape, 30);
 		robotNode.attachChild(robotBase);
@@ -101,6 +102,10 @@ public class Robot extends BaseAppState {
 		rootNode.attachChild(robotNode);
 		app.getPhysicsSpace().add(robotBase);
 
+		robotControl.steer(0, -.4f);
+		robotControl.steer(1, .4f);
+		robotControl.steer(2, .4f);
+		robotControl.steer(3, -.4f);
 
 		// You must add a light to make the model visible
 		DirectionalLight sun = new DirectionalLight();
@@ -126,11 +131,13 @@ public class Robot extends BaseAppState {
 		//    	robotControl.setLinearVelocity(robotControl.getLinearVelocity().add(forward));
 		//    	robotControl.setAngularVelocity(robotControl.getAngularVelocity().add(new Vector3f(0f, 0f, rotate * tpf)));
 		//    	rotate *= .05f;
+		robotControl.accelerate(0, accelerationValueLeft);
+		robotControl.accelerate(2, accelerationValueLeft);
+		robotControl.accelerate(1, accelerationValueRight);
+		robotControl.accelerate(3, accelerationValueRight);
 
-		robotControl.accelerate(accelerationValue);
-		robotControl.steer(steeringValue);
-		
-		accelerationValue *= .7;
+		//		accelerationValueLeft *= .7;
+		//		accelerationValueRight *= .7;
 	}
 
 	@Override
@@ -153,13 +160,12 @@ public class Robot extends BaseAppState {
 		for(int i = 0; i < 4; i++) {
 			Node wheelNode = new Node("wheel " + i + " node");
 			Spatial wheel = new Geometry("wheel " + i, wheelMesh);
-//			wheel = app.getAssetManager().loadModel("assets/Models/RobotBase/BadWheel.blend");
 			Material cube = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
 			Texture texture = app.getAssetManager().loadTexture("assets/Models/RobotBase/BlueMat.jpg");
 			cube.setTexture("ColorMap", texture);			
 			wheel.setMaterial(cube);
 			wheel.rotate(0f, FastMath.HALF_PI, 0f);
-			
+
 			if(i%2 == 0) {
 				sideWheel = 1;
 			} else {
@@ -171,7 +177,7 @@ public class Robot extends BaseAppState {
 				backWheel = 1;
 			}
 			Vector3f position = new Vector3f(sideWheel*xOff, yOff, backWheel*zOff);
-			robotControl.addWheel(wheelNode, position, wheelDirection, wheelAxle, restLength, radius, backWheel == 1);
+			robotControl.addWheel(wheelNode, position, wheelDirection, wheelAxle, restLength, radius, false);
 			wheelNode.attachChild(wheel);
 			robotNode.attachChild(wheelNode);
 		}
@@ -180,14 +186,14 @@ public class Robot extends BaseAppState {
 	private void getControls() {
 		InputManager manager = app.getInputManager();
 
-		manager.addMapping("forwardMove", new KeyTrigger(KeyInput.KEY_W));
-		manager.addMapping("backwardMove", new KeyTrigger(KeyInput.KEY_S));
-		manager.addMapping("rightMove", new KeyTrigger(KeyInput.KEY_D));
-		manager.addMapping("leftMove", new KeyTrigger(KeyInput.KEY_A));
+		manager.addMapping("leftDrivesForward", new KeyTrigger(KeyInput.KEY_Q));
+		manager.addMapping("leftDrivesBackward", new KeyTrigger(KeyInput.KEY_A));
+		manager.addMapping("rightDrivesForward", new KeyTrigger(KeyInput.KEY_E));
+		manager.addMapping("rightDrivesBackward", new KeyTrigger(KeyInput.KEY_D));
 		manager.addMapping("pause", new KeyTrigger(KeyInput.KEY_P));
 		manager.addMapping("resume", new KeyTrigger(KeyInput.KEY_SPACE));
 
-		manager.addListener(actionListener, "forwardMove", "backwardMove", "rightMove", "leftMove", "pause", "resume");
+		manager.addListener(actionListener, "leftDrivesForward", "leftDrivesBackward", "rightDrivesForward", "rightDrivesBackward", "pause", "resume");
 
 	}
 
@@ -200,6 +206,4 @@ public class Robot extends BaseAppState {
 	protected void onEnable() {
 
 	}
-
-
 }
