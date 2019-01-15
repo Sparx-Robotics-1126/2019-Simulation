@@ -36,7 +36,7 @@ public class Robot extends BaseAppState {
 	float accelerationValue = 0f;
 	float steeringValue = 0f;
 
-	private final float robotAcceleration = 400f;
+	private final float robotAcceleration = 100f;
 
 	private final ActionListener actionListener = new ActionListener() {
 
@@ -52,9 +52,9 @@ public class Robot extends BaseAppState {
 				}
 			}
 			if(name.equals("leftMove") && pressed) {
-					steeringValue += .3f;
+					steeringValue += .2f;
 			} else if(name.equals("rightMove") && pressed){
-				steeringValue -= .3f;			
+				steeringValue -= .2f;			
 			}
 			if(name.equals("pause")) {
 				app.pause();
@@ -79,16 +79,16 @@ public class Robot extends BaseAppState {
 		robotNode = new Node("vehicleNode");
 		robotBase = assetManager.loadModel("assets/Models/RobotBase/RobotBase.blend");
 		robotShape = new CompoundCollisionShape();
-		//		robotShape.addChildShape(new BoxCollisionShape(new Vector3f(.4f, .5f, .4f)), new Vector3f(0, .1f, 0));
+//		robotShape.addChildShape(new BoxCollisionShape(new Vector3f(.4f, .5f, .4f)), new Vector3f(0, .1f, 0));
 		robotShape = CollisionShapeFactory.createDynamicMeshShape(robotBase);
 		robotControl = new VehicleControl(robotShape, 30);
 		robotNode.attachChild(robotBase);
 
 		robotBase.addControl(robotControl);
 
-		float stiffness = 150.0f;
-		float compValue = .4f;
-		float dampValue = .5f;
+		float stiffness = 800.0f;
+		float compValue = .6f;
+		float dampValue = .7f;
 		robotControl.setSuspensionCompression(compValue * 2.0f * FastMath.sqrt(stiffness));
 		robotControl.setSuspensionDamping(dampValue * 2.0f * FastMath.sqrt(stiffness));
 		robotControl.setSuspensionStiffness(stiffness);
@@ -98,7 +98,7 @@ public class Robot extends BaseAppState {
 		robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
 		addWheels();
 		robotBase.rotate(FastMath.HALF_PI, 0f, 0f);
-		rootNode.attachChild(robotBase);
+		rootNode.attachChild(robotNode);
 		app.getPhysicsSpace().add(robotBase);
 
 
@@ -131,7 +131,6 @@ public class Robot extends BaseAppState {
 		robotControl.steer(steeringValue);
 		
 		accelerationValue *= .7;
-		steeringValue *= .1;
 	}
 
 	@Override
@@ -142,13 +141,13 @@ public class Robot extends BaseAppState {
 	private void addWheels() {
 		Vector3f wheelDirection = new Vector3f(0, -1, 0);
 		Vector3f wheelAxle = new Vector3f(-1, 0, 0);
-		float radius = .5f;
+		float radius = .3f;
 		float restLength = .3f;
-		float yOff = .6f;
-		float xOff = .4f;
-		float zOff = .4f;
+		float yOff = .5f;
+		float xOff = .6f;
+		float zOff = .6f;
 
-		Mesh wheelMesh = new Cylinder(16, 16, radius, radius * .06f, true);
+		Mesh wheelMesh = new Cylinder(16, 16, radius, radius * .16f, true);
 		int sideWheel;
 		int backWheel;
 		for(int i = 0; i < 4; i++) {

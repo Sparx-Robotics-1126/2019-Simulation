@@ -37,10 +37,10 @@ public class FieldAppState extends BaseAppState {
 		Node rootNode = app.getRootNode();
 		
 		Geometry floor = new Geometry("floor", new Box(10f, 0.1f, 5f));
-		RigidBodyControl floorCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(100f, 0.1f, 500f)), 0f);
+		RigidBodyControl floorCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(10f, 0.1f, 5f)), 0f);
 		floor.addControl(floorCtrl);
 		floorCtrl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
-		floorCtrl.setPhysicsLocation(new Vector3f(0, 0, -3f));
+		floorCtrl.setPhysicsLocation(new Vector3f(0, 0, -.04f));
 		app.getPhysicsSpace().add(floor);
 		
 		AssetManager assetManager = app.getAssetManager();
