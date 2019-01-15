@@ -24,9 +24,17 @@ public class FieldAppState extends BaseAppState {
 	private SimMain app;
 	private AssetManager assetManager;
 	private Node rootNode;
+
 	private Geometry cargoGeom;
 	private ArrayList<RigidBodyControl> cargoCtrlList = new ArrayList<RigidBodyControl>();
-	
+
+	private final float CARGO_VARIANCE = 0.0254f; // +- .5 inch for a total of 1 inch.
+	private final float CARGO_RADIUS  = 0.3302f/2f - CARGO_VARIANCE; // 
+
+	private final float CARGO_SPACING = 0.35f;
+	private final float CARGO_SET_X_POS = 7.35f;
+	private final float CARGO_SET_Y_POS = 2.0f;
+
 	@Override
 	public void update(float tpf) {
         for (RigidBodyControl ctrl : cargoCtrlList)
@@ -77,16 +85,12 @@ public class FieldAppState extends BaseAppState {
 		Spatial field = assetManager.loadModel("assets/Models/Field/FullField.blend");
 		rootNode.attachChild(field);
 		field.rotate(FastMath.PI / 2, 0, 0); 
-		
-		
-		
-		createSet(7.2517f,2.393f,0.3302f);
-		createSet(-7.9102f,2.7295f,0.3302f);
-		createSet(7.2517f,-2.393f,0.3302f);
-		createSet(-7.9102f,-2.7295f,0.3302f);
-		
-		
-
+			
+		createSet(CARGO_SET_X_POS,CARGO_SET_Y_POS,CARGO_SPACING);
+		createSet(-CARGO_SET_X_POS,CARGO_SET_Y_POS,CARGO_SPACING);
+		createSet(CARGO_SET_X_POS,-CARGO_SET_Y_POS,CARGO_SPACING);
+		createSet(-CARGO_SET_X_POS,-CARGO_SET_Y_POS,CARGO_SPACING);
+				
 		CollisionShape fieldShape = CollisionShapeFactory.createMeshShape(field);
 		RigidBodyControl ctrl2 = new RigidBodyControl(fieldShape);
 		ctrl2.setKinematic(true);
@@ -106,42 +110,42 @@ public class FieldAppState extends BaseAppState {
 	}
 	
 	
-	private void createSet(float startX,float startY,float ballSpacing) {
+	private void createSet(float startX,float startY,float cargoSpacing) {
 		for(int a=0;a<3;a++) 
 		{
-			/*for x values*/
-			float x = startX + a * 0.3302f;
-			
 			for(int b=0;b<2;b++) 
 			{
-				/*			for y values	*/	
-				float y = startY + b * 0.3302f;
+				float x = startX + (a * cargoSpacing) - (1f * cargoSpacing);	
+				float y = startY + (b * cargoSpacing) - (0.5f * cargoSpacing);
 				createCargo(x, y);
 			}
 		}
-
 	}
+	
 	private void createCargo(float x, float y)
 	{
+		createCargo(x, y, 0.0f);
+	}
+	
+	private void createCargo(float x, float y, float z)
+	{
 		Random rand = new Random();
-		Sphere cargo = new Sphere(10,10,0.1524f + 0.0254f*rand.nextFloat());
+		Sphere cargo = new Sphere(10,10, CARGO_RADIUS + CARGO_VARIANCE*rand.nextFloat());
 		//Box cargo = new Box(1,1,1);
-		cargoGeom = new Geometry ("cargo", cargo);
+		Geometry cargoGeom = new Geometry ("cargo", cargo);
 		Material cargoMat = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		cargoMat.setBoolean("UseMaterialColors", true);
 		cargoMat.setColor("Ambient", ColorRGBA.Orange);
 		cargoMat.setColor("Diffuse", ColorRGBA.Orange);
 		cargoGeom.setMaterial(cargoMat);
 		rootNode.attachChild(cargoGeom);
-		cargoGeom.move(x, y, cargo.radius + 0.02f);
+		cargoGeom.move(x, y, cargo.radius + 0.01f + z);
 		RigidBodyControl cargoCtrl = new RigidBodyControl(cargo.radius);
-		cargoCtrl.setMass(1f);
-//		cargoCtrl.setFriction(0.1f);
-//		cargoCtrl.setDamping(0.01f, 0.01f);
 		cargoGeom.addControl(cargoCtrl);
 		app.getPhysicsSpace().add(cargoGeom);
-		cargoCtrlList.add(cargoCtrl);
-		
+		cargoCtrl.setMass(0.2f);
+		cargoCtrl.setFriction(0.1f);
+		cargoCtrl.setDamping(0.01f, 0.01f);
 	}
 	
 	
