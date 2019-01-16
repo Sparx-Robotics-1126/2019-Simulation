@@ -66,6 +66,13 @@ public class Robot extends BaseAppState {
 			} else if(name.equals("resume")){
 				app.resume();
 			}
+			
+			if(name.equals("reset") && pressed) {
+				robotControl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
+				robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
+				accelerationValueRight = 0;
+				accelerationValueLeft = 0;
+			}
 		}
 	};
 
@@ -196,8 +203,9 @@ public class Robot extends BaseAppState {
 		manager.addMapping("rightDrivesBackward", new KeyTrigger(KeyInput.KEY_D));
 		manager.addMapping("pause", new KeyTrigger(KeyInput.KEY_P));
 		manager.addMapping("resume", new KeyTrigger(KeyInput.KEY_SPACE));
+		manager.addMapping("reset", new KeyTrigger(KeyInput.KEY_R));
 
-		manager.addListener(actionListener, "leftDrivesForward", "leftDrivesBackward", "rightDrivesForward", "rightDrivesBackward", "pause", "resume");
+		manager.addListener(actionListener, "leftDrivesForward", "leftDrivesBackward", "rightDrivesForward", "rightDrivesBackward", "pause", "resume", "reset");
 
 	}
 
