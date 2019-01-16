@@ -29,7 +29,6 @@ public class FieldAppState extends BaseAppState {
 	private AssetManager assetManager;
 	private Node rootNode;
 
-	private Geometry cargoGeom;
 	private ArrayList<RigidBodyControl> cargoCtrlList = new ArrayList<RigidBodyControl>();
 
 	private final float CARGO_VARIANCE = 0.0254f; // +- .5 inch for a total of 1 inch.
