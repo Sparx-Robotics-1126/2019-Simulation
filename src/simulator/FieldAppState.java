@@ -3,6 +3,7 @@ package simulator;
 
 import java.util.ArrayList;
 import java.util.Random;
+
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
@@ -11,16 +12,17 @@ import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
-import com.jme3.scene.shape.Sphere;
-import com.jme3.material.Material;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.scene.shape.Box;
+import com.jme3.scene.shape.Sphere;
 
 public class FieldAppState extends BaseAppState {
 	private SimMain app;
@@ -79,7 +81,13 @@ public class FieldAppState extends BaseAppState {
 		app = (SimMain) _app;
 		rootNode = app.getRootNode();
 
-
+		Geometry floor = new Geometry("floor", new Box(10f, 0.1f, 5f));
+		RigidBodyControl floorCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(10f, 0.1f, 5f)), 0f);
+		floor.addControl(floorCtrl);
+		floorCtrl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
+		floorCtrl.setPhysicsLocation(new Vector3f(0, 0, -.04f));
+		app.getPhysicsSpace().add(floor);
+		
 		assetManager = app.getAssetManager();
 		assetManager.registerLocator("assets.zip", ZipLocator.class);
 		assetManager.registerLoader(BlenderLoader.class, "blend");
