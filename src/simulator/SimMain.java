@@ -44,6 +44,10 @@ public class SimMain extends SimpleApplication {
 		bulletAppState.setSpeed(1);
 	}
 	
+	public boolean isPaused() {
+		return bulletAppState.getSpeed() == 0f;
+	}
+	
 	public static void main(String[] args) {
 		SimMain app = new SimMain();
 		app.start();

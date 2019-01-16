@@ -7,6 +7,7 @@ import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.asset.plugins.ZipLocator;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
@@ -19,6 +20,7 @@ import com.jme3.scene.shape.Sphere;
 import com.jme3.material.Material;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.plugins.blender.BlenderLoader;
+import com.jme3.scene.shape.Box;
 
 public class FieldAppState extends BaseAppState {
 	private SimMain app;
@@ -82,7 +84,7 @@ public class FieldAppState extends BaseAppState {
 		assetManager.registerLocator("assets.zip", ZipLocator.class);
 		assetManager.registerLoader(BlenderLoader.class, "blend");
 		
-		Spatial field = assetManager.loadModel("assets/Models/Field/FullField.blend");
+		Spatial field = assetManager.loadModel("assets/Models/Field/FieldWithoutFloor.blend");
 		rootNode.attachChild(field);
 		field.rotate(FastMath.PI / 2, 0, 0); 
 			
@@ -92,8 +94,8 @@ public class FieldAppState extends BaseAppState {
 		createSet(-CARGO_SET_X_POS,-CARGO_SET_Y_POS,CARGO_SPACING);
 				
 		CollisionShape fieldShape = CollisionShapeFactory.createMeshShape(field);
-		RigidBodyControl ctrl2 = new RigidBodyControl(fieldShape);
-		ctrl2.setKinematic(true);
+		RigidBodyControl ctrl2 = new RigidBodyControl(fieldShape, 0);
+		ctrl2.setKinematic(false);
 		field.addControl(ctrl2);
 		app.getPhysicsSpace().add(field);
 	
