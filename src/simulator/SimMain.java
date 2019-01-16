@@ -3,10 +3,13 @@ package simulator;
 import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
+import com.jme3.asset.plugins.ClasspathLocator;
+import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.audio.AudioListenerState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.Vector3f;
+import com.jme3.scene.plugins.blender.BlenderLoader;
 
 public class SimMain extends SimpleApplication {
 	private BulletAppState bulletAppState;
@@ -29,7 +32,8 @@ public class SimMain extends SimpleApplication {
 
 	@Override
 	public void simpleInitApp() {
-
+		assetManager.registerLocator("/", ClasspathLocator.class);
+		assetManager.registerLoader(BlenderLoader.class, "blend");
 	}
 
 	public PhysicsSpace getPhysicsSpace() {

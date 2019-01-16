@@ -84,12 +84,9 @@ public class Robot extends BaseAppState {
 
 		app.getPhysicsSpace().setGravity(new Vector3f(0f, 0f, -9.81f));
 		AssetManager assetManager = app.getAssetManager();
-		assetManager.registerLocator("assets.zip", ZipLocator.class);
-		assetManager.registerLoader(BlenderLoader.class, "blend");
-
 
 		robotNode = new Node("vehicleNode");
-		robotBase = assetManager.loadModel("assets/Models/RobotBase/RobotBase.blend");
+		robotBase = assetManager.loadModel("Models/RobotBase/RobotBase.blend");
 		robotShape = new CompoundCollisionShape();
 		//		robotShape.addChildShape(new BoxCollisionShape(new Vector3f(.4f, .5f, .4f)), new Vector3f(0, .1f, 0));
 		robotShape = CollisionShapeFactory.createDynamicMeshShape(robotBase);
@@ -172,7 +169,7 @@ public class Robot extends BaseAppState {
 			Node wheelNode = new Node("wheel " + i + " node");
 			Spatial wheel = new Geometry("wheel " + i, wheelMesh);
 			Material cube = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-			Texture texture = app.getAssetManager().loadTexture("assets/Models/RobotBase/BlueMat.jpg");
+			Texture texture = app.getAssetManager().loadTexture("Models/RobotBase/BlueMat.jpg");
 			cube.setTexture("ColorMap", texture);			
 			wheel.setMaterial(cube);
 			wheel.rotate(0f, FastMath.HALF_PI, 0f);

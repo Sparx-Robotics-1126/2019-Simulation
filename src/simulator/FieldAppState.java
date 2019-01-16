@@ -88,10 +88,8 @@ public class FieldAppState extends BaseAppState {
 		app.getPhysicsSpace().add(floor);
 		
 		assetManager = app.getAssetManager();
-		assetManager.registerLocator("assets.zip", ZipLocator.class);
-		assetManager.registerLoader(BlenderLoader.class, "blend");
 		
-		Spatial field = assetManager.loadModel("assets/Models/Field/FieldWithoutFloor.blend");
+		Spatial field = assetManager.loadModel("Models/Field/FieldWithoutFloor.blend");
 		rootNode.attachChild(field);
 		field.rotate(FastMath.PI / 2, 0, 0); 
 			
