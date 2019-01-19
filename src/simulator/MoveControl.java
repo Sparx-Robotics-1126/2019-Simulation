@@ -15,6 +15,47 @@ public class MoveControl extends AbstractControl{
 
 	private RigidBodyControl objCtrl;
 	private float speed = .2f;
+	private InputManager manager;
+	
+	public MoveControl(InputManager manager) {
+		this.manager = manager;
+		manager.addMapping("objRight", new KeyTrigger(KeyInput.KEY_RIGHT));
+		manager.addMapping("objLeft", new KeyTrigger(KeyInput.KEY_LEFT));
+		manager.addMapping("objFwd", new KeyTrigger(KeyInput.KEY_UP));
+		manager.addMapping("objBkwd", new KeyTrigger(KeyInput.KEY_DOWN));
+		manager.addMapping("objUp", new KeyTrigger(KeyInput.KEY_Z));
+		manager.addMapping("objDown", new KeyTrigger(KeyInput.KEY_X));
+		manager.addMapping("printPlace", new KeyTrigger(KeyInput.KEY_S));
+		
+		manager.addListener(new ActionListener(){
+
+			@Override
+			public void onAction(String key, boolean pressed, float tpf){
+				if(key.equals("objRight") && pressed) {
+					objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(0, speed, 0)));
+				}
+				else if(key.equals("objLeft") && pressed) {
+					objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(0, -speed, 0)));
+				}
+				else if(key.equals("objFwd") && pressed) {
+					objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(-speed, 0, 0)));
+				}
+				else if(key.equals("objBkwd") && pressed) {
+					objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(speed, 0, 0)));
+				}
+				else if(key.equals("objUp") && pressed) {
+					objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(0, 0, speed)));
+				}
+				else if(key.equals("objDown") && pressed) {
+					objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(0, 0, -speed)));
+				}
+				else if(key.equals("printPlace")) {
+					System.out.println(objCtrl.getPhysicsLocation());
+				}
+			}
+
+		}, "objFwd", "objBkwd", "objRight", "objLeft", "objUp", "objDown", "printPlace");
+	}
 	
 	@Override
 	protected void controlUpdate(float arg0) {
@@ -25,47 +66,11 @@ public class MoveControl extends AbstractControl{
 		this.speed = speed;
 	}
 	
-	public void setSpatial(Spatial spatial, InputManager manager) {
+	public void setSpatial(Spatial spatial) {
 		super.setSpatial(spatial);
-		if(spatial != null && manager != null) {
+		if(spatial != null) {
 			objCtrl = spatial.getControl(RigidBodyControl.class);
 			objCtrl.setGravity(Vector3f.ZERO);
-			manager.addMapping("objRight", new KeyTrigger(KeyInput.KEY_RIGHT));
-			manager.addMapping("objLeft", new KeyTrigger(KeyInput.KEY_LEFT));
-			manager.addMapping("objFwd", new KeyTrigger(KeyInput.KEY_UP));
-			manager.addMapping("objBkwd", new KeyTrigger(KeyInput.KEY_DOWN));
-			manager.addMapping("objUp", new KeyTrigger(KeyInput.KEY_Z));
-			manager.addMapping("objDown", new KeyTrigger(KeyInput.KEY_X));
-			manager.addMapping("printPlace", new KeyTrigger(KeyInput.KEY_S));
-			
-			manager.addListener(new ActionListener(){
-
-				@Override
-				public void onAction(String key, boolean pressed, float tpf){
-					if(key.equals("objRight") && pressed) {
-						objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(0, speed, 0)));
-					}
-					else if(key.equals("objLeft") && pressed) {
-						objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(0, speed, 0)));
-					}
-					else if(key.equals("objFwd") && pressed) {
-						objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(speed, 0, 0)));
-					}
-					else if(key.equals("objBkwd") && pressed) {
-						objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(speed, 0, 0)));
-					}
-					else if(key.equals("objUp") && pressed) {
-						objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(0, 0, speed)));
-					}
-					else if(key.equals("objDown") && pressed) {
-						objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(0, 0, speed)));
-					}
-					else if(key.equals("printPlace")) {
-						System.out.println(objCtrl.getPhysicsLocation());
-					}
-				}
-
-			}, "objFwd", "objBkwd", "objRight", "objLeft", "objUp", "objDown", "printPlace");
 		}
 	}
 
