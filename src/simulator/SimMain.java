@@ -20,7 +20,8 @@ public class SimMain extends SimpleApplication {
 				new StatsAppState(), 
 				new AudioListenerState(), 
 				new DebugKeysAppState(),
-				new CameraControl());
+				new CameraControl(),
+				new HelpHud());
 		bulletAppState = new BulletAppState();
 		getStateManager().attach(bulletAppState);
 		bulletAppState.getPhysicsSpace().setWorldMax(new Vector3f(16f, 16f, 16f));
