@@ -20,9 +20,8 @@ public class SimMain extends SimpleApplication {
 				new AudioListenerState(), 
 				new DebugKeysAppState(),
 				new CameraControl(),
-				new HelpHud()
-//				,
-//				new DebugWindow()
+				new HelpHud(),
+				new DebugWindow()
 				);
 		bulletAppState = new BulletAppState();
 		getStateManager().attach(bulletAppState);
