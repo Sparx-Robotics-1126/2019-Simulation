@@ -4,7 +4,6 @@ import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.StatsAppState;
 import com.jme3.asset.plugins.ClasspathLocator;
-import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.audio.AudioListenerState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
@@ -21,7 +20,10 @@ public class SimMain extends SimpleApplication {
 				new AudioListenerState(), 
 				new DebugKeysAppState(),
 				new CameraControl(),
-				new HelpHud());
+				new HelpHud()
+//				,
+//				new DebugWindow()
+				);
 		bulletAppState = new BulletAppState();
 		getStateManager().attach(bulletAppState);
 		bulletAppState.getPhysicsSpace().setWorldMax(new Vector3f(16f, 16f, 16f));
@@ -57,7 +59,4 @@ public class SimMain extends SimpleApplication {
 		SimMain app = new SimMain();
 		app.start();
 	}
-	
-	
-
 }

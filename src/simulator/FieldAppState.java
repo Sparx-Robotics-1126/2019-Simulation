@@ -7,7 +7,6 @@ import java.util.Random;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
-import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -20,7 +19,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
 
@@ -153,7 +151,5 @@ public class FieldAppState extends BaseAppState {
 		cargoCtrl.setMass(0.2f);
 		cargoCtrl.setFriction(0.1f);
 		cargoCtrl.setDamping(0.01f, 0.01f);
-	}
-	
-	
+	}	
 }

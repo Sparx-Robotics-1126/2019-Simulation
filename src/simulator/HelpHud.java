@@ -1,26 +1,20 @@
 package simulator;
 
-import javax.print.attribute.Size2DSyntax;
-
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
-import com.jme3.font.BitmapText;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.niftygui.NiftyJmeDisplay;
-
 import de.lessvoid.nifty.Nifty;
 import de.lessvoid.nifty.builder.EffectBuilder;
 import de.lessvoid.nifty.builder.LayerBuilder;
 import de.lessvoid.nifty.builder.PanelBuilder;
 import de.lessvoid.nifty.builder.ScreenBuilder;
 import de.lessvoid.nifty.builder.TextBuilder;
-
 import de.lessvoid.nifty.screen.DefaultScreenController;
-import de.lessvoid.nifty.tools.SizeValue;
 
 
 
@@ -67,16 +61,19 @@ public class HelpHud extends BaseAppState {
 		    // layer added
 		    layer(new LayerBuilder("background") {{
 		        childLayoutCenter();
+		
 		    }});
 		    
 		    layer(new LayerBuilder("foreground") {{
 		        childLayoutCenter();
+		       
 
 		        panel(new PanelBuilder("panel_mid") {{
 		            childLayoutVertical();
 		            alignCenter();
 		            height("100%");
 		            width("90%");
+		   
 		            // add text
 		            text(new TextBuilder() {{
 		                text("left move forward = q\n "
@@ -85,11 +82,13 @@ public class HelpHud extends BaseAppState {
 		                   + "right move back = d\n" 
 		                   + "pause  = p\n"
 		                   + "resume = space\n"
+		                   + "(you must resume after you start befor the robot will move)"
 		                   + " reset = r\n"
 		                   + "help = h\n"
 		                   + "move camera = left mouse\n"
 		                   + "zoom = middle mouse\n"
-		                   + "pick up hatch = f");
+		                   + "pick up hatch = f\n"
+		                   + "debug window = t");
 		                font("Interface/Fonts/Default.fnt");
 		                wrap(true);
 		                color("#0066ff");

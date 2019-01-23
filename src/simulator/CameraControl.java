@@ -70,9 +70,7 @@ public class CameraControl extends BaseAppState {
 		
 		manager.addListener(analogListener, "upMouse", "downMouse", "rightMouse", "leftMouse", "wheelUp", "wheelDown");
 		manager.addListener(actionListener, "leftButtonMouse");
-		manager.addListener(keyListener, "number1", "number2","number3");
-		
-				       
+		manager.addListener(keyListener, "number1", "number2","number3");	       
 	}
 	
 	private final ActionListener actionListener = new ActionListener() {
@@ -89,22 +87,24 @@ public class CameraControl extends BaseAppState {
        
         public void onAction(String name, boolean keyPressed, float tpf) {
             if (name.equals("number1")) {
-            	 camMode1 = true;
-            	 camMode2 = false;
-            	 camMode3 = false;
+            	DebugWindow.getInstance().log("Changing to camera 1");
+            	camMode1 = true;
+            	camMode2 = false;
+            	camMode3 = false;
          		cam.lookAt(center, Vector3f.UNIT_Z);
             } else if (name.equals("number2")) {
+            	DebugWindow.getInstance().log("Changing to camera 2");
             	camMode2 = true;
             	camMode1 = false;
             	camMode3 = false;
             } else if (name.equals("number3")) {
+            	DebugWindow.getInstance().log("Changing to camera 3");
             	camMode3 = true;
             	camMode1 = false;
             	camMode2 = false;
             }	
         }
     };
-	
     
 	private final AnalogListener analogListener = new AnalogListener() {
         @Override
@@ -112,11 +112,9 @@ public class CameraControl extends BaseAppState {
         	if(leftPressed)
         	{
             	float rotateAmount = FastMath.PI * value;
-        		
         		Vector3f location = cam.getLocation();
         		Quaternion amount = new Quaternion();
         		float direction = 1;
-        		
        		
             	if(name.equals("upMouse")) {
             		if(Math.abs(location.y) < Math.abs(location.x))

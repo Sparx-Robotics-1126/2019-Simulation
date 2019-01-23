@@ -3,7 +3,6 @@ package simulator;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
-import com.jme3.asset.plugins.ZipLocator;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.VehicleControl;
@@ -22,7 +21,6 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.scene.shape.Cylinder;
 import com.jme3.texture.Texture;
 
@@ -60,7 +58,7 @@ public class Robot extends BaseAppState {
 			} else if(name.indexOf("rightDrives") != -1 && !pressed){
 				accelerationValueRight = 0;
 			}
-
+			
 			if(name.equals("pause")) {
 				app.pause();
 			} else if(name.equals("resume")){
@@ -160,7 +158,7 @@ public class Robot extends BaseAppState {
 		float restLength = .3f;
 		float yOff = .5f;
 		float xOff = .6f;
-		float zOff = .6f;
+		float zOff = .4f;
 
 		Mesh wheelMesh = new Cylinder(16, 16, radius, radius * .16f, true);
 		int sideWheel;
@@ -203,7 +201,7 @@ public class Robot extends BaseAppState {
 		manager.addMapping("reset", new KeyTrigger(KeyInput.KEY_R));
 
 		manager.addListener(actionListener, "leftDrivesForward", "leftDrivesBackward", "rightDrivesForward", "rightDrivesBackward", "pause", "resume", "reset");
-
+		
 	}
 
 	@Override
