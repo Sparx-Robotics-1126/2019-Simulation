@@ -52,11 +52,11 @@ public class ConsoleCommandsAppState extends BaseAppState {
               } else if (evt.getCommand().equals("phyDebug")) {
             	  BulletAppState physics = app.getStateManager().getState(BulletAppState.class);
             	  String value = parser.get(0);
-            	  if(value.equals("true"))
+            	  if(value != null && value.equals("true"))
             	  {
             		  physics.setDebugEnabled(true);
             	  }
-            	  else if(value.equals("false"))
+            	  else if(value != null && value.equals("false"))
             	  {
             		  physics.setDebugEnabled(false);
             	  }
