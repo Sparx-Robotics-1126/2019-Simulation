@@ -35,10 +35,10 @@ class DebugWindow extends BaseAppState    {
 	
 	public void log(String logLine) {
 		debugText += logLine + "\n";
-		Element element = nifty.getScreen("debug").findElementById(
-				"Text ID");
-		TextRenderer textRenderer = element.getRenderer(TextRenderer.class);
-		textRenderer.setText(debugText);
+//		Element element = nifty.getScreen("debug").findElementById(
+//				"Text ID");
+//		TextRenderer textRenderer = element.getRenderer(TextRenderer.class);
+//		textRenderer.setText(debugText);
 	}
 	
 	@Override
