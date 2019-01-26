@@ -10,6 +10,8 @@ import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.plugins.blender.BlenderLoader;
 
+import strongdk.jme.appstate.console.ConsoleAppState;
+
 public class SimMain extends SimpleApplication {
 	private BulletAppState bulletAppState;
 	
@@ -21,7 +23,9 @@ public class SimMain extends SimpleApplication {
 				new DebugKeysAppState(),
 				new CameraControl(),
 				new HelpHud(),
-				new DebugWindow()
+				new DebugWindow(),
+				new ConsoleAppState(),
+				new ConsoleCommandsAppState()
 				);
 		bulletAppState = new BulletAppState();
 		getStateManager().attach(bulletAppState);

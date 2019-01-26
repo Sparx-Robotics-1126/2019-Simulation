@@ -90,7 +90,6 @@ public class Robot extends BaseAppState {
 		robotShape = CollisionShapeFactory.createDynamicMeshShape(robotBase);
 		robotControl = new VehicleControl(robotShape, 30);
 		robotNode.attachChild(robotBase);
-
 		robotBase.addControl(robotControl);
 
 		float stiffness = 800.0f;

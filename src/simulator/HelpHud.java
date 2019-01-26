@@ -87,7 +87,8 @@ public class HelpHud extends BaseAppState {
 		                   + "help = h\n"
 		                   + "move camera = left mouse\n"
 		                   + "zoom = middle mouse\n"
-		                   + "pick up hatch = f\n"
+		                   + "pick up hatch = w\n"
+		                   + "drop hatch = s"
 		                   + "debug window = t");
 		                font("Interface/Fonts/Default.fnt");
 		                wrap(true);
