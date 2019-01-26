@@ -3,6 +3,7 @@ package simulator;
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
+import com.jme3.bullet.BulletAppState;
 import com.jme3.renderer.Camera;
 
 import strongdk.jme.appstate.console.CommandEvent;
@@ -29,7 +30,7 @@ public class ConsoleCommandsAppState extends BaseAppState {
 		console.registerCommand("help", commandListener);
 		console.registerCommand("cam", commandListener);
 		console.registerCommand("hide", commandListener);
-				
+		console.registerCommand("phyDebug", commandListener);
 	}
 	
     private CommandListener commandListener = new CommandListener() {
@@ -40,6 +41,7 @@ public class ConsoleCommandsAppState extends BaseAppState {
             	  console.appendConsole("help: this message.");
             	  console.appendConsole("hide: hide the console.");
             	  console.appendConsole("cam: display camera location.");
+            	  console.appendConsole("phyDebug true/false: enable/disable physics debug.");
               } else if (evt.getCommand().equals("hide")) {
                   console.setVisible(false);
               } else if (evt.getCommand().equals("cam")) {
@@ -47,6 +49,21 @@ public class ConsoleCommandsAppState extends BaseAppState {
             	  String info = "location " + cam.getLocation().toString();
             	  info += " direction " + cam.getDirection().toString();
             	  console.appendConsole("Cam: " + info);
+              } else if (evt.getCommand().equals("phyDebug")) {
+            	  BulletAppState physics = app.getStateManager().getState(BulletAppState.class);
+            	  String value = parser.get(0);
+            	  if(value.equals("true"))
+            	  {
+            		  physics.setDebugEnabled(true);
+            	  }
+            	  else if(value.equals("false"))
+            	  {
+            		  physics.setDebugEnabled(false);
+            	  }
+            	  else
+            	  {
+            		  console.appendConsoleError("You must specify either 'true' or 'false' for the phyDebug command.");
+            	  }
               } else if (evt.getCommand().equals("rotation")) {
                     Integer value = parser.getInt(0);
                     if(value != null){
