@@ -24,6 +24,7 @@ public class ConsoleCommandsAppState extends BaseAppState {
 	protected void initialize(Application _app) {
 		app = (SimpleApplication) _app;
 		console = app.getStateManager().getState(ConsoleAppState.class);
+		console.setConsoleNumLines(40);
 		
 		console.registerCommand("help", commandListener);
 		console.registerCommand("cam", commandListener);
@@ -43,12 +44,12 @@ public class ConsoleCommandsAppState extends BaseAppState {
                   console.setVisible(false);
               } else if (evt.getCommand().equals("cam")) {
             	  Camera cam = app.getCamera();
-            	  String info = cam.getLocation().toString();
+            	  String info = "location " + cam.getLocation().toString();
+            	  info += " direction " + cam.getDirection().toString();
             	  console.appendConsole("Cam: " + info);
               } else if (evt.getCommand().equals("rotation")) {
                     Integer value = parser.getInt(0);
                     if(value != null){
-                  
                           console.appendConsole("Rotation speed changed: " + value);
                     }else{
                           console.appendConsoleError("Could not change speed, not a valid number: " + parser.getString(0));
