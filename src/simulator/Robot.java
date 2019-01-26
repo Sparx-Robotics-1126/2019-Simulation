@@ -12,17 +12,13 @@ import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
 import com.jme3.light.DirectionalLight;
-import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
-import com.jme3.scene.Mesh;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Cylinder;
-import com.jme3.texture.Texture;
 
 public class Robot extends BaseAppState {
 	private SimMain app;
@@ -32,7 +28,7 @@ public class Robot extends BaseAppState {
 	private CollisionShape robotShape;
 	float accelerationValueLeft = 0f;
 	float accelerationValueRight = 0f;
-	private final float robotAcceleration = 200f;
+	private final float robotAcceleration = 150f;
 	
 	private final ActionListener actionListener = new ActionListener() {
 
@@ -85,9 +81,10 @@ public class Robot extends BaseAppState {
 
 		robotNode = new Node("vehicleNode");
 		robotBase = assetManager.loadModel("Models/RobotBase/RobotDriveBase.blend");
+		robotBase.scale(.5f);
 		robotShape = new CompoundCollisionShape();
 		Geometry robot_geo = (Geometry)((Node)((Node)((Node)robotBase).getChild(0)).getChild(0)).getChild(0);
-		robot_geo.setLocalRotation(new Quaternion(3, 0, 0, 3));
+		robot_geo.setLocalRotation(new Quaternion(1, 0, 0, 1));
 		((CompoundCollisionShape)robotShape).addChildShape(new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
 		robotControl = new VehicleControl(robotShape, 60);
 		robotNode.attachChild(robotBase);
@@ -108,10 +105,10 @@ public class Robot extends BaseAppState {
 		rootNode.attachChild(robotNode);
 		app.getPhysicsSpace().add(robotBase);
 
-		robotControl.steer(0, -.4f);
-		robotControl.steer(1, .4f);
-		robotControl.steer(2, .4f);
-		robotControl.steer(3, -.4f);
+		robotControl.steer(0, -.25f);
+		robotControl.steer(1, .25f);
+		robotControl.steer(2, .25f);
+		robotControl.steer(3, -.25f);
 
 		// You must add a light to make the model visible
 		DirectionalLight sun = new DirectionalLight();
@@ -154,23 +151,23 @@ public class Robot extends BaseAppState {
 	private void addWheels() {
 		Vector3f wheelDirection = new Vector3f(0, -1, 0);
 		Vector3f wheelAxle = new Vector3f(-1, 0, 0);
-		float radius = .3f;
-		float restLength = .3f;
-		float yOff = 0f;
-		float xOff = .6f;
-		float zOff = .4f;
+		float radius = .06f;
+		float restLength = .1f;
+		float yOff = .0f;
+		float xOff = .4f;
+		float zOff = .2f;
 
-		Mesh wheelMesh = new Cylinder(16, 16, radius, radius * .16f, true);
+//		Mesh wheelMesh = new Cylinder(16, 16, radius, radius * .16f, true);
 		int sideWheel;
 		int backWheel;
 		for(int i = 0; i < 4; i++) {
 			Node wheelNode = new Node("wheel " + i + " node");
-			Spatial wheel = new Geometry("wheel " + i, wheelMesh);
-			Material cube = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
-			Texture texture = app.getAssetManager().loadTexture("Models/RobotBase/BlueMat.jpg");
-			cube.setTexture("ColorMap", texture);			
-			wheel.setMaterial(cube);
-			wheel.rotate(0f, FastMath.HALF_PI, 0f);
+//			Spatial wheel = new Geometry("wheel " + i, wheelMesh);
+//			Material cube = new Material(app.getAssetManager(), "Common/MatDefs/Misc/Unshaded.j3md");
+//			Texture texture = app.getAssetManager().loadTexture("Models/RobotBase/BlueMat.jpg");
+//			cube.setTexture("ColorMap", texture);			
+//			wheel.setMaterial(cube);
+//			wheel.rotate(0f, FastMath.HALF_PI, 0f);
 
 			if(i%2 == 0) {
 				sideWheel = 1;
@@ -184,7 +181,7 @@ public class Robot extends BaseAppState {
 			}
 			Vector3f position = new Vector3f(sideWheel*xOff, yOff, backWheel*zOff);
 			robotControl.addWheel(wheelNode, position, wheelDirection, wheelAxle, restLength, radius, false);
-			wheelNode.attachChild(wheel);
+//			wheelNode.attachChild(wheel);
 			robotNode.attachChild(wheelNode);
 		}
 	}
