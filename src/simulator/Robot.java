@@ -3,10 +3,10 @@ package simulator;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.VehicleControl;
-import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -28,17 +28,12 @@ public class Robot extends BaseAppState {
 	private SimMain app;
 	private Node robotNode;
 	private Spatial robotBase;
-	public Spatial getRobotBase ()
-	{
-		return robotBase;
-	}
 	private VehicleControl robotControl;
 	private CollisionShape robotShape;
 	float accelerationValueLeft = 0f;
 	float accelerationValueRight = 0f;
-
 	private final float robotAcceleration = 200f;
-
+	
 	private final ActionListener actionListener = new ActionListener() {
 
 		@Override
@@ -73,7 +68,12 @@ public class Robot extends BaseAppState {
 			}
 		}
 	};
-
+	
+	public Spatial getRobotBase ()
+	{
+		return robotBase;
+	}
+	
 	@Override
 	protected void initialize(Application _app) {
 
@@ -84,11 +84,12 @@ public class Robot extends BaseAppState {
 		AssetManager assetManager = app.getAssetManager();
 
 		robotNode = new Node("vehicleNode");
-		robotBase = assetManager.loadModel("Models/RobotBase/RobotBase.blend");
+		robotBase = assetManager.loadModel("Models/RobotBase/RobotDriveBase.blend");
 		robotShape = new CompoundCollisionShape();
-		//		robotShape.addChildShape(new BoxCollisionShape(new Vector3f(.4f, .5f, .4f)), new Vector3f(0, .1f, 0));
-		robotShape = CollisionShapeFactory.createDynamicMeshShape(robotBase);
-		robotControl = new VehicleControl(robotShape, 30);
+		Geometry robot_geo = (Geometry)((Node)((Node)((Node)robotBase).getChild(0)).getChild(0)).getChild(0);
+		robot_geo.setLocalRotation(new Quaternion(3, 0, 0, 3));
+		((CompoundCollisionShape)robotShape).addChildShape(new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
+		robotControl = new VehicleControl(robotShape, 60);
 		robotNode.attachChild(robotBase);
 		robotBase.addControl(robotControl);
 
@@ -155,7 +156,7 @@ public class Robot extends BaseAppState {
 		Vector3f wheelAxle = new Vector3f(-1, 0, 0);
 		float radius = .3f;
 		float restLength = .3f;
-		float yOff = .5f;
+		float yOff = 0f;
 		float xOff = .6f;
 		float zOff = .4f;
 
@@ -203,11 +204,28 @@ public class Robot extends BaseAppState {
 		
 	}
 
+	public void setDrivesPowerLeft(float power) {
+		accelerationValueLeft = power;
+	}
+	
+	public float getDrivesPowerLeft() {
+		return accelerationValueLeft;
+	}
+	
 	@Override
 	protected void onDisable() {
 
 	}
 
+	public void setDrivesPowerRight(float power) {
+		accelerationValueRight = power;
+	}
+	
+	public float getDrivesPowerRight() {
+		return accelerationValueRight;
+	}
+
+	
 	@Override
 	protected void onEnable() {
 

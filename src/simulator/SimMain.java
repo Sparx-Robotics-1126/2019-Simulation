@@ -33,7 +33,7 @@ public class SimMain extends SimpleApplication {
 		bulletAppState.getPhysicsSpace().setWorldMin(new Vector3f(-16f, -16f, -16f));
 		bulletAppState.getPhysicsSpace().setAccuracy(1f/300f);
 		
-//		bulletAppState.setDebugEnabled(true);
+		bulletAppState.setDebugEnabled(true);
 	}
 
 	@Override

@@ -15,10 +15,8 @@ public class MoveControl extends AbstractControl{
 
 	private RigidBodyControl objCtrl;
 	private float speed = .2f;
-	private InputManager manager;
 	
 	public MoveControl(InputManager manager) {
-		this.manager = manager;
 		manager.addMapping("objRight", new KeyTrigger(KeyInput.KEY_RIGHT));
 		manager.addMapping("objLeft", new KeyTrigger(KeyInput.KEY_LEFT));
 		manager.addMapping("objFwd", new KeyTrigger(KeyInput.KEY_UP));
