@@ -110,20 +110,6 @@ public class Robot extends BaseAppState {
 		robotControl.steer(2, .25f);
 		robotControl.steer(3, -.25f);
 
-		// You must add a light to make the model visible
-		DirectionalLight sun = new DirectionalLight();
-		sun.setDirection(new Vector3f(-0.1f, -0.7f, -1.0f));
-		sun.setColor(new ColorRGBA(.5f,.5f,.5f,1));
-		DirectionalLight sun2 = new DirectionalLight();
-		sun2.setDirection(new Vector3f(0.1f, 0.7f, -1.0f));
-		sun2.setColor(new ColorRGBA(.4f,.4f,.4f,1));
-		DirectionalLight sun3 = new DirectionalLight();
-		sun3.setDirection(new Vector3f(0.1f, 0.7f, 1.0f));
-		sun3.setColor(new ColorRGBA(.3f,.3f,.3f,1));
-
-		rootNode.addLight(sun);
-		rootNode.addLight(sun2);
-		rootNode.addLight(sun3);
 		getControls();
 		app.pause();
 	}
