@@ -49,13 +49,13 @@ public class infoDisplay extends BaseAppState {
 		int viewPortHeight = guiViewPort.getCamera().getHeight();
 		int viewPortWidth = guiViewPort.getCamera().getWidth();
 		float infoQuadHeight = (viewPortHeight / 4);
-		float infoQuadWidth = (viewPortWidth / 5); //7
+		float infoQuadWidth = (viewPortWidth / 7);
 		
 		BitmapFont guiFont = assetManager.loadFont(enqBitmapFontAssetName);
 		scrollingBitmapText = new BitmapText(guiFont, false);
 		scrollingBitmapText.setName("scrollingBitmapText");
 		scrollingBitmapText.setColor("Color", new ColorRGBA(255, 0, 0, 1f));
-		scrollingBitmapText.setLocalTranslation(infoQuadWidth / 3.9f, infoQuadHeight, 0);
+		scrollingBitmapText.setLocalTranslation(infoQuadWidth / 3.9f, infoQuadHeight / 2f, 0);
 		consoleBaseNode.attachChild(scrollingBitmapText);
 		infoQuad.setMesh(new Quad(infoQuadWidth, infoQuadHeight));
 		RobotCodeCommunication.run();
