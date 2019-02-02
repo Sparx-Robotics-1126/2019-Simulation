@@ -87,18 +87,15 @@ public class CameraControl extends BaseAppState {
        
         public void onAction(String name, boolean keyPressed, float tpf) {
             if (name.equals("number1")) {
-            	DebugWindow.getInstance().log("Changing to camera 1");
             	camMode1 = true;
             	camMode2 = false;
             	camMode3 = false;
          		cam.lookAt(center, Vector3f.UNIT_Z);
-            } else if (name.equals("number2")) {
-            	DebugWindow.getInstance().log("Changing to camera 2");
+            } else if (name.equals("number2")) {           
             	camMode2 = true;
             	camMode1 = false;
             	camMode3 = false;
             } else if (name.equals("number3")) {
-            	DebugWindow.getInstance().log("Changing to camera 3");
             	camMode3 = true;
             	camMode1 = false;
             	camMode2 = false;

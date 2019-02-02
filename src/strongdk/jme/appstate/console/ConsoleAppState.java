@@ -74,8 +74,8 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * command mappings to the console. Use the {@link CommandListener} interface to
  * create your own commands and add them to the console.
  *
- * <p>This AppState is completely threadsafe. Howver when exeucting code
- * in your own {@link CommandListener} remember that you arent working from
+ * <p>This AppState is completely threadsafe. However when executing code
+ * in your own {@link CommandListener} remember that you aren't working from
  * the main game thread. Be sure to use {@code app.enqueue()} if your command
  * modifies the scenegraph.
  *
@@ -340,7 +340,7 @@ public class ConsoleAppState implements AppState {
             } else {
                   scrollingBitmapText.setCullHint(Spatial.CullHint.Dynamic);
             }
-
+            
             //background geom
             if (reducedConsoleLinesToFit) {
                   //This means the console is the full height of the screen.
@@ -361,7 +361,7 @@ public class ConsoleAppState implements AppState {
             //background scrolling text geom
             bgScrollingQuad.setMesh(new Quad(bgFieldQuadWidth, lineHeight * numConsoleLines));
             bgScrollingQuad.setLocalTranslation(horizontalPadding, viewPortHeight - (lineHeight * numConsoleLines) - verticalPadding, .9f);
-
+            
       }
 
       /**

@@ -11,14 +11,13 @@ import strongdk.jme.appstate.console.CommandListener;
 import strongdk.jme.appstate.console.CommandParser;
 import strongdk.jme.appstate.console.ConsoleAppState;
 
-public class ConsoleCommandsAppState extends BaseAppState {
+public class ConsoleDebugWindowAppState extends BaseAppState {
 	private SimpleApplication app;
 	private ConsoleAppState console;
 
 	@Override
 	protected void cleanup(Application arg0) {
 		// TODO Auto-generated method stub
-		
 	}
 
 	@Override
@@ -64,13 +63,6 @@ public class ConsoleCommandsAppState extends BaseAppState {
             	  {
             		  console.appendConsoleError("You must specify either 'true' or 'false' for the phyDebug command.");
             	  }
-              } else if (evt.getCommand().equals("rotation")) {
-                    Integer value = parser.getInt(0);
-                    if(value != null){
-                          console.appendConsole("Rotation speed changed: " + value);
-                    }else{
-                          console.appendConsoleError("Could not change speed, not a valid number: " + parser.getString(0));
-                    }
               }
         }
 

@@ -17,15 +17,14 @@ public class SimMain extends SimpleApplication {
 	
 	public SimMain() {
 		super(new Robot(),
-				new FieldAppState(),
-				new StatsAppState(), 
+				new FieldAppState(), 
 				new AudioListenerState(), 
 				new DebugKeysAppState(),
 				new CameraControl(),
-				new HelpHud(),
-				new DebugWindow(),
 				new ConsoleAppState(),
-				new ConsoleCommandsAppState()
+				new HelpDisplay(),
+				new infoDisplay(),
+				new ConsoleDebugWindowAppState()
 				);
 		bulletAppState = new BulletAppState();
 		getStateManager().attach(bulletAppState);
