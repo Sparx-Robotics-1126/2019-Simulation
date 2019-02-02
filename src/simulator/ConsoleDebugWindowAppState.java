@@ -25,59 +25,59 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		app = (SimpleApplication) _app;
 		console = app.getStateManager().getState(ConsoleAppState.class);
 		console.setConsoleNumLines(40);
-		
+
 		console.registerCommand("help", commandListener);
 		console.registerCommand("cam", commandListener);
 		console.registerCommand("hide", commandListener);
 		console.registerCommand("phyDebug", commandListener);
+		console.registerCommand("clear", commandListener);
 	}
-	
-    private CommandListener commandListener = new CommandListener() {
-        @Override
-        public void execute(CommandEvent evt) {
-              final CommandParser parser = evt.getParser();
-              if (evt.getCommand().equals("help")) {
-            	  console.appendConsole("help: this message.");
-            	  console.appendConsole("hide: hide the console.");
-            	  console.appendConsole("cam: display camera location.");
-            	  console.appendConsole("phyDebug true/false: enable/disable physics debug.");
-              } else if (evt.getCommand().equals("hide")) {
-                  console.setVisible(false);
-              } else if (evt.getCommand().equals("cam")) {
-            	  Camera cam = app.getCamera();
-            	  String info = "location " + cam.getLocation().toString();
-            	  info += " direction " + cam.getDirection().toString();
-            	  console.appendConsole("Cam: " + info);
-              } else if (evt.getCommand().equals("phyDebug")) {
-            	  BulletAppState physics = app.getStateManager().getState(BulletAppState.class);
-            	  String value = parser.get(0);
-            	  if(value != null && value.equals("true"))
-            	  {
-            		  physics.setDebugEnabled(true);
-            	  }
-            	  else if(value != null && value.equals("false"))
-            	  {
-            		  physics.setDebugEnabled(false);
-            	  }
-            	  else
-            	  {
-            		  console.appendConsoleError("You must specify either 'true' or 'false' for the phyDebug command.");
-            	  }
-              }
-        }
 
-  };
+	private CommandListener commandListener = new CommandListener() {
+		@Override
+		public void execute(CommandEvent evt) {
+			final CommandParser parser = evt.getParser();
+			if (evt.getCommand().equals("help")) {
+				console.appendConsole("help: this message.");
+				console.appendConsole("hide: hide the console.");
+				console.appendConsole("cam: display camera location.");
+				console.appendConsole("phyDebug true/false: enable/disable physics debug.");
+				console.appendConsole("clear: removes text from console");
+			} else if (evt.getCommand().equals("hide")) {
+				console.setVisible(false);
+			} else if (evt.getCommand().equals("cam")) {
+				Camera cam = app.getCamera();
+				String info = "location " + cam.getLocation().toString();
+				info += " direction " + cam.getDirection().toString();
+				console.appendConsole("Cam: " + info);
+			} else if (evt.getCommand().equals("phyDebug")) {
+				BulletAppState physics = app.getStateManager().getState(BulletAppState.class);
+				String value = parser.get(0);
+				if (value != null && value.equals("true")) {
+					physics.setDebugEnabled(true);
+				} else if (value != null && value.equals("false")) {
+
+					physics.setDebugEnabled(false);
+				} else {
+					console.appendConsoleError("You must specify either 'true' or 'false' for the phyDebug command.");
+				}
+			} else if (evt.getCommand().equals("clear")) {
+				console.clearConsole();
+			}
+
+		}
+	};
 
 	@Override
 	protected void onDisable() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	protected void onEnable() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }
