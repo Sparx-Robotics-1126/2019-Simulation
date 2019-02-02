@@ -12,15 +12,9 @@ public class RobotCodeCommunication {
 	private static final NetworkTable  table = NetworkTableInstance.getDefault().getTable("CommsTable");
 
 	public static void run() {
+		NetworkTableInstance.getDefault().startClient("localhost");
 		subtableData = new ConcurrentHashMap<String, Double>();
-		NetworkTableInstance inst = NetworkTableInstance.getDefault();
-		inst.startClient("CommsTable");
-		String[] subtableNames = table.getSubTables().toArray(new String[0]);
-		for(int i = 0; i < subtableNames.length; i++) {
-			subtableData.put(subtableNames[i], table.getEntry(subtableNames[i]).getDouble(0.0));
-		}
-		System.out.println(table.getKeys().size());
-		System.out.println(table.getSubTables().size());
+		getMap();
 		addFlags(table);
 	}
 
@@ -37,6 +31,10 @@ public class RobotCodeCommunication {
 	}
 	
 	public static ConcurrentHashMap<String, Double> getMap() {
+		String[] subtableNames = table.getSubTables().toArray(new String[0]);
+		for(int i = 0; i < subtableNames.length; i++) {
+			subtableData.put(subtableNames[i], table.getEntry(subtableNames[i]).getDouble(0.0));
+		}
 		return subtableData;
 	}
 }

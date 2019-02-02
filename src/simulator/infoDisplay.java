@@ -1,5 +1,7 @@
 package simulator;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
@@ -47,15 +49,16 @@ public class infoDisplay extends BaseAppState {
 		int viewPortHeight = guiViewPort.getCamera().getHeight();
 		int viewPortWidth = guiViewPort.getCamera().getWidth();
 		float infoQuadHeight = (viewPortHeight / 4);
-		float infoQuadWidth = (viewPortWidth / 7);
-
+		float infoQuadWidth = (viewPortWidth / 5); //7
+		
 		BitmapFont guiFont = assetManager.loadFont(enqBitmapFontAssetName);
 		scrollingBitmapText = new BitmapText(guiFont, false);
 		scrollingBitmapText.setName("scrollingBitmapText");
 		scrollingBitmapText.setColor("Color", new ColorRGBA(255, 0, 0, 1f));
-		scrollingBitmapText.setLocalTranslation(infoQuadWidth / 3.9f, infoQuadHeight / 2, 0);
+		scrollingBitmapText.setLocalTranslation(infoQuadWidth / 3.9f, infoQuadHeight, 0);
 		consoleBaseNode.attachChild(scrollingBitmapText);
 		infoQuad.setMesh(new Quad(infoQuadWidth, infoQuadHeight));
+		RobotCodeCommunication.run();
 	}
 
 	public void update(float tpf) {
@@ -73,6 +76,11 @@ public class infoDisplay extends BaseAppState {
 
 		String displayText = String.format("the total time is %.2f", timeTotal);
 		displayText += String.format("\n  your speed is %.2f", speed);
+		displayText += "\n Network Tables to follow";
+		ConcurrentHashMap<String, Double> map= RobotCodeCommunication.getMap();
+		for(String key : map.keySet()) {
+			displayText += "\n" + key + " " + map.get(key);
+		}
 		scrollingBitmapText.setText(displayText);
 	}
 
