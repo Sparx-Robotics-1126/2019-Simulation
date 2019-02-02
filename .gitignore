@@ -3,7 +3,7 @@
 /bin/
 *.class
 
-*.jar
+
 *.war
 *.ear
 
