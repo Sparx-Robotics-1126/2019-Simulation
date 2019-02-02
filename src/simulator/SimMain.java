@@ -2,7 +2,6 @@ package simulator;
 
 import com.jme3.app.DebugKeysAppState;
 import com.jme3.app.SimpleApplication;
-import com.jme3.app.StatsAppState;
 import com.jme3.asset.plugins.ClasspathLocator;
 import com.jme3.audio.AudioListenerState;
 import com.jme3.bullet.BulletAppState;
