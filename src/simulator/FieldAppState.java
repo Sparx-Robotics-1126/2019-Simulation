@@ -28,7 +28,16 @@ public class FieldAppState extends BaseAppState {
 	private AssetManager assetManager;
 	private Node rootNode;
 
+	
+	private RigidBodyControl hatchCtrl;
+	private Spatial hatch;
+	
 	private ArrayList<RigidBodyControl> cargoCtrlList = new ArrayList<RigidBodyControl>();
+	private ArrayList<RigidBodyControl> hatchCtrlList = new ArrayList<RigidBodyControl>();
+
+	public ArrayList<RigidBodyControl> getHatchCtrlList() {
+		return hatchCtrlList;
+	}
 
 	private final float CARGO_VARIANCE = 0.0254f; // +- .5 inch for a total of 1 inch.
 	private final float CARGO_RADIUS  = 0.3302f/2f - CARGO_VARIANCE; // 
@@ -250,6 +259,23 @@ public class FieldAppState extends BaseAppState {
 		cargoCtrl.setFriction(0.1f);
 		cargoCtrl.setDamping(0.01f, 0.01f);
 	}
+		hatch = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
+		rootNode.attachChild(hatch);
+		hatch.move(y,x,z);
+		hatch.rotate(0, 0, FastMath.PI / 2);
+		CollisionShape hatchShape = CollisionShapeFactory.createDynamicMeshShape(hatch);
+		hatchCtrl = new RigidBodyControl(hatchShape, 1f);
+		hatch.addControl(hatchCtrl);
+		app.getPhysicsSpace().add(hatch);
+		hatchCtrl.setFriction(0.1f);
+		hatchCtrl.setDamping(0.01f, 0.01f);
+		hatchCtrlList.add(hatchCtrl);
+	}
+
+
+
+	
+	
 
 	private void addLight() {
 		//You must add a light to make the models visible
