@@ -10,7 +10,8 @@ import edu.wpi.first.networktables.NetworkTableType;
 public class RobotCodeCommunication {
 	private static ConcurrentHashMap<String, Double> subtableData;
 	private static final NetworkTable  table = NetworkTableInstance.getDefault().getTable("CommsTable");
-
+	
+	
 	public static void run() {
 		NetworkTableInstance.getDefault().startClient("localhost");
 		subtableData = new ConcurrentHashMap<String, Double>();
