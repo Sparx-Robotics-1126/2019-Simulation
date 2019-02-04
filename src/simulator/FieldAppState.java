@@ -28,10 +28,10 @@ public class FieldAppState extends BaseAppState {
 	private AssetManager assetManager;
 	private Node rootNode;
 
-	
+
 	private RigidBodyControl hatchCtrl;
 	private Spatial hatch;
-	
+
 	private ArrayList<RigidBodyControl> cargoCtrlList = new ArrayList<RigidBodyControl>();
 	private ArrayList<RigidBodyControl> hatchCtrlList = new ArrayList<RigidBodyControl>();
 
@@ -235,13 +235,11 @@ public class FieldAppState extends BaseAppState {
 		}
 	}
 
-	private void createCargo(float x, float y)
-	{
+	private void createCargo(float x, float y) {
 		createCargo(x, y, 0.1f);
 	}
 
-	private void createCargo(float x, float y, float z)
-	{
+	private void createCargo(float x, float y, float z) {
 		Random rand = new Random();
 		Sphere cargo = new Sphere(10,10, CARGO_RADIUS + CARGO_VARIANCE*rand.nextFloat());
 		Geometry cargoGeom = new Geometry ("cargo", cargo);
@@ -258,7 +256,7 @@ public class FieldAppState extends BaseAppState {
 		cargoCtrl.setMass(0.2f);
 		cargoCtrl.setFriction(0.1f);
 		cargoCtrl.setDamping(0.01f, 0.01f);
-	}
+
 		hatch = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
 		rootNode.attachChild(hatch);
 		hatch.move(y,x,z);
@@ -274,8 +272,8 @@ public class FieldAppState extends BaseAppState {
 
 
 
-	
-	
+
+
 
 	private void addLight() {
 		//You must add a light to make the models visible

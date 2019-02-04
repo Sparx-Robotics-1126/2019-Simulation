@@ -38,18 +38,18 @@ public class Robot extends BaseAppState {
 	private SimMain app;
 	private Node robotNode;
 	private Spatial robotBase;
-	private RigidBodyControl linkedHatch = null;
 	private final float HATCH_PICKUP_RANGE = 20f;
+	private RigidBodyControl linkedHatch = null;
 	private AssetManager assetManager;
-	public Spatial getRobotBase ()
-	{
-		return robotBase;
-	}
+
 	private VehicleControl robotControl;
 	private CollisionShape robotShape;
 	boolean hatchPickedUp = false;
 	private final float Z_GRAVITY = -9.81f;
 	private Vector3f hatchHoldingPosition;
+	private float accelerationValueLeft = 0f;
+	private float accelerationValueRight = 0f;
+	private final float ROBOT_ACCELERATION = 150f;
 	private final ActionListener actionListener = new ActionListener() {
 
 		@Override
