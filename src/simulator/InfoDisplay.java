@@ -19,9 +19,8 @@ public class InfoDisplay extends BaseAppState {
 	private BitmapText scrollingBitmapText;
 	private Robot robot;
 	private Vector3f lastPosition;
-	private String networkTableKey;
 	private float timePast;
-	private float timeTotal;
+	private float totalSeconds = 50;
 	private float speed;
 
 	protected void initialize(Application _app) {
@@ -49,12 +48,12 @@ public class InfoDisplay extends BaseAppState {
 		int viewPortWidth = guiViewPort.getCamera().getWidth();
 		float infoQuadHeight = (viewPortHeight / 4);
 		float infoQuadWidth = (viewPortWidth / 7);
-		
+
 		BitmapFont guiFont = assetManager.loadFont(enqBitmapFontAssetName);
 		scrollingBitmapText = new BitmapText(guiFont, false);
 		scrollingBitmapText.setName("scrollingBitmapText");
 		scrollingBitmapText.setColor("Color", new ColorRGBA(255, 0, 0, 1f));
-		scrollingBitmapText.setLocalTranslation(infoQuadWidth / 3.9f, infoQuadHeight / 2f, 0);
+		scrollingBitmapText.setLocalTranslation(infoQuadWidth / 3.9f, infoQuadHeight / 2, 0);
 		consoleBaseNode.attachChild(scrollingBitmapText);
 		infoQuad.setMesh(new Quad(infoQuadWidth, infoQuadHeight));
 	}
@@ -62,7 +61,8 @@ public class InfoDisplay extends BaseAppState {
 	public void update(float tpf) {
 		Vector3f newPosition = robot.getRobotBase().getWorldTranslation();
 		timePast += tpf;
-		timeTotal += tpf;
+		totalSeconds += tpf;
+
 		if (timePast > 0.5) {
 			if (lastPosition != null) {
 				float distance = newPosition.distance(lastPosition);
@@ -71,18 +71,16 @@ public class InfoDisplay extends BaseAppState {
 			lastPosition = newPosition.clone();
 			timePast = 0;
 		}
+		String displayText = String.format("your speed is %.2f", speed);
 
-		String displayText = String.format("the total time is %.2f", timeTotal);
-		displayText += String.format("\n  your speed is %.2f", speed);
-		if(networkTableKey != null)
-			displayText += "\nNetwork table "+ networkTableKey + " is " + RobotCodeCommunication.getValue(networkTableKey);
+		if (totalSeconds < 60) {
+			displayText += String.format("\nthe time is %.1f seconds", totalSeconds);
+		} else {
+			displayText += String.format("\nthe time is %.2f minutes", totalSeconds / 60);
+		}
 		scrollingBitmapText.setText(displayText);
 	}
 
-	public void setDisplayedNetworkValue(String networkTableKey) {
-		this.networkTableKey = networkTableKey;
-	}
-	
 	@Override
 	protected void cleanup(Application arg0) {
 		// TODO Auto-generated method stub
