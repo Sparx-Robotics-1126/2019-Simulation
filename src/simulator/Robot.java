@@ -1,14 +1,8 @@
 package simulator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Vector;
-
-import org.ejml.ops.SpecializedOps;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import com.jme3.app.Application;
-import com.jme3.app.state.AppState;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
@@ -26,13 +20,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.plugins.blender.BlenderLoader;
-import com.jme3.scene.shape.Cylinder;
-import com.jme3.texture.Texture;
-import com.jogamp.common.util.FloatStack;
-import com.sun.prism.Presentable;
-import com.sun.xml.internal.bind.v2.model.core.ID;
-import com.sun.xml.internal.bind.v2.runtime.reflect.opt.FieldAccessor_Integer;
 
 public class Robot extends BaseAppState {
 	private SimMain app;

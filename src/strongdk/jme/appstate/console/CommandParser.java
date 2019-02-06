@@ -71,7 +71,7 @@ public class CommandParser {
       }
 
       private final static String separator = "\\s+";
-      private final String[] inputArray; // By definition, an array with atleast 1 element.
+      private final String[] inputArray; // By definition, an array with at least 1 element.
 
       public CommandParser(String inputString) {
             if (inputString == null) {

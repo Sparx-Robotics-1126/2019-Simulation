@@ -1,7 +1,5 @@
 package simulator;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
@@ -17,10 +15,11 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.shape.Quad;
 
-public class infoDisplay extends BaseAppState {
+public class InfoDisplay extends BaseAppState {
 	private BitmapText scrollingBitmapText;
 	private Robot robot;
 	private Vector3f lastPosition;
+	private String networkTableKey;
 	private float timePast;
 	private float timeTotal;
 	private float speed;
@@ -58,7 +57,6 @@ public class infoDisplay extends BaseAppState {
 		scrollingBitmapText.setLocalTranslation(infoQuadWidth / 3.9f, infoQuadHeight / 2f, 0);
 		consoleBaseNode.attachChild(scrollingBitmapText);
 		infoQuad.setMesh(new Quad(infoQuadWidth, infoQuadHeight));
-		RobotCodeCommunication.run();
 	}
 
 	public void update(float tpf) {
@@ -76,14 +74,15 @@ public class infoDisplay extends BaseAppState {
 
 		String displayText = String.format("the total time is %.2f", timeTotal);
 		displayText += String.format("\n  your speed is %.2f", speed);
-		displayText += "\n Network Tables to follow";
-		ConcurrentHashMap<String, Double> map= RobotCodeCommunication.getMap();
-		for(String key : map.keySet()) {
-			displayText += "\n" + key + " " + map.get(key);
-		}
+		if(networkTableKey != null)
+			displayText += "\nNetwork table "+ networkTableKey + " is " + RobotCodeCommunication.getValue(networkTableKey);
 		scrollingBitmapText.setText(displayText);
 	}
 
+	public void setDisplayedNetworkValue(String networkTableKey) {
+		this.networkTableKey = networkTableKey;
+	}
+	
 	@Override
 	protected void cleanup(Application arg0) {
 		// TODO Auto-generated method stub

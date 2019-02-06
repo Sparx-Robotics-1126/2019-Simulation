@@ -22,7 +22,7 @@ public class SimMain extends SimpleApplication {
 				new CameraControl(),
 				new ConsoleAppState(),
 				new HelpDisplay(),
-				new infoDisplay(),
+				new InfoDisplay(),
 				new ConsoleDebugWindowAppState()
 				);
 		bulletAppState = new BulletAppState();
