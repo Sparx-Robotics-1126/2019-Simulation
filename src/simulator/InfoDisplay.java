@@ -22,7 +22,8 @@ public class InfoDisplay extends BaseAppState {
 	private float timePast;
 	private float totalSeconds = 50;
 	private float speed;
-
+	private String networkTableKey;
+	
 	protected void initialize(Application _app) {
 		String enqBitmapFontAssetName = "Interface/Fonts/Default.fnt";
 		SimpleApplication app = (SimpleApplication) _app;
@@ -78,9 +79,16 @@ public class InfoDisplay extends BaseAppState {
 		} else {
 			displayText += String.format("\nthe time is %.2f minutes", totalSeconds / 60);
 		}
+		
+		if(networkTableKey != null)
+			displayText += networkTableKey + " : " + RobotCodeCommunication.getInstance().getValue(networkTableKey);
 		scrollingBitmapText.setText(displayText);
 	}
 
+	public void setDisplayedNetworkValue(String networkTableKey) {
+		this.networkTableKey = networkTableKey;
+	}
+	
 	@Override
 	protected void cleanup(Application arg0) {
 		// TODO Auto-generated method stub

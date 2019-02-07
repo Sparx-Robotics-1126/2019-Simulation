@@ -14,7 +14,8 @@ import strongdk.jme.appstate.console.ConsoleAppState;
 public class ConsoleDebugWindowAppState extends BaseAppState {
 	private SimpleApplication app;
 	private ConsoleAppState console;
-
+	private RobotCodeCommunication robotCodeComm;
+	
 	@Override
 	protected void cleanup(Application arg0) {
 		// TODO Auto-generated method stub
@@ -25,6 +26,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		app = (SimpleApplication) _app;
 		console = app.getStateManager().getState(ConsoleAppState.class);
 		console.setConsoleNumLines(40);
+		robotCodeComm = RobotCodeCommunication.getInstance();
 
 		console.registerCommand("help", commandListener);
 		console.registerCommand("cam", commandListener);
@@ -32,7 +34,9 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		console.registerCommand("phyDebug", commandListener);
 		console.registerCommand("startTables", commandListener);
 		console.registerCommand("listTables", commandListener);
+		console.registerCommand("listObjects", commandListener);
 		console.registerCommand("displayTable", commandListener);
+		console.registerCommand("pair", commandListener);
 		console.registerCommand("clear", commandListener);
 	}
 
@@ -45,9 +49,15 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				console.appendConsole("hide: hide the console.");
 				console.appendConsole("cam: display camera location.");
 				console.appendConsole("phyDebug true/false: enable/disable physics debug.");
-				console.appendConsole("startTables: starts the network tables.");
-				console.appendConsole("listTables: display all data in the tables");
-				console.appendConsole("displayTable tableKey: displays one network table key value pair in the updtaing info display box");
+				if(!robotCodeComm.isStarted()) {
+					console.appendConsole("startTables: starts the network tables.");
+				}else {
+					console.appendConsole("listTables: display all data in the tables");
+					console.appendConsole("listObjects: Lists all objects that can be paired in the robot simulator.");
+					console.appendConsole("displayTable tableKey: displays one network table key value pair in the updtaing info display box");
+					console.appendConsole("pair simulationObject networkTableKey: The simulationObject should be from the list found in listObjects, "
+							+ "and the networkTableKey should be from the listTables command. Pairing them will link the values together.");
+				}
 				console.appendConsole("clear: removes text from console");
 			} else if (evt.getCommand().equals("hide")) {
 				console.setVisible(false);
@@ -62,49 +72,45 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				if (value != null && value.equals("true")) {
 					physics.setDebugEnabled(true);
 				} else if (value != null && value.equals("false")) {
-
 					physics.setDebugEnabled(false);
 				} else {
 					console.appendConsoleError("You must specify either 'true' or 'false' for the phyDebug command.");
 				}
 			} else if(evt.getCommand().equals("startTables")) {
-				if(!RobotCodeCommunication.isStarted()) {
-					RobotCodeCommunication.run();
+				if(!robotCodeComm.isStarted()) {
+					robotCodeComm.run();
 				}
-			} else if(evt.getCommand().equals("listTables")) {
-				if(RobotCodeCommunication.isStarted()) {
-					for(String key : RobotCodeCommunication.keys()){
-						console.appendConsole(key);
-					}
-				} else {
-					console.appendConsole("Network tables are not started. Use startTables first.");
-				}
-			} else if(evt.getCommand().equals("displayTable")) {
-				if(RobotCodeCommunication.isStarted()) {
-					if(evt.getParser().get(0) != null) {
-						System.out.println(evt.getParser().get(0));
-						app.getStateManager().getState(InfoDisplay.class).setDisplayedNetworkValue(evt.getParser().get(0));
-					} else
-						console.appendConsoleError("You must specify a network table key, all keys can be found with listTables command");
-				} else
-					console.appendConsoleError("Network tables are not started. Use startTables first.");
+			} else if(evt.getCommand().equals("listObjects")) {
+				console.appendConsole("Code to get objects not yet implemented");
 			} else if (evt.getCommand().equals("clear")) {
 				console.clearConsole();
 			}
 
+			if(!robotCodeComm.isStarted()) {
+				console.appendConsoleError("Network tables are not started. Use startTables first.");
+			} else{
+				if(evt.getCommand().equals("listTables")) {
+					for(String key : robotCodeComm.keys()){
+						console.appendConsole(key + " : " + robotCodeComm.getValue(key));
+					}
+				} else if(evt.getCommand().equals("displayTable")) {
+					String parameter = evt.getParser().get(0);
+					if(parameter != null || !robotCodeComm.keys().contains(parameter)) {
+						app.getStateManager().getState(InfoDisplay.class).setDisplayedNetworkValue(parameter);
+					} else {
+						console.appendConsoleError("You must specify a network table key, all keys can be found with listTables command");
+					}
+				}
+			}
 		}
 	};
 
 	@Override
 	protected void onDisable() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	protected void onEnable() {
-		// TODO Auto-generated method stub
-
 	}
 
 }
