@@ -61,10 +61,20 @@ public class HelpDisplay extends BaseAppState {
 		BitmapText scrollingBitmapText = new BitmapText(guiFont, false);
 		scrollingBitmapText.setName("scrollingBitmapText");
 		scrollingBitmapText.setColor("Color", new ColorRGBA(255, 0, 0, 1f));
-		scrollingBitmapText.setText("left move forward = q\n " + "left move back = a\n" + "right move forward = e\n"
-				+ "right move back = d\n" + "pause  = p\n" + "resume = space\n" + "(you must resume after you start\n"
-				+ "before the robot will move)\n" + "reset = r\n" + "help = h\n" + "move camera = left mouse\n"
-				+ "zoom = middle mouse\n" + "pick up hatch = w\n" + "drop hatch = s\n" + "debug window = t");
+		scrollingBitmapText.setText("left move forward = q\n " + 
+				"left move back = a\n" + 
+				"right move forward = e\n" + 
+				"right move back = d\n" + 
+				"pause  = p\n" + "resume = space\n" + 
+				"(you must resume after you start\n" + 
+				"before the robot will move)\n" + 
+				"reset = r\n" + 
+				"help = h\n" + 
+				"move camera = left mouse\n" + 
+				"zoom = middle mouse\n" + 
+				"pick up hatch = w\n" + 
+				"drop hatch = s\n" + 
+				"debug window = ` or t");
 		scrollingBitmapText.setLocalTranslation(helpQuadStartX + 100, helpQuadStartY + helpQuadHeight - 100, 0);
 		consoleBaseNode.attachChild(scrollingBitmapText);
 

@@ -1,5 +1,7 @@
 package simulator;
 
+import java.util.Vector;
+
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
 import com.jme3.app.state.BaseAppState;
@@ -22,6 +24,7 @@ public class InfoDisplay extends BaseAppState {
 	private float timePast;
 	private float totalSeconds = 50;
 	private float speed;
+	private Vector<String> networkTableKeyVec = new Vector<String>();
 
 	protected void initialize(Application _app) {
 		String enqBitmapFontAssetName = "Interface/Fonts/Default.fnt";
@@ -78,7 +81,22 @@ public class InfoDisplay extends BaseAppState {
 		} else {
 			displayText += String.format("\nthe time is %.2f minutes", totalSeconds / 60);
 		}
-		scrollingBitmapText.setText(displayText);
+
+		if (networkTableKeyVec != null) {
+			for (int a = 0; a < networkTableKeyVec.size(); a++) {
+				String networkTableKeyString = networkTableKeyVec.get(a);
+				displayText += "\nNetwork table " + networkTableKeyString + " is "
+						+ RobotCodeCommunication.getValue(networkTableKeyString);
+				scrollingBitmapText.setText(displayText);
+			}	
+		}
+	}
+	public boolean removeNetworkTableValue(String networkTableKey) {
+		return networkTableKeyVec.remove(networkTableKey);
+	}
+	public void setDisplayedNetworkValue(String networkTableKey) {
+		networkTableKeyVec.add(networkTableKey);
+
 	}
 
 	@Override

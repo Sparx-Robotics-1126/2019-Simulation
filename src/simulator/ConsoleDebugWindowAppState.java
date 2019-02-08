@@ -33,6 +33,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		console.registerCommand("startTables", commandListener);
 		console.registerCommand("listTables", commandListener);
 		console.registerCommand("displayTable", commandListener);
+		console.registerCommand("hideTable", commandListener);
 		console.registerCommand("clear", commandListener);
 	}
 
@@ -48,7 +49,12 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				console.appendConsole("startTables: starts the network tables.");
 				console.appendConsole("listTables: display all data in the tables");
 				console.appendConsole("displayTable tableKey: displays one network table key value pair in the updtaing info display box");
-				console.appendConsole("clear: removes text from console");
+				console.appendConsole("hideTable: hides display table");
+				console.appendConsole("escape: exits console");
+				console.appendConsole("`,0, or t: starts console");
+				console.appendConsole("up: copys previous input");
+				console.appendConsole("PgUp: scrolls history up");
+				console.appendConsole("PgDown: scrolls history down");
 			} else if (evt.getCommand().equals("hide")) {
 				console.setVisible(false);
 			} else if (evt.getCommand().equals("cam")) {
@@ -88,10 +94,22 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 						console.appendConsoleError("You must specify a network table key, all keys can be found with listTables command");
 				} else
 					console.appendConsoleError("Network tables are not started. Use startTables first.");
-			} else if (evt.getCommand().equals("clear")) {
+				
+			} else if (evt.getCommand().equals("hideTable")){
+				if(evt.getParser().get(0) != null) {
+					System.out.println(evt.getParser().get(0));
+					InfoDisplay id = app.getStateManager().getState(InfoDisplay.class);
+					boolean removed = id.removeNetworkTableValue(evt.getParser().get(0));
+					
+					if(removed == false) {
+						console.appendConsoleError("You were unable to remove the display table key");
+					}
+				} else
+					console.appendConsoleError("You must specify a network table key, all keys can be found with listTables command");
+			}else if (evt.getCommand().equals("clear")) {
 				console.clearConsole();
 			}
-
+	
 		}
 	};
 
