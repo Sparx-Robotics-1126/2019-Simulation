@@ -1235,7 +1235,6 @@ public class ConsoleAppState implements AppState {
 				break;
 			case KeyInput.KEY_GRAVE:
 			case 0:
-			case KeyInput.KEY_T:	
 				// On testing on a mac I found that the grave key registered
 				// as 0 instead of KEY_GRAVE. So instead of using the KeyCode
 				// for the grave key I use the KeyChar to identify that

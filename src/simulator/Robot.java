@@ -78,10 +78,6 @@ public class Robot extends BaseAppState {
 			else if(name.equals("pickupHatch") && pressed) {
 				detectHatch();
 			} else if(name.equals("dropHatch") && pressed) {
-				//System.out.println("\n\n\nangle [0]: " + robotControl.getPhysicsRotation().toAngles(null)[0]);// * (180 / FastMath.PI));
-				//System.out.println("angle [1]: " + robotControl.getPhysicsRotation().toAngles(null)[1]);// * (180 / FastMath.PI));
-				//System.out.println("angle [2]: " + robotControl.getPhysicsRotation().toAngles(null)[2]);// * (180 / FastMath.PI));
-
 				if(linkedHatch != null) {
 					unlinkHatch((Spatial)linkedHatch.getUserObject());
 				}
@@ -154,7 +150,7 @@ public class Robot extends BaseAppState {
 		//		accelerationValueLeft *= .7;
 		//		accelerationValueRight *= .7;
 
-		hatchHoldingPosition = generateHoldingPosition();
+		hatchHoldingPosition = generateHoldingPosition(1f);
 
 
 		if(linkedHatch != null) {
@@ -169,28 +165,28 @@ public class Robot extends BaseAppState {
 		}
 	}
 
-	private Vector3f generateHoldingPosition() {
+	private Vector3f generateHoldingPosition(float holdingDistance) {
 
 		Vector3f holdingPosition = robotControl.getPhysicsLocation(); 
 
 		if(robotControl.getPhysicsRotation().toAngles(null)[0] > 0) {
 			if(robotControl.getPhysicsRotation().toAngles(null)[2] > 0) {
-				holdingPosition.setY((float) (holdingPosition.getY() + (2 * (1-linearizedCos((FastMath.PI/2)-robotControl.getPhysicsRotation().toAngles(null)[2])))));
+				holdingPosition.setY((float) (holdingPosition.getY() + (holdingDistance * (1-linearizedCos((FastMath.PI/2)-robotControl.getPhysicsRotation().toAngles(null)[2])))));
 			}	else {
-				holdingPosition.setY((float) (holdingPosition.getY() - (2 * linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2]))));
+				holdingPosition.setY((float) (holdingPosition.getY() - (holdingDistance * linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2]))));
 			}
 		} else {
 			if(robotControl.getPhysicsRotation().toAngles(null)[2] > 0) {
-				holdingPosition.setY((float) (holdingPosition.getY() - (2 * (1-linearizedCos((FastMath.PI/2)-robotControl.getPhysicsRotation().toAngles(null)[2])))));
+				holdingPosition.setY((float) (holdingPosition.getY() - (holdingDistance * (1-linearizedCos((FastMath.PI/2)-robotControl.getPhysicsRotation().toAngles(null)[2])))));
 			} else {
-				holdingPosition.setY((float) (holdingPosition.getY() + (2 * linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2]))));
+				holdingPosition.setY((float) (holdingPosition.getY() + (holdingDistance * linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2]))));
 			}
 		}
 
 		if(robotControl.getPhysicsRotation().toAngles(null)[2] > 0) {
-			holdingPosition.setX((float) (holdingPosition.getX() - (2 * (1 - linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2])))));
+			holdingPosition.setX((float) (holdingPosition.getX() - (holdingDistance * (1 - linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2])))));
 		} else {
-			holdingPosition.setX((float) (holdingPosition.getX() - (2 * (1 - linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2])))));
+			holdingPosition.setX((float) (holdingPosition.getX() - (holdingDistance * (1 - linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2])))));
 		}
 
 		holdingPosition.setZ(holdingPosition.getZ() + 0.75f);
@@ -240,11 +236,6 @@ public class Robot extends BaseAppState {
 
 	private void pickupHatch() {
 		final float TRANSLATE_SPEED = 1f;
-		System.out.println("Picking up hatch");
-		
-		
-		
-
 		Vector3f translateVector = createItemTranslationVector(robotControl, linkedHatch).mult(TRANSLATE_SPEED);
 		Quaternion translateQuat = createItemRotationQuaternion(robotControl, linkedHatch);
 		linkedHatch.setPhysicsLocation(linkedHatch.getPhysicsLocation().add(translateVector));
@@ -254,10 +245,8 @@ public class Robot extends BaseAppState {
 
 
 	private Quaternion createItemRotationQuaternion(VehicleControl robot, RigidBodyControl item) {
+		//I made this by mistake but it works so ¯\_(-_-)_/¯
 		float robotYRot = robot.getPhysicsRotation().toAngles(null)[1];
-		//		float[] angles = {robot.getPhysicsRotation().toAngles(null)[0], robot.getPhysicsRotation().toAngles(null)[1], robotZRot};
-		//		float[] angles = {robot.getPhysicsRotation().toAngles(null)[0], robotZRot, robot.getPhysicsRotation().toAngles(null)[2]};
-
 		return new Quaternion(new float[] {robotYRot, robot.getPhysicsRotation().toAngles(null)[1], robot.getPhysicsRotation().toAngles(null)[2]}); 
 	}
 

@@ -59,6 +59,7 @@ public class FieldAppState extends BaseAppState {
 		createFloor();
 		createHabs();
 		createCargoPieces();
+		createHatch(1f, -2f, 0.5f);
 		addLight();
 	}
 
@@ -257,9 +258,14 @@ public class FieldAppState extends BaseAppState {
 		cargoCtrl.setFriction(0.1f);
 		cargoCtrl.setDamping(0.01f, 0.01f);
 
+		
+	}
+
+	
+	private void createHatch(float x, float y, float z) {
 		hatch = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
 		rootNode.attachChild(hatch);
-		hatch.move(y,x,z);
+		hatch.move(x,y,z);
 		hatch.rotate(0, 0, FastMath.PI / 2);
 		CollisionShape hatchShape = CollisionShapeFactory.createDynamicMeshShape(hatch);
 		hatchCtrl = new RigidBodyControl(hatchShape, 1f);
@@ -269,9 +275,6 @@ public class FieldAppState extends BaseAppState {
 		hatchCtrl.setDamping(0.01f, 0.01f);
 		hatchCtrlList.add(hatchCtrl);
 	}
-
-
-
 
 
 

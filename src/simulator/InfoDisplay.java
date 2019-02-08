@@ -25,7 +25,8 @@ public class InfoDisplay extends BaseAppState {
 	private float totalSeconds = 50;
 	private float speed;
 	private Vector<String> networkTableKeyVec = new Vector<String>();
-
+	private String networkTableKey;
+	
 	protected void initialize(Application _app) {
 		String enqBitmapFontAssetName = "Interface/Fonts/Default.fnt";
 		SimpleApplication app = (SimpleApplication) _app;
@@ -86,7 +87,7 @@ public class InfoDisplay extends BaseAppState {
 			for (int a = 0; a < networkTableKeyVec.size(); a++) {
 				String networkTableKeyString = networkTableKeyVec.get(a);
 				displayText += "\nNetwork table " + networkTableKeyString + " is "
-						+ RobotCodeCommunication.getValue(networkTableKeyString);
+						+ RobotCodeCommunication.getInstance().getValue(networkTableKeyString);
 				scrollingBitmapText.setText(displayText);
 			}	
 		}
@@ -96,9 +97,8 @@ public class InfoDisplay extends BaseAppState {
 	}
 	public void setDisplayedNetworkValue(String networkTableKey) {
 		networkTableKeyVec.add(networkTableKey);
-
 	}
-
+	
 	@Override
 	protected void cleanup(Application arg0) {
 		// TODO Auto-generated method stub
