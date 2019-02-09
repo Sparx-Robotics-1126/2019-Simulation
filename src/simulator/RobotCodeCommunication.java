@@ -75,12 +75,13 @@ public class RobotCodeCommunication extends BaseAppState{
 		if(isConnected()) {
 			Vector<PairedDouble> pairedDoubles = PairedDoubleFactory.getInstance().getPairedDoubles();
 			pairedDoubles.forEach((pairedDoubleObject)->{
-				if(pairedDoubleObject.updatesFromTable()) {
-					pairedDoubleObject.update();
-				} else{
-					table.getSubTable(pairedDoubleObject.getConnection()).getEntry(".value").setDouble(pairedDoubleObject.value);
+				if(!pairedDoubleObject.getConnection().equals("")) {
+					if(pairedDoubleObject.updatesFromTable()) {
+						pairedDoubleObject.update();
+					} else{
+						table.getSubTable(pairedDoubleObject.getConnection()).getEntry(".value").setDouble(pairedDoubleObject.value);
+					}
 				}
-					
 			});
 		}
 	}

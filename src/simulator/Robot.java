@@ -2,8 +2,6 @@ package simulator;
 
 import java.util.ArrayList;
 
-import javax.lang.model.type.NullType;
-
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
@@ -19,11 +17,9 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.network.kernel.NamedThreadFactory;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.sun.org.apache.xalan.internal.xsltc.compiler.util.MatchGenerator;
 
 import simulator.PairedDoubleFactory.PairedDouble;
 
@@ -42,6 +38,10 @@ public class Robot extends BaseAppState {
 	private Vector3f hatchHoldingPosition;
 	private PairedDouble accelerationValueLeft = PairedDoubleFactory.getInstance().createPairedDouble("leftSideDrives", true, 0.0);
 	private PairedDouble accelerationValueRight = PairedDoubleFactory.getInstance().createPairedDouble("rightSideDrives", true, 0.0);
+	private PairedDouble leftEncoder = PairedDoubleFactory.getInstance().createPairedDouble("leftEncoder", false, 0.0);
+	private PairedDouble rightEncoder = PairedDoubleFactory.getInstance().createPairedDouble("rightEncoder", false, 0.0);
+	private Vector3f lastLeftLocation = Vector3f.ZERO;
+	private Vector3f lastRightLocation = Vector3f.ZERO;
 	private final float ROBOT_ACCELERATION = 150f;
 	private final ActionListener actionListener = new ActionListener() {
 
@@ -147,21 +147,20 @@ public class Robot extends BaseAppState {
 
 	@Override
 	public void update(float tpf) {  
-
-		//    	Vector3f forward = robotBase.getLocalRotation().mult(Vector3f.UNIT_Z).multLocal(vertVelocity).multLocal(tpf);
-		//    	robotControl.setLinearVelocity(robotControl.getLinearVelocity().add(forward));
-		//    	robotControl.setAngularVelocity(robotControl.getAngularVelocity().add(new Vector3f(0f, 0f, rotate * tpf)));
-		//    	rotate *= .05f;
 		robotControl.accelerate(0, (float) (ROBOT_ACCELERATION * accelerationValueLeft.value));
 		robotControl.accelerate(2, (float) (ROBOT_ACCELERATION * accelerationValueLeft.value));
 		robotControl.accelerate(1, (float) (ROBOT_ACCELERATION * accelerationValueRight.value));
 		robotControl.accelerate(3, (float) (ROBOT_ACCELERATION * accelerationValueRight.value));
 
-		//		accelerationValueLeft.value *= .7;
-		//		accelerationValueRight.value *= .7;
-
-
-
+		Vector3f currentLeftLocation = robotControl.getWheel(0).getLocation();
+		Vector3f currentRightLocation = robotControl.getWheel(0).getLocation(); 
+		
+		leftEncoder.value = currentLeftLocation.distance(lastLeftLocation);
+		rightEncoder.value = currentRightLocation.distance(lastRightLocation);
+		
+		lastLeftLocation = currentLeftLocation;
+		lastRightLocation = currentRightLocation;
+		
 		if(linkedHatch != null) {
 			hatchHoldingPosition = locInFrontOfRobot(0.5f);
 			hatchPickedUp = false;

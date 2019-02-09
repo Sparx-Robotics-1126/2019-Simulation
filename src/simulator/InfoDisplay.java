@@ -89,9 +89,9 @@ public class InfoDisplay extends BaseAppState {
 				String networkTableKeyString = networkTableKeyVec.get(a);
 				displayText += "\nNetwork table " + networkTableKeyString + " is "
 						+ robotComm.getValue(networkTableKeyString);
-				scrollingBitmapText.setText(displayText);
 			}	
 		}
+		scrollingBitmapText.setText(displayText);
 	}
 	
 	public boolean removeNetworkTableValue(String networkTableKey) {
