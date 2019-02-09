@@ -2,6 +2,8 @@ package simulator;
 
 import java.util.ArrayList;
 
+import javax.lang.model.type.NullType;
+
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
@@ -17,15 +19,17 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.jme3.network.kernel.NamedThreadFactory;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.sun.org.apache.xalan.internal.xsltc.compiler.util.MatchGenerator;
 
 public class Robot extends BaseAppState {
 	private SimMain app;
 	private Node robotNode;
 	private Spatial robotBase;
-	private final float HATCH_PICKUP_RANGE = 20f;
+	private final float HATCH_PICKUP_RANGE = 2f;
 	private RigidBodyControl linkedHatch = null;
 	private AssetManager assetManager;
 
@@ -82,14 +86,18 @@ public class Robot extends BaseAppState {
 					unlinkHatch((Spatial)linkedHatch.getUserObject());
 				}
 			}
+
+			else if(name.equals("printInfo") && pressed) {
+				printRotation(robotControl.getPhysicsRotation());
+			}
 		}
 	};
-	
+
 	public Spatial getRobotBase ()
 	{
 		return robotBase;
 	}
-	
+
 	@Override
 	protected void initialize(Application _app) {
 
@@ -150,76 +158,91 @@ public class Robot extends BaseAppState {
 		//		accelerationValueLeft *= .7;
 		//		accelerationValueRight *= .7;
 
-		hatchHoldingPosition = generateHoldingPosition(1f);
 
 
 		if(linkedHatch != null) {
+			hatchHoldingPosition = locInFrontOfRobot(0.5f);
 			hatchPickedUp = false;
 			linkedHatch.setGravity(new Vector3f(0, 0, 0));
 
 			pickupHatch();
 
-			if(distanceTo(robotControl, linkedHatch) > HATCH_PICKUP_RANGE) {
+			if(distanceTo(robotControl.getPhysicsLocation(), linkedHatch.getPhysicsLocation()) > HATCH_PICKUP_RANGE) {
 				unlinkHatch((Spatial)linkedHatch.getUserObject());
 			}
 		}
 	}
-
-	private Vector3f generateHoldingPosition(float holdingDistance) {
-
-		Vector3f holdingPosition = robotControl.getPhysicsLocation(); 
-
+	
+	private Vector3f locInFrontOfRobot(float offset) {
+		Vector3f holdingPosition = robotControl.getPhysicsLocation();
+		float robotZRot  = robotControl.getPhysicsRotation().toAngles(null)[2];
+		float xOffset = 0;
+		float yOffset = 0;
+		
+		if(robotZRot > 0) {
+			xOffset = (float) (Math.sin(Math.abs(robotZRot)) * offset);
+		} else {
+			xOffset = -1f * (float)(Math.sin(Math.abs(robotZRot)) * offset);
+		}
+		
 		if(robotControl.getPhysicsRotation().toAngles(null)[0] > 0) {
-			if(robotControl.getPhysicsRotation().toAngles(null)[2] > 0) {
-				holdingPosition.setY((float) (holdingPosition.getY() + (holdingDistance * (1-linearizedCos((FastMath.PI/2)-robotControl.getPhysicsRotation().toAngles(null)[2])))));
-			}	else {
-				holdingPosition.setY((float) (holdingPosition.getY() - (holdingDistance * linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2]))));
-			}
+			yOffset = -1f * (float) (Math.cos(robotZRot) * offset);
 		} else {
-			if(robotControl.getPhysicsRotation().toAngles(null)[2] > 0) {
-				holdingPosition.setY((float) (holdingPosition.getY() - (holdingDistance * (1-linearizedCos((FastMath.PI/2)-robotControl.getPhysicsRotation().toAngles(null)[2])))));
-			} else {
-				holdingPosition.setY((float) (holdingPosition.getY() + (holdingDistance * linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2]))));
-			}
-		}
-
-		if(robotControl.getPhysicsRotation().toAngles(null)[2] > 0) {
-			holdingPosition.setX((float) (holdingPosition.getX() - (holdingDistance * (1 - linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2])))));
-		} else {
-			holdingPosition.setX((float) (holdingPosition.getX() - (holdingDistance * (1 - linearizedCos(robotControl.getPhysicsRotation().toAngles(null)[2])))));
-		}
-
+			yOffset = (float) (Math.cos(robotZRot) * offset);
+		}	
+		
+		holdingPosition.setX(holdingPosition.getX() + xOffset);
+		holdingPosition.setY(holdingPosition.getY() + yOffset);
 		holdingPosition.setZ(holdingPosition.getZ() + 0.75f);
+
 		return holdingPosition;
 	}
+
+	private void printRotation(Quaternion quat) {
+		System.out.println("\nAngles[0]: " + quat.toAngles(null)[0]);
+		System.out.println("Angles[1]: " + quat.toAngles(null)[1]);
+		System.out.println("Angles[2]: " + quat.toAngles(null)[2]);
+	}
+
 
 	@Override
 	protected void cleanup(Application _app) {
 
 	}
 
-	private float linearizedCos(float x) {
-		return Math.abs(x * 0.63661977237f + 1);	
-	}
-
 	private void detectHatch() {
 		FieldAppState field = app.getStateManager().getState(FieldAppState.class);
 		ArrayList<RigidBodyControl> hatchList = field.getHatchCtrlList();
+		
 		float smallest = Float.MAX_VALUE;
 		RigidBodyControl operatingCtrl = null;
+		
 		for(RigidBodyControl ctrl: hatchList) {
-			float distance = distanceTo(robotControl, ctrl);
-			if(distance < HATCH_PICKUP_RANGE && distance < smallest) {
+			float distance = distanceTo(robotControl.getPhysicsLocation(), ctrl.getPhysicsLocation());
+			
+			if(distance < HATCH_PICKUP_RANGE && distance < smallest && robotIsFacingHatch(ctrl)) {
 				smallest = distance;
 				operatingCtrl = ctrl;
 			}
 		}
-		if(!(operatingCtrl == null)) {
-			linkedHatch = operatingCtrl;
-			//			linkedHatch.setGravity(new Vector3f(0f, 0f, 0f));
-		}
+		
+		linkedHatch = operatingCtrl;
 	}
 
+	private boolean robotIsFacingHatch(RigidBodyControl hatch) {
+		float distanceInFront = 1f;
+//		Vector3f rotCol = robotControl.getPhysicsRotation().getRotationColumn(2);
+		while(distanceInFront < HATCH_PICKUP_RANGE) {
+			if(distanceTo(hatch.getPhysicsLocation(), locInFrontOfRobot(distanceInFront)) < 1f) {
+				return true;
+			}
+			distanceInFront += 0.1;
+		}
+		return false;
+	}
+	
+	
+	
 	private void unlinkHatch(Spatial hatchSpatial) {
 		if(linkedHatch != null) {
 			Node rootNode = app.getRootNode();
@@ -233,7 +256,9 @@ public class Robot extends BaseAppState {
 		}
 
 	}
-
+	
+	
+	
 	private void pickupHatch() {
 		final float TRANSLATE_SPEED = 1f;
 		Vector3f translateVector = createItemTranslationVector(robotControl, linkedHatch).mult(TRANSLATE_SPEED);
@@ -245,7 +270,7 @@ public class Robot extends BaseAppState {
 
 
 	private Quaternion createItemRotationQuaternion(VehicleControl robot, RigidBodyControl item) {
-		//I made this by mistake but it works so ¯\_(-_-)_/¯
+		//I made this by mistake but it works so ¯\_(O_O)_/¯
 		float robotYRot = robot.getPhysicsRotation().toAngles(null)[1];
 		return new Quaternion(new float[] {robotYRot, robot.getPhysicsRotation().toAngles(null)[1], robot.getPhysicsRotation().toAngles(null)[2]}); 
 	}
@@ -260,14 +285,14 @@ public class Robot extends BaseAppState {
 		return ret;
 	}
 
-	private float distanceTo(VehicleControl robot, RigidBodyControl item) {
-		Vector3f robotLoc = robot.getPhysicsLocation();
-		Vector3f itemLoc = item.getPhysicsLocation();
-		float xDist = (float) Math.pow(itemLoc.getX() - robotLoc.getX(), 2);
-		float yDist = (float) Math.pow(itemLoc.getY() - robotLoc.getY(), 2);
-		float zDist = (float) Math.pow(itemLoc.getZ() - robotLoc.getZ(), 2);
+	private float distanceTo(Vector3f loc1, Vector3f loc2) {
+		float xDist = (float) Math.pow(loc1.getX() - loc2.getX(), 2);
+		float yDist = (float) Math.pow(loc1.getY() - loc2.getY(), 2);
+		float zDist = (float) Math.pow(loc1.getZ() - loc2.getZ(), 2);
 		return FastMath.sqrt(xDist + yDist + zDist);
 	}
+
+
 
 
 	private void addWheels() {
@@ -311,20 +336,22 @@ public class Robot extends BaseAppState {
 		manager.addMapping("reset", new KeyTrigger(KeyInput.KEY_R));
 		manager.addMapping("pickupHatch", new KeyTrigger(KeyInput.KEY_W));
 		manager.addMapping("dropHatch", new KeyTrigger(KeyInput.KEY_S));
+		manager.addMapping("printInfo", new KeyTrigger(KeyInput.KEY_Z));
 
 		manager.addListener(actionListener, "leftDrivesForward", "leftDrivesBackward",
-				"rightDrivesForward", "rightDrivesBackward", "pause", "reset", "pickupHatch", "dropHatch");
+				"rightDrivesForward", "rightDrivesBackward", "pause", "reset", "pickupHatch",
+				"dropHatch", "printInfo");
 
 	}
 
 	public void setDrivesPowerLeft(float power) {
 		accelerationValueLeft = power;
 	}
-	
+
 	public float getDrivesPowerLeft() {
 		return accelerationValueLeft;
 	}
-	
+
 	@Override
 	protected void onDisable() {
 
@@ -333,12 +360,12 @@ public class Robot extends BaseAppState {
 	public void setDrivesPowerRight(float power) {
 		accelerationValueRight = power;
 	}
-	
+
 	public float getDrivesPowerRight() {
 		return accelerationValueRight;
 	}
 
-	
+
 	@Override
 	protected void onEnable() {
 
