@@ -152,11 +152,11 @@ public class Robot extends BaseAppState {
 		robotControl.accelerate(1, (float) (ROBOT_ACCELERATION * accelerationValueRight.value));
 		robotControl.accelerate(3, (float) (ROBOT_ACCELERATION * accelerationValueRight.value));
 
-		Vector3f currentLeftLocation = robotControl.getWheel(0).getLocation();
-		Vector3f currentRightLocation = robotControl.getWheel(0).getLocation(); 
+		Vector3f currentLeftLocation = robotControl.getPhysicsLocation().add(new Vector3f(0, 0, -.25f));
+		Vector3f currentRightLocation = robotControl.getPhysicsLocation().add(new Vector3f(0, 0, .25f)); 
 		
-		leftEncoder.value = currentLeftLocation.distance(lastLeftLocation);
-		rightEncoder.value = currentRightLocation.distance(lastRightLocation);
+		leftEncoder.value += currentLeftLocation.distance(lastLeftLocation);
+		rightEncoder.value += currentRightLocation.distance(lastRightLocation);
 		
 		lastLeftLocation = currentLeftLocation;
 		lastRightLocation = currentRightLocation;
