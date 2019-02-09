@@ -6,6 +6,7 @@ import com.jme3.app.state.BaseAppState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.renderer.Camera;
 
+import simulator.PairedDoubleFactory.PairedDouble;
 import strongdk.jme.appstate.console.CommandEvent;
 import strongdk.jme.appstate.console.CommandListener;
 import strongdk.jme.appstate.console.CommandParser;
@@ -15,10 +16,10 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 	private SimpleApplication app;
 	private ConsoleAppState console;
 	private RobotCodeCommunication robotCodeComm;
+	private PairedDoubleFactory pairedDoubleCreator = PairedDoubleFactory.getInstance();
 	
 	@Override
 	protected void cleanup(Application arg0) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
@@ -26,7 +27,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		app = (SimpleApplication) _app;
 		console = app.getStateManager().getState(ConsoleAppState.class);
 		console.setConsoleNumLines(40);
-		robotCodeComm = RobotCodeCommunication.getInstance();
+		robotCodeComm = app.getStateManager().getState(RobotCodeCommunication.class);
 
 		console.registerCommand("help", commandListener);
 		console.registerCommand("cam", commandListener);
@@ -38,6 +39,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		console.registerCommand("displayTable", commandListener);
 		console.registerCommand("hideTable", commandListener);
 		console.registerCommand("pair", commandListener);
+		console.registerCommand("unpair", commandListener);
 		console.registerCommand("clear", commandListener);
 	}
 
@@ -65,8 +67,14 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 					console.appendConsole("displayTable tableKey: displays one network table key value pair in the updtaing info display box");
 					console.appendConsole("pair simulationObject networkTableKey: The simulationObject should be from the list found in listObjects, "
 							+ "and the networkTableKey should be from the listTables command. Pairing them will link the values together.");
+					console.appendConsole("unpair simulationObject: Disconnects a simulation object from its connection if it has one.");
 					console.appendConsole("hideTable: hides display table");
 				}
+				console.appendConsole("escape: exits console");
+				console.appendConsole("`: starts console");
+				console.appendConsole("up: copys previous input");
+				console.appendConsole("PgUp: scrolls history up");
+				console.appendConsole("PgDown: scrolls history down");
 				console.appendConsole("clear: removes text from console");
 			} else if (evt.getCommand().equals("hide")) {
 				console.setVisible(false);
@@ -87,11 +95,10 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				}
 			} else if(evt.getCommand().equals("startTables")) {
 				if(!robotCodeComm.isStarted()) {
-					robotCodeComm.run();
+					console.appendConsole(robotCodeComm.run() ? "Network table client successfully started" : "Network table client failed to start; nothing to connect to.");
 				}
 			} else if (evt.getCommand().equals("hideTable")){
 				if(evt.getParser().get(0) != null) {
-					System.out.println(evt.getParser().get(0));
 					InfoDisplay id = app.getStateManager().getState(InfoDisplay.class);
 					boolean removed = id.removeNetworkTableValue(evt.getParser().get(0));
 					
@@ -101,12 +108,12 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				} else
 					console.appendConsoleError("You must specify a network table key, all keys can be found with listTables command");
 			} else if(evt.getCommand().equals("listObjects")) {
-				console.appendConsole("Code to get objects not yet implemented");
+				for(PairedDouble pairedDouble : pairedDoubleCreator.getPairedDoubles()){
+					console.appendConsole(pairedDouble.toString());
+				}
 			} else if (evt.getCommand().equals("clear")) {
 				console.clearConsole();
-			}
-
-			if(!robotCodeComm.isStarted()) {
+			} else if(!robotCodeComm.isStarted()) {
 				console.appendConsoleError("Network tables are not started. Use startTables first.");
 			} else{
 				if(evt.getCommand().equals("listTables")) {
@@ -117,13 +124,37 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 					String parameter = evt.getParser().get(0);
 					if(parameter != null || !robotCodeComm.keys().contains(parameter)) {
 						app.getStateManager().getState(InfoDisplay.class).setDisplayedNetworkValue(parameter);
-					} else {
+					} else{
 						console.appendConsoleError("You must specify a network table key, all keys can be found with listTables command");
+					}
+				} else if(evt.getCommand().equals("pair")) {
+					String simObjectParameter = evt.getParser().get(0);
+					String networkTableParameter = evt.getParser().get(1);
+					if(simObjectParameter != null && pairedDoubleCreator.pairedDoubleNames().contains(simObjectParameter)) {
+						if(networkTableParameter != null && robotCodeComm.keys().contains(networkTableParameter)){
+							console.appendConsole(pairedDoubleCreator.createConnection(simObjectParameter, networkTableParameter) ? "Successful pair" : "unsuccessful pair");
+						} else{
+							console.appendConsoleError("You need to specify a network table key to map it to, from listTables.");	
+						}
+					} else{
+						console.appendConsoleError("You must specify both a simulation object, which must be found in the listObjects command, and a network table key to map it to, from listTables.");		
+					}
+				} else if(evt.getCommand().equals("unpair")) {
+					String simObjectParameter = evt.getParser().get(0);
+					if(simObjectParameter != null && pairedDoubleCreator.pairedDoubleNames().contains(simObjectParameter)) {
+						if(pairedDoubleCreator.breakConnection(simObjectParameter)) {
+							console.appendConsole("Connection on " + simObjectParameter + " is now unlinked.");
+						} else{
+							console.appendConsole("No connection existed on " + simObjectParameter + ".");
+						}
+					} else{
+						console.appendConsoleError(simObjectParameter + " is not a valid SimObject from the list found in listObjects.");
 					}
 				}
 			}
 		}
 	};
+
 
 	@Override
 	protected void onDisable() {

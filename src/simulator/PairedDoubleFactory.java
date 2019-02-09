@@ -8,23 +8,28 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
-public class PropertiesManager {
-	
-	private static PropertiesManager propertiesManager;
+public class PairedDoubleFactory {
+
+	private static PairedDoubleFactory propertiesManager;
 
 	private static Vector<PairedDouble> doubles;
 	private Set<String> connectionNames;
 	private Properties prop;
 	private String propertiesLocation;
 	private static final String DEFAULTLOCATION = "data" + File.separator + "properties.xml";
+	private RobotCodeCommunication robotComm;
 
-	public PropertiesManager getInstance() {
+	public static PairedDoubleFactory getInstance() {
 		if(propertiesManager == null) {
-			propertiesManager = new PropertiesManager();
+			propertiesManager = new PairedDoubleFactory();
 		}
 		return propertiesManager;
 	}
-	
+
+	public PairedDoubleFactory() {
+		loadProperties();
+	}
+
 	public void setPropertiesLocation(String location) {
 		propertiesLocation = location;
 	}
@@ -44,7 +49,6 @@ public class PropertiesManager {
 			try {
 				prop.loadFromXML(new FileInputStream(propertiesLocation));
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} else {
@@ -69,22 +73,19 @@ public class PropertiesManager {
 		}
 	}
 
-	public PairedDouble createPairedDouble(String name) {
-		return createPairedDouble(name, 0);
+	public PairedDouble createPairedDouble(String name, boolean updateFromTable) {
+		return createPairedDouble(name, updateFromTable, 0);
 	}
 
-	public PairedDouble createPairedDouble(String name, double startingValue) {
-		if(prop == null) {
-			loadProperties();
-		}
+	public PairedDouble createPairedDouble(String name, boolean updateFromTable, double startingValue) {
 		for(PairedDouble dbl: doubles) {
 			if(dbl.getName().equals(name)) {
 				System.out.println("Variable already exists!");
 				return null;
 			}
 		}
-		PairedDouble dbl = new PairedDouble(name, startingValue);
-		connectionNames = RobotCodeCommunication.getInstance().keys();
+		PairedDouble dbl = new PairedDouble(name, startingValue, updateFromTable);
+		connectionNames = robotComm.keys();
 		if(prop.containsKey((dbl.getName()))) {
 			if(connectionNames.contains(prop.getProperty(dbl.getName()))) {
 				dbl.setConnection(prop.getProperty(dbl.getName()));
@@ -95,15 +96,15 @@ public class PropertiesManager {
 		doubles.add(dbl);
 		return dbl;
 	}
-	
+
 	public boolean createConnection(PairedDouble pairedDouble, String connectionName) {
-		connectionNames = RobotCodeCommunication.getInstance().keys();
+		connectionNames = robotComm.keys();
 		if(!doubles.contains(pairedDouble)) {
 			doubles.add(pairedDouble);
 		}
-		if(connectionNames.contains("connectionName")) {
+		if(connectionNames.contains(connectionName)) {
 			for(PairedDouble dbl: doubles) {
-				if(dbl.getConnection().contentEquals(connectionName)) {
+				if(dbl.getConnection().equals(connectionName)) {
 					return false;
 				}
 			}
@@ -113,7 +114,7 @@ public class PropertiesManager {
 		}
 		return false;
 	}
-	
+
 	public boolean createConnection(String pairedDouble, String connectionName) {
 		for(PairedDouble dbl: doubles) {
 			if(dbl.getName().equals(pairedDouble)) {
@@ -122,7 +123,26 @@ public class PropertiesManager {
 		}
 		return false;
 	}
-	
+
+	public boolean breakConnection(PairedDouble pairedDouble) {
+		if(pairedDouble.getConnection().equals("")) {
+			return false;
+		} else{
+			pairedDouble.setConnection("");
+			prop.setProperty(pairedDouble.getName(), "");
+			return true;
+		}
+	}
+
+	public boolean breakConnection(String pairedDouble) {
+		for(PairedDouble dbl: doubles) {
+			if(dbl.getName().equals(pairedDouble)) {
+				return breakConnection(dbl);
+			}
+		}
+		return false;
+	}
+
 	public Vector<String> pairedDoubleNames() {
 		Vector<String> pairedDoubleNames = new Vector<String>();
 		for(PairedDouble dbl: doubles) {
@@ -131,15 +151,28 @@ public class PropertiesManager {
 		return pairedDoubleNames;
 	}
 
+	public Vector<PairedDouble> getPairedDoubles() {
+		return doubles;
+	}
+
+	public void setRobotComm(RobotCodeCommunication comms) {
+		robotComm = comms;
+	}
+
+
+
 	public class PairedDouble {
 
 		private final String name;
 		private String connection;
+		private boolean updateFromTable;
 		public volatile double value;
 
-		private PairedDouble(String name, double value) {
+		private PairedDouble(String name, double value, boolean updateFromTable) {
 			this.name = name;
 			this.value = value;
+			this.connection = "";
+			this.updateFromTable = updateFromTable;
 		}
 
 		public String getName() {
@@ -154,6 +187,17 @@ public class PropertiesManager {
 			return connection;
 		}
 
+		public void update() {
+			value = robotComm.getValue(connection);
+		}
+
+		public boolean updatesFromTable() {
+			return updateFromTable;
+		}
+
+		public String toString() {
+			return getName() + " : " + value + ((connection.equals("")) ? " is not connected to a network table value." : " with a connection to " + connection + "."); 
+		}
 	}
 
 }

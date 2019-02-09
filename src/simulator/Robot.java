@@ -21,6 +21,8 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 
+import simulator.PairedDoubleFactory.PairedDouble;
+
 public class Robot extends BaseAppState {
 	private SimMain app;
 	private Node robotNode;
@@ -34,27 +36,27 @@ public class Robot extends BaseAppState {
 	boolean hatchPickedUp = false;
 	private final float Z_GRAVITY = -9.81f;
 	private Vector3f hatchHoldingPosition;
-	private float accelerationValueLeft = 0f;
-	private float accelerationValueRight = 0f;
+	private PairedDouble accelerationValueLeft = PairedDoubleFactory.getInstance().createPairedDouble("leftSideDrives", true, 0.0);
+	private PairedDouble accelerationValueRight = PairedDoubleFactory.getInstance().createPairedDouble("rightSideDrives", true, 0.0);
 	private final float ROBOT_ACCELERATION = 150f;
 	private final ActionListener actionListener = new ActionListener() {
 
 		@Override
 		public void onAction(String name, boolean pressed, float tpf) {
 			if (name.equals("leftDrivesForward") && pressed) {
-				accelerationValueLeft = ROBOT_ACCELERATION;
+				accelerationValueLeft.value = 1;
 			} else if(name.equals("leftDrivesBackward") && pressed) {
-				accelerationValueLeft = -ROBOT_ACCELERATION;
+				accelerationValueLeft.value = -1;
 			} else if(name.indexOf("leftDrives") != -1 && !pressed){
-				accelerationValueLeft = 0;
+				accelerationValueLeft.value = 0;
 			}
 
 			else if(name.equals("rightDrivesForward") && pressed) {
-				accelerationValueRight = ROBOT_ACCELERATION;
+				accelerationValueRight.value = 1;
 			} else if(name.equals("rightDrivesBackward") && pressed){
-				accelerationValueRight = -ROBOT_ACCELERATION;			
+				accelerationValueRight.value = -1;			
 			} else if(name.indexOf("rightDrives") != -1 && !pressed){
-				accelerationValueRight = 0;
+				accelerationValueRight.value = 0;
 			}
 
 			else if(name.equals("pause") && pressed) {
@@ -68,8 +70,8 @@ public class Robot extends BaseAppState {
 			else if(name.equals("reset") && pressed) {
 				robotControl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
 				robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
-				accelerationValueRight = 0;
-				accelerationValueLeft = 0;
+				accelerationValueRight.value = 0;
+				accelerationValueLeft.value = 0;
 				if(linkedHatch != null) {
 					unlinkHatch((Spatial)linkedHatch.getUserObject());
 				}
@@ -99,7 +101,7 @@ public class Robot extends BaseAppState {
 
 		app.getPhysicsSpace().setGravity(new Vector3f(0f, 0f, Z_GRAVITY));
 		assetManager = app.getAssetManager();
-
+		
 		robotNode = new Node("vehicleNode");
 		robotBase = assetManager.loadModel("Models/RobotBase/RobotDriveBase.blend");
 		robotBase.scale(.5f);
@@ -142,13 +144,13 @@ public class Robot extends BaseAppState {
 		//    	robotControl.setLinearVelocity(robotControl.getLinearVelocity().add(forward));
 		//    	robotControl.setAngularVelocity(robotControl.getAngularVelocity().add(new Vector3f(0f, 0f, rotate * tpf)));
 		//    	rotate *= .05f;
-		robotControl.accelerate(0, accelerationValueLeft);
-		robotControl.accelerate(2, accelerationValueLeft);
-		robotControl.accelerate(1, accelerationValueRight);
-		robotControl.accelerate(3, accelerationValueRight);
+		robotControl.accelerate(0, (float) (ROBOT_ACCELERATION * accelerationValueLeft.value));
+		robotControl.accelerate(2, (float) (ROBOT_ACCELERATION * accelerationValueLeft.value));
+		robotControl.accelerate(1, (float) (ROBOT_ACCELERATION * accelerationValueRight.value));
+		robotControl.accelerate(3, (float) (ROBOT_ACCELERATION * accelerationValueRight.value));
 
-		//		accelerationValueLeft *= .7;
-		//		accelerationValueRight *= .7;
+		//		accelerationValueLeft.value *= .7;
+		//		accelerationValueRight.value *= .7;
 
 		hatchHoldingPosition = generateHoldingPosition(1f);
 
@@ -318,11 +320,11 @@ public class Robot extends BaseAppState {
 	}
 
 	public void setDrivesPowerLeft(float power) {
-		accelerationValueLeft = power;
+		accelerationValueLeft.value = power;
 	}
 	
-	public float getDrivesPowerLeft() {
-		return accelerationValueLeft;
+	public double getDrivesPowerLeft() {
+		return accelerationValueLeft.value;
 	}
 	
 	@Override
@@ -331,11 +333,11 @@ public class Robot extends BaseAppState {
 	}
 
 	public void setDrivesPowerRight(float power) {
-		accelerationValueRight = power;
+		accelerationValueRight.value = power;
 	}
 	
-	public float getDrivesPowerRight() {
-		return accelerationValueRight;
+	public double getDrivesPowerRight() {
+		return accelerationValueRight.value;
 	}
 
 	

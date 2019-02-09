@@ -25,7 +25,7 @@ public class InfoDisplay extends BaseAppState {
 	private float totalSeconds = 50;
 	private float speed;
 	private Vector<String> networkTableKeyVec = new Vector<String>();
-	private String networkTableKey;
+	private RobotCodeCommunication robotComm;
 	
 	protected void initialize(Application _app) {
 		String enqBitmapFontAssetName = "Interface/Fonts/Default.fnt";
@@ -36,6 +36,7 @@ public class InfoDisplay extends BaseAppState {
 		BlendMode materialBlendMode = BlendMode.Alpha;
 		Node guiNode = app.getGuiNode();
 
+		robotComm = app.getStateManager().getState(RobotCodeCommunication.class);
 		Node consoleBaseNode = new Node("Console");
 
 		Material darkGrayMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
@@ -87,33 +88,32 @@ public class InfoDisplay extends BaseAppState {
 			for (int a = 0; a < networkTableKeyVec.size(); a++) {
 				String networkTableKeyString = networkTableKeyVec.get(a);
 				displayText += "\nNetwork table " + networkTableKeyString + " is "
-						+ RobotCodeCommunication.getInstance().getValue(networkTableKeyString);
+						+ robotComm.getValue(networkTableKeyString);
 				scrollingBitmapText.setText(displayText);
 			}	
 		}
 	}
+	
 	public boolean removeNetworkTableValue(String networkTableKey) {
 		return networkTableKeyVec.remove(networkTableKey);
 	}
+	
 	public void setDisplayedNetworkValue(String networkTableKey) {
 		networkTableKeyVec.add(networkTableKey);
 	}
 	
 	@Override
 	protected void cleanup(Application arg0) {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected void onDisable() {
-		// TODO Auto-generated method stub
 
 	}
 
 	@Override
 	protected void onEnable() {
-		// TODO Auto-generated method stub
 
 	}
 }

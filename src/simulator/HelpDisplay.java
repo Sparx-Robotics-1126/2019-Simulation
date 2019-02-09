@@ -1,4 +1,4 @@
-package simulator;
+	package simulator;
 
 import com.jme3.app.Application;
 import com.jme3.app.SimpleApplication;
@@ -6,7 +6,6 @@ import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.font.BitmapFont;
 import com.jme3.font.BitmapText;
-import com.jme3.font.LineWrapMode;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -100,16 +99,16 @@ public class HelpDisplay extends BaseAppState {
 
 	@Override
 	protected void cleanup(Application arg0) {
-		// TODO Auto-generated method stub
+ 
 	}
 
 	@Override
 	protected void onDisable() {
-		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	protected void onEnable() {
-		// TODO Auto-generated method stub
+
 	}
 }
