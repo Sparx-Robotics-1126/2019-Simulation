@@ -34,7 +34,7 @@ public class CameraControl extends BaseAppState {
 		cam.setLocation(robot.getRobotBase().getWorldTranslation().add(0f, 0f, 1f)) ;
     	cam.setRotation(robot.getRobotBase().getWorldRotation());
 		} else if(camMode3 == true) {
-		cam.lookAt(robot.getRobotBase().getWorldTranslation().add(0f, 0f, 2f),Vector3f.UNIT_Z);
+		center.set(robot.getRobotBase().getWorldTranslation().add(0f, 0f, 1f));
 		}
 	}
 	@Override
@@ -99,6 +99,8 @@ public class CameraControl extends BaseAppState {
             	camMode3 = true;
             	camMode1 = false;
             	camMode2 = false;
+            	center.set(robot.getRobotBase().getWorldTranslation().add(0f, 0f, 1f));
+            	cam.lookAt(center, Vector3f.UNIT_Z);
             }	
         }
     };
@@ -109,7 +111,7 @@ public class CameraControl extends BaseAppState {
         	if(leftPressed)
         	{
             	float rotateAmount = FastMath.PI * value;
-        		Vector3f location = cam.getLocation();
+        		Vector3f location = cam.getLocation().subtract(center);
         		Quaternion amount = new Quaternion();
         		float direction = 1;
        		
@@ -159,13 +161,13 @@ public class CameraControl extends BaseAppState {
         	}
         	else if(name.equals("wheelUp") || name.equals("wheelDown"))
         	{
-        		Vector3f location = cam.getLocation();
+        		Vector3f location = cam.getLocation().subtract(center);
             	if(name.equals("wheelUp")) {
             		location.multLocal(1.1f); 		
             	} else if(name.equals("wheelDown")) {
             		location.multLocal(0.9f);  		
             	}
-        		cam.setLocation(location);
+        		cam.setLocation(location.add(center));
         		cam.lookAt(center, Vector3f.UNIT_Z);
         	}
 

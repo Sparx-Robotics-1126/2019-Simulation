@@ -50,6 +50,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 			if (evt.getCommand().equals("help")) {
 				console.appendConsole("help: this message.");
 				console.appendConsole("hide: hide the console.");
+				console.appendConsole("clear: removes text from console");
 				console.appendConsole("cam: display camera location.");
 				console.appendConsole("phyDebug true/false: enable/disable physics debug.");
 				console.appendConsole("clear: clears text");
@@ -70,12 +71,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 					console.appendConsole("unpair simulationObject: Disconnects a simulation object from its connection if it has one.");
 					console.appendConsole("hideTable: hides display table");
 				}
-				console.appendConsole("escape: exits console");
-				console.appendConsole("`: starts console");
-				console.appendConsole("up: copys previous input");
-				console.appendConsole("PgUp: scrolls history up");
-				console.appendConsole("PgDown: scrolls history down");
-				console.appendConsole("clear: removes text from console");
+
 			} else if (evt.getCommand().equals("hide")) {
 				console.setVisible(false);
 			} else if (evt.getCommand().equals("cam")) {
