@@ -84,13 +84,12 @@ public class InfoDisplay extends BaseAppState {
 			displayText += String.format("\nthe time is %.2f minutes", totalSeconds / 60);
 		}
 
-		if (networkTableKeyVec != null) {
-			for (int a = 0; a < networkTableKeyVec.size(); a++) {
-				String networkTableKeyString = networkTableKeyVec.get(a);
-				displayText += "\nNetwork table " + networkTableKeyString + " is "
-						+ robotComm.getValue(networkTableKeyString);
-			}	
-		}
+		for (int a = 0; a < networkTableKeyVec.size(); a++) {
+			String networkTableKeyString = networkTableKeyVec.get(a);
+			displayText += "\nNetwork table " + networkTableKeyString + " is "
+					+ robotComm.getValue(networkTableKeyString);
+		}	
+		
 		scrollingBitmapText.setText(displayText);
 	}
 	
