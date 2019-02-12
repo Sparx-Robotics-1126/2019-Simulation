@@ -85,14 +85,6 @@ public class PairedDoubleFactory {
 			}
 		}
 		PairedDouble dbl = new PairedDouble(name, startingValue, updateFromTable);
-		connectionNames = robotComm.keys();
-		if(prop.containsKey((dbl.getName()))) {
-			if(connectionNames.contains(prop.getProperty(dbl.getName()))) {
-				dbl.setConnection(prop.getProperty(dbl.getName()));
-			} else {
-				prop.remove(dbl.getName());
-			}
-		}
 		doubles.add(dbl);
 		return dbl;
 	}
