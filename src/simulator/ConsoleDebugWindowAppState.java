@@ -70,6 +70,8 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 							+ "and the networkTableKey should be from the listTables command. Pairing them will link the values together.");
 					console.appendConsole("unpair simulationObject: Disconnects a simulation object from its connection if it has one.");
 					console.appendConsole("hideTable: hides display table");
+					console.appendConsole("loadProperties: Loads in pairedDoubles and their connections from saved file.");
+					console.appendConsole("saveProperties: Saves pairedDoubles to a file.");
 				}
 
 			} else if (evt.getCommand().equals("hide")) {
@@ -146,6 +148,10 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 					} else{
 						console.appendConsoleError(simObjectParameter + " is not a valid SimObject from the list found in listObjects.");
 					}
+				} else if(evt.getCommand().equals("loadProperies")){
+					pairedDoubleCreator.loadProperties();
+				} else if(evt.getCommand().equals("saveProperties")) {
+					pairedDoubleCreator.saveProperties();
 				}
 			}
 		}
