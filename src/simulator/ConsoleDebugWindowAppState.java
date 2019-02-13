@@ -27,7 +27,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		app = (SimpleApplication) _app;
 		console = app.getStateManager().getState(ConsoleAppState.class);
 		console.setConsoleNumLines(40);
-		robotCodeComm = app.getStateManager().getState(RobotCodeCommunication.class);
+		robotCodeComm = RobotCodeCommunication.getInstance();
 
 		console.registerCommand("help", commandListener);
 		console.registerCommand("cam", commandListener);
@@ -93,7 +93,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				}
 			} else if(evt.getCommand().equals("startTables")) {
 				if(!robotCodeComm.isStarted()) {
-					console.appendConsole(robotCodeComm.run() ? "Network table client successfully started" : "Network table client failed to start; nothing to connect to.");
+					console.appendConsole(robotCodeComm.runTables() ? "Network table client successfully started" : "Network table client failed to start; nothing to connect to.");
 				}
 			} else if (evt.getCommand().equals("hideTable")){
 				if(evt.getParser().get(0) != null) {

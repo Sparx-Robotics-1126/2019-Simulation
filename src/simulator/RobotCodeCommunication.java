@@ -4,37 +4,47 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
 
-import com.jme3.app.Application;
-import com.jme3.app.state.BaseAppState;
-
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import simulator.PairedDoubleFactory.PairedDouble;
 
-public class RobotCodeCommunication extends BaseAppState{
+public class RobotCodeCommunication extends Thread{
 	private final NetworkTable  table = NetworkTableInstance.getDefault().getTable("CommsTable");
 	private boolean running = false;
+	private static RobotCodeCommunication instance;
 
+	public static RobotCodeCommunication getInstance() {
+		if(instance == null) {
+			instance = new RobotCodeCommunication();
+		}
+		return instance;
 
-	public RobotCodeCommunication() {
-		PairedDoubleFactory.getInstance().setRobotComm(this);
 	}
 
-	public boolean run() {
+	private RobotCodeCommunication() {
+	}
+
+	public boolean runTables() {
 		if(!running) {
 			NetworkTableInstance.getDefault().startClient("localhost");
+
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 			running = isConnected();
-		}
-		if(!running) {
-			NetworkTableInstance.getDefault().stopClient(); //To stop the network table from spamming timeouts after a failed connection attempt
+
+			if(!running) {
+				NetworkTableInstance.getDefault().stopClient();
+			} else {
+				start();
+			}
 		}
 		return running;
 	}
+
+
 
 	public Set<String> keys(){
 		if(!isConnected() || !isStarted())
@@ -70,35 +80,20 @@ public class RobotCodeCommunication extends BaseAppState{
 		return running;
 	}
 
-	@Override
-	public void update(float tpf) {  
-		if(isConnected()) {
-			Vector<PairedDouble> pairedDoubles = PairedDoubleFactory.getInstance().getPairedDoubles();
-			pairedDoubles.forEach((pairedDoubleObject)->{
-				if(!pairedDoubleObject.getConnection().equals("")) {
-					if(pairedDoubleObject.updatesFromTable()) {
-						pairedDoubleObject.update();
-					} else{
-						table.getSubTable(pairedDoubleObject.getConnection()).getEntry(".value").setDouble(pairedDoubleObject.value);
+	public void run() {  
+		while(!interrupted()) {
+			if(isConnected()) {
+				Vector<PairedDouble> pairedDoubles = PairedDoubleFactory.getInstance().getPairedDoubles();
+				pairedDoubles.forEach((pairedDoubleObject)->{
+					if(!pairedDoubleObject.getConnection().equals("")) {
+						if(pairedDoubleObject.updatesFromTable()) {
+							pairedDoubleObject.update();
+						} else{
+							table.getSubTable(pairedDoubleObject.getConnection()).getEntry(".value").setDouble(pairedDoubleObject.value);
+						}
 					}
-				}
-			});
+				});
+			}
 		}
-	}
-
-	@Override
-	protected void cleanup(Application arg0) {
-	}
-
-	@Override
-	protected void initialize(Application arg0) {
-	}
-
-	@Override
-	protected void onDisable() {
-	}
-
-	@Override
-	protected void onEnable() {
 	}
 }

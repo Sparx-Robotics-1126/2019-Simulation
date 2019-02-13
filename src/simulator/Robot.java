@@ -152,8 +152,21 @@ public class Robot extends BaseAppState {
 		robotControl.accelerate(1, (float) (ROBOT_ACCELERATION * accelerationValueRight.value));
 		robotControl.accelerate(3, (float) (ROBOT_ACCELERATION * accelerationValueRight.value));
 
-		Vector3f currentLeftLocation = robotControl.getPhysicsLocation().add(new Vector3f(0, 0, -.25f));
-		Vector3f currentRightLocation = robotControl.getPhysicsLocation().add(new Vector3f(0, 0, .25f)); 
+
+		Vector3f currentLeftLocation = robotControl.getPhysicsLocation();
+		Vector3f currentRightLocation = robotControl.getPhysicsLocation(); 
+		float[] offsets = getOffsets(.25f); 
+		float xOffset = offsets[0];
+		float yOffset = offsets[1];
+		
+		currentLeftLocation.setX(currentLeftLocation.getX() + xOffset);
+		currentLeftLocation.setY(currentLeftLocation.getY() + yOffset);
+		currentLeftLocation.setZ(currentLeftLocation.getZ() + 0.75f);
+
+		currentRightLocation.setX(currentRightLocation.getX() - xOffset);
+		currentRightLocation.setY(currentRightLocation.getY() - yOffset);
+		currentRightLocation.setZ(currentRightLocation.getZ() + 0.75f);
+		
 		
 		leftEncoder.value += currentLeftLocation.distance(lastLeftLocation);
 		rightEncoder.value += currentRightLocation.distance(lastRightLocation);
@@ -199,6 +212,25 @@ public class Robot extends BaseAppState {
 		return holdingPosition;
 	}
 
+	private float[] getOffsets(float mainOffset) {
+		float robotZRot  = robotControl.getPhysicsRotation().toAngles(null)[2] + FastMath.HALF_PI;
+		float xOffset = 0;
+		float yOffset = 0;
+		
+		if(robotControl.getPhysicsRotation().toAngles(null)[0] > 0) {
+			xOffset = (float) (FastMath.sin(FastMath.abs(robotZRot)) * mainOffset);
+		} else {
+			xOffset = -1f * (float)(FastMath.sin(FastMath.abs(robotZRot)) * mainOffset);
+		}
+		
+		yOffset = -1 * (float) (Math.cos(robotZRot) * mainOffset);
+		return new float[]{xOffset, yOffset};
+	}
+	
+	public float[] getRotation() {
+		return robotControl.getPhysicsRotation().toAngles(null);
+	}
+	
 	private void printRotation(Quaternion quat) {
 		System.out.println("\nAngles[0]: " + quat.toAngles(null)[0]);
 		System.out.println("Angles[1]: " + quat.toAngles(null)[1]);

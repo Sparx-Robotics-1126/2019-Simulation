@@ -27,6 +27,7 @@ public class PairedDoubleFactory {
 	}
 
 	public PairedDoubleFactory() {
+		robotComm = RobotCodeCommunication.getInstance();
 		loadProperties();
 	}
 
@@ -146,12 +147,6 @@ public class PairedDoubleFactory {
 	public Vector<PairedDouble> getPairedDoubles() {
 		return doubles;
 	}
-
-	public void setRobotComm(RobotCodeCommunication comms) {
-		robotComm = comms;
-	}
-
-
 
 	public class PairedDouble {
 

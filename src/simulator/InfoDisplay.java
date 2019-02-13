@@ -36,7 +36,7 @@ public class InfoDisplay extends BaseAppState {
 		BlendMode materialBlendMode = BlendMode.Alpha;
 		Node guiNode = app.getGuiNode();
 
-		robotComm = app.getStateManager().getState(RobotCodeCommunication.class);
+		robotComm = RobotCodeCommunication.getInstance();
 		Node consoleBaseNode = new Node("Console");
 
 		Material darkGrayMat = new Material(assetManager, "Common/MatDefs/Misc/Unshaded.j3md");
