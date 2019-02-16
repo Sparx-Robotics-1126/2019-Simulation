@@ -73,8 +73,12 @@ public class HelpDisplay extends BaseAppState {
 				"zoom = middle mouse\n" + 
 				"pick up hatch = w\n" + 
 				"drop hatch = s\n" + 
-				"debug window = ` or t");
-		scrollingBitmapText.setLocalTranslation(helpQuadStartX + 100, helpQuadStartY + helpQuadHeight - 100, 0);
+				"debug window = ` or t/n" +
+				"lift arms down = z\n" +
+				"lift arms up = x\n" +
+				"lead screw down = c\n" +
+				"lead screw up = v");
+		scrollingBitmapText.setLocalTranslation(helpQuadStartX + 100, helpQuadStartY + helpQuadHeight - 60, 0);
 		consoleBaseNode.attachChild(scrollingBitmapText);
 
 		helpQuad.setMesh(new Quad(helpQuadWidth, helpQuadHeight));
