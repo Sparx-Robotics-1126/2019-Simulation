@@ -27,6 +27,7 @@ public class PairedDoubleFactory {
 	}
 
 	public PairedDoubleFactory() {
+		robotComm = RobotCodeCommunication.getInstance();
 		loadProperties();
 	}
 
@@ -85,14 +86,6 @@ public class PairedDoubleFactory {
 			}
 		}
 		PairedDouble dbl = new PairedDouble(name, startingValue, updateFromTable);
-		connectionNames = robotComm.keys();
-		if(prop.containsKey((dbl.getName()))) {
-			if(connectionNames.contains(prop.getProperty(dbl.getName()))) {
-				dbl.setConnection(prop.getProperty(dbl.getName()));
-			} else {
-				prop.remove(dbl.getName());
-			}
-		}
 		doubles.add(dbl);
 		return dbl;
 	}
@@ -154,12 +147,6 @@ public class PairedDoubleFactory {
 	public Vector<PairedDouble> getPairedDoubles() {
 		return doubles;
 	}
-
-	public void setRobotComm(RobotCodeCommunication comms) {
-		robotComm = comms;
-	}
-
-
 
 	public class PairedDouble {
 

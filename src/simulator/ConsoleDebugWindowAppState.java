@@ -27,7 +27,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		app = (SimpleApplication) _app;
 		console = app.getStateManager().getState(ConsoleAppState.class);
 		console.setConsoleNumLines(40);
-		robotCodeComm = app.getStateManager().getState(RobotCodeCommunication.class);
+		robotCodeComm = RobotCodeCommunication.getInstance();
 
 		console.registerCommand("help", commandListener);
 		console.registerCommand("cam", commandListener);
@@ -70,6 +70,8 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 							+ "and the networkTableKey should be from the listTables command. Pairing them will link the values together.");
 					console.appendConsole("unpair simulationObject: Disconnects a simulation object from its connection if it has one.");
 					console.appendConsole("hideTable: hides display table");
+					console.appendConsole("loadProperties: Loads in pairedDoubles and their connections from saved file.");
+					console.appendConsole("saveProperties: Saves pairedDoubles to a file.");
 				}
 
 			} else if (evt.getCommand().equals("hide")) {
@@ -91,7 +93,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				}
 			} else if(evt.getCommand().equals("startTables")) {
 				if(!robotCodeComm.isStarted()) {
-					console.appendConsole(robotCodeComm.run() ? "Network table client successfully started" : "Network table client failed to start; nothing to connect to.");
+					console.appendConsole(robotCodeComm.runTables() ? "Network table client successfully started" : "Network table client failed to start; nothing to connect to.");
 				}
 			} else if (evt.getCommand().equals("hideTable")){
 				if(evt.getParser().get(0) != null) {
@@ -146,6 +148,10 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 					} else{
 						console.appendConsoleError(simObjectParameter + " is not a valid SimObject from the list found in listObjects.");
 					}
+				} else if(evt.getCommand().equals("loadProperies")){
+					pairedDoubleCreator.loadProperties();
+				} else if(evt.getCommand().equals("saveProperties")) {
+					pairedDoubleCreator.saveProperties();
 				}
 			}
 		}

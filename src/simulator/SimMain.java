@@ -15,8 +15,7 @@ public class SimMain extends SimpleApplication {
 	private BulletAppState bulletAppState;
 	
 	public SimMain() {
-		super(	new RobotCodeCommunication(),
-				new Robot(),
+		super(	new Robot(),
 				new FieldAppState(), 
 				new AudioListenerState(), 
 				new DebugKeysAppState(),
