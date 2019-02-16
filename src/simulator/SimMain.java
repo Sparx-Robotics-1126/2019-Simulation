@@ -13,8 +13,6 @@ import com.jme3.renderer.Renderer;
 import com.jme3.renderer.ViewPort;
 import com.jme3.scene.plugins.blender.BlenderLoader;
 import com.jme3.terrain.noise.Color;
-import com.sun.org.apache.bcel.internal.generic.NEW;
-
 import strongdk.jme.appstate.console.ConsoleAppState;
 
 public class SimMain extends SimpleApplication {
