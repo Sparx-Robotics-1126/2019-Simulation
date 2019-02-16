@@ -6,8 +6,14 @@ import com.jme3.asset.plugins.ClasspathLocator;
 import com.jme3.audio.AudioListenerState;
 import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
+import com.jme3.renderer.RenderManager;
+import com.jme3.renderer.Renderer;
+import com.jme3.renderer.ViewPort;
 import com.jme3.scene.plugins.blender.BlenderLoader;
+import com.jme3.terrain.noise.Color;
+import com.sun.org.apache.bcel.internal.generic.NEW;
 
 import strongdk.jme.appstate.console.ConsoleAppState;
 
@@ -23,7 +29,8 @@ public class SimMain extends SimpleApplication {
 				new ConsoleAppState(),
 				new HelpDisplay(),
 				new InfoDisplay(),
-				new ConsoleDebugWindowAppState()
+				new ConsoleDebugWindowAppState(),
+				new HatchLogic()
 				);
 		bulletAppState = new BulletAppState();
 		getStateManager().attach(bulletAppState);
@@ -36,6 +43,9 @@ public class SimMain extends SimpleApplication {
 	public void simpleInitApp() {
 		assetManager.registerLocator("/", ClasspathLocator.class);
 		assetManager.registerLoader(BlenderLoader.class, "blend");
+		//instead of colors between 0-255 it is 0.0-0.999... DUMB!
+		viewPort.setBackgroundColor(new ColorRGBA(0.427f, 0.5921f, 0.6901f, 1f));
+		
 	}
 
 	public PhysicsSpace getPhysicsSpace() {
