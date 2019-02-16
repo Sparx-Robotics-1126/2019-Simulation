@@ -14,12 +14,11 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.jme3.scene.Node;
-import com.jme3.scene.Spatial;
-import com.sun.webkit.ThemeClient;
 
-//TODO put down stuff doesn't really work 100% but there are more important things
-//maybe I'll take a look at it later
+//WHAT DOESN'T WORK:
+//Sometimes when the hatch attaches to a wall it wiggles or comes off
+//Probably a bunch of other stuff but thats all i could find lmk if other stuff doesn't work
+//Sincerely- the bug exterminator
 public class HatchLogic extends BaseAppState {
 	private SimMain app;
 	private final Vector3f[] HATCH_POSITIONS = {
@@ -60,6 +59,7 @@ public class HatchLogic extends BaseAppState {
 	private final float Z_GRAVITY = -9.81f;
 	private RigidBodyControl linkedHatch = null;
 	private final float HATCH_PICKUP_RANGE = 2f;
+	private boolean translatingHatch = true;
 	Robot robot;
 	SimUtilities utilities = new SimUtilities();
 	private final ActionListener actionListener = new ActionListener() {
@@ -87,7 +87,11 @@ public class HatchLogic extends BaseAppState {
 	@Override
 	public void update(float tpf) {
 		if(linkedHatch != null) {
+			
 			moveHatch();
+			if(translatingHatch) {
+				translatingHatch = shouldTranslate();
+			}
 			//			this condition never got triggered so I removed it for efficiency, we might need to add it back but idk sooo
 			//			if(utilities.distanceTo(robotControl.getPhysicsLocation(), linkedHatch.getPhysicsLocation()) > HATCH_PICKUP_RANGE) {
 			//				unlinkHatch();
@@ -151,6 +155,7 @@ public class HatchLogic extends BaseAppState {
 			}
 			linkedHatch.setLinearVelocity(new Vector3f(0f, 0f, 0f));
 			linkedHatch = null;
+			translatingHatch = true;
 		}
 	}
 
@@ -165,7 +170,6 @@ public class HatchLogic extends BaseAppState {
 				bestPoss = dropoffPos;
 			}
 		}
-
 		return bestPoss;
 	}
 
@@ -177,14 +181,30 @@ public class HatchLogic extends BaseAppState {
 
 
 	private void moveHatch() {
-		final float TRANSLATE_SPEED = 1f;
-		Vector3f translateVector = createItemTranslationVector(robotControl, linkedHatch).mult(TRANSLATE_SPEED);
+		Vector3f translateVector = createItemTranslationVector(robotControl, linkedHatch);
 		Quaternion translateQuat = createItemRotationQuaternion(robotControl, linkedHatch);
-		linkedHatch.setPhysicsLocation(linkedHatch.getPhysicsLocation().add(translateVector.mult(0.1f)));
+		if(translatingHatch) {
+			linkedHatch.setPhysicsLocation(linkedHatch.getPhysicsLocation().add(translateVector.mult(0.05f)));
+		} else {
+			linkedHatch.setPhysicsLocation(linkedHatch.getPhysicsLocation().add(translateVector));
+		}
 		linkedHatch.setPhysicsRotation(translateQuat);
+		if(linkedHatch.getPhysicsLocation().getZ() > 1f) {
+			//Every once and a while the hatch goes too high
+			//idk why but this fixes is so don't remove it!
+			translatingHatch = false;
+		}
 	}
 
-
+	private boolean shouldTranslate() {
+//		System.out.println(utilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()));
+		if(utilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()) < 0.75f) {
+			return false;
+			
+		} else {
+			return true;
+		}
+	}
 
 	private Quaternion createItemRotationQuaternion(VehicleControl robot, RigidBodyControl item) {
 		//I made this by mistake but it works so �\_(O_O)_/�
