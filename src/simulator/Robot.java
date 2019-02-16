@@ -34,21 +34,12 @@ public class Robot extends BaseAppState {
 	private Node robotNode;
 	private Node habClimberNode;
 	private Spatial robotBase;
-	private final float HATCH_PICKUP_RANGE = 2f;
-	private RigidBodyControl linkedHatch = null;
 	private AssetManager assetManager;
-	private final Vector3f[] HATCH_POSITIONS = {new Vector3f(0.5686435f, -0.58888614f, 0.6995726f), 
-			new Vector3f(1.0236804f, -0.58888614f, 0.6995726f), new Vector3f(1.5357443f, -0.58888614f, 0.6995726f),
-			new Vector3f(-0.568f, -0.58888614f, 0.6995726f), new Vector3f(-1.023f, -0.58888614f, 0.6995726f),
-			new Vector3f(-1.53f, -0.58888614f, 0.6995726f), new Vector3f(1.568f, 1f, 0.7f), 
-			};
 	private Spatial habLifter1;
 	private Spatial habLifter2;
 	private Spatial leadScrew;
-	private Vector3f hatchHoldingPosition;
 	private VehicleControl robotControl;
 	private CollisionShape robotShape;
-	boolean hatchPickedUp = false;
 	private final float Z_GRAVITY = -9.81f;
 	private PairedDouble accelerationValueLeft = PairedDoubleFactory.getInstance().createPairedDouble("leftSideDrives", true, 0.0);
 	private PairedDouble accelerationValueRight = PairedDoubleFactory.getInstance().createPairedDouble("rightSideDrives", true, 0.0);
@@ -108,9 +99,7 @@ public class Robot extends BaseAppState {
 				leadScrewPosition = 2f;
 				habLifter1.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
 				habLifter2.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
-					hatchLogic.dropHatch();
-				if(linkedHatch != null) {
-				}
+				hatchLogic.dropHatch();
 			}
 
 

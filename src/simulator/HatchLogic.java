@@ -69,7 +69,6 @@ public class HatchLogic extends BaseAppState {
 	@Override
 	public void update(float tpf) {
 		
-		robotControl = robot.getRobotControl();
 		
 		if(linkedHatch != null) {
 			moveHatch();
@@ -84,6 +83,7 @@ public class HatchLogic extends BaseAppState {
 		app = (SimMain) _app;
 		getControls();
 		robot = app.getStateManager().getState(Robot.class);
+		robotControl = robot.getRobotControl();
 	}
 	
 	
@@ -214,6 +214,9 @@ public class HatchLogic extends BaseAppState {
 		unlinkHatch();
 	}
 	
+	public void pickupHatch() {
+		detectHatch();
+	}
 	@Override
 	protected void cleanup(Application arg0) {
 		// TODO Auto-generated method stub
