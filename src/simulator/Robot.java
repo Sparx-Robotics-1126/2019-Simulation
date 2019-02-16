@@ -243,8 +243,8 @@ public class Robot extends BaseAppState {
 		currentRightLocation.setY(currentRightLocation.getY() - yOffset);
 		
 		if(notFirstRun) {
-			leftEncoder.value += (currentLeftLocation.distance(lastLeftLocation)*12.66);
-			rightEncoder.value += (currentRightLocation.distance(lastRightLocation)*12.66);
+			leftEncoder.value += (currentLeftLocation.distance(lastLeftLocation)*41.52);
+			rightEncoder.value += (currentRightLocation.distance(lastRightLocation)*41.52);
 		}
 		
 		lastLeftLocation = currentLeftLocation;
