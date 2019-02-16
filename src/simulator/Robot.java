@@ -128,6 +128,7 @@ public class Robot extends BaseAppState {
 
 		app = (SimMain) _app;
 		Node rootNode = app.getRootNode();
+		
 
 		app.getPhysicsSpace().setGravity(new Vector3f(0f, 0f, Z_GRAVITY));
 		assetManager = app.getAssetManager();
@@ -136,13 +137,16 @@ public class Robot extends BaseAppState {
 		robotBase.scale(.5f);
 		robotShape = new CompoundCollisionShape();
 		Geometry robot_geo = (Geometry)((Node)((Node)((Node)robotBase).getChild(0)).getChild(0)).getChild(0);
-		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2), new Vector3f(-.2f, 0f, 0f));//new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
+		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2), new Vector3f(-.2f, 0f, 0f));
+		//new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
 		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2), new Vector3f(.2f, 0f, 0f));
 		robot_geo.setLocalRotation(new Quaternion(1, 0, 0, 1));
 		robotControl = new VehicleControl(robotShape, 60);
 		robotNode.attachChild(robotBase);
 		robotNode.addControl(robotControl);
 
+		createWheels();
+		
 		habClimberNode = new Node("climbingNode");
 		habLifter1 = assetManager.loadModel("Models/RobotBase/habLifter1.blend");
 		habLifter1.scale(0.15f);
@@ -163,6 +167,8 @@ public class Robot extends BaseAppState {
 		rootNode.attachChild(leadScrew);
 		habClimberNode.attachChild(leadScrew);
 
+		
+		
 		float stiffness = 800.0f;
 		float compValue = .6f;
 		float dampValue = .7f;
@@ -188,8 +194,26 @@ public class Robot extends BaseAppState {
 		hatchLogic = app.getStateManager().getState(HatchLogic.class);
 		setEncoders(false);
 	}
-
-
+	private void createWheels() {
+		wheel(.325f,-.15f,0.25f);
+		wheel(.325f,-.15f,-0.25f);
+		wheel(-0.325f,-.15f,0.25f);
+		wheel(-0.325f,-.15f,-0.25f);
+		
+	}
+	private void wheel(float wheelX, float wheelY, float wheelZ) {
+		Material wheelColor = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		wheelColor.setBoolean("UseMaterialColors", true);
+		wheelColor.setColor("Diffuse", ColorRGBA.Yellow);
+		
+		Cylinder wheel = new Cylinder(100, 100, 0.125f, 0.0625f, true, false);
+		Geometry wheelGeometry = new Geometry("wheel", wheel);
+		wheelGeometry.setMaterial(wheelColor);
+		wheelGeometry.setLocalTranslation(wheelX, wheelY, wheelZ);
+		wheelGeometry.rotate(0, FastMath.HALF_PI, 0);
+		robotNode.attachChild(wheelGeometry);
+		}
+	
 	@Override
 	public void update(float tpf) {
 		robotAcceleration = (float)(gearShifter.value * 150 + 150);
@@ -222,16 +246,6 @@ public class Robot extends BaseAppState {
 			
 		hatchLogic.update(tpf);
 	}
-	private void wheel(float wheelX, float wheelY, float wheelZ) {
-		Material wheelColor = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		wheelColor.setBoolean("UseMaterialColors", true);
-		wheelColor.setColor("Diffuse", ColorRGBA.Yellow);
-
-//		Cylinder wheel1 = new Cylinder(100, 100, 0.25f, 0.625f, true, false);
-//		wheel1.setMaterial(wheelColor);
-		
-		
-		}
 	
 	private void setEncoders(boolean notFirstRun) {
 		Vector3f currentLeftLocation = robotControl.getPhysicsLocation();
