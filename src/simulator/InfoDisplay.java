@@ -22,7 +22,7 @@ public class InfoDisplay extends BaseAppState {
 	private Robot robot;
 	private Vector3f lastPosition;
 	private float timePast;
-	private float totalSeconds = 50;
+	private float totalSeconds;
 	private float speed;
 	private Vector<String> networkTableKeyVec = new Vector<String>();
 	private RobotCodeCommunication robotComm;

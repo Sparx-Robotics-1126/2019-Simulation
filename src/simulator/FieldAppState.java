@@ -27,25 +27,18 @@ public class FieldAppState extends BaseAppState {
 	private SimMain app;
 	private AssetManager assetManager;
 	private Node rootNode;
-
-
 	private RigidBodyControl hatchCtrl;
 	private Spatial hatch;
-
 	private ArrayList<RigidBodyControl> cargoCtrlList = new ArrayList<RigidBodyControl>();
 	private ArrayList<RigidBodyControl> hatchCtrlList = new ArrayList<RigidBodyControl>();
-
 	public ArrayList<RigidBodyControl> getHatchCtrlList() {
 		return hatchCtrlList;
 	}
-
 	private final float CARGO_VARIANCE = 0.0254f; // +- .5 inch for a total of 1 inch.
 	private final float CARGO_RADIUS  = 0.3302f/2f - CARGO_VARIANCE; // 
-
 	private final float CARGO_SPACING = 0.35f;
 	private final float CARGO_SET_X_POS = 7.35f;
 	private final float CARGO_SET_Y_POS = 2.0f;
-
 	private final float[] HAB_HEIGHTS = {.04f, .115f, .28f};
 	private final float HAB_WIDTH = 1.625f;
 
@@ -114,7 +107,6 @@ public class FieldAppState extends BaseAppState {
 	private void createField() {
 		Spatial field = assetManager.loadModel("Models/Field/FieldWithoutFloor.blend");
 		field.rotate(FastMath.PI / 2, 0, 0); 
-
 		CollisionShape fieldShape = CollisionShapeFactory.createMeshShape(field);
 		RigidBodyControl ctrl2 = new RigidBodyControl(fieldShape, 0);
 		ctrl2.setKinematic(false);

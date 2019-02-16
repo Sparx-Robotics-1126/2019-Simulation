@@ -10,10 +10,13 @@ import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.material.Material;
+import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -26,23 +29,30 @@ import simulator.PairedDoubleFactory.PairedDouble;
 public class Robot extends BaseAppState {
 	private SimMain app;
 	private Node robotNode;
+	private Node habClimberNode;
 	private Spatial robotBase;
 	private final float HATCH_PICKUP_RANGE = 2f;
 	private RigidBodyControl linkedHatch = null;
 	private AssetManager assetManager;
-
+	private Spatial habLifter1;
+	private Spatial habLifter2;
+	private Spatial leadScrew;
+	private Vector3f hatchHoldingPosition;
 	private VehicleControl robotControl;
 	private CollisionShape robotShape;
+	private CollisionShape lifterShape;
+	private CollisionShape screwShape;
 	boolean hatchPickedUp = false;
 	private final float Z_GRAVITY = -9.81f;
-	private Vector3f hatchHoldingPosition;
 	private PairedDouble accelerationValueLeft = PairedDoubleFactory.getInstance().createPairedDouble("leftSideDrives", true, 0.0);
 	private PairedDouble accelerationValueRight = PairedDoubleFactory.getInstance().createPairedDouble("rightSideDrives", true, 0.0);
 	private PairedDouble leftEncoder = PairedDoubleFactory.getInstance().createPairedDouble("leftEncoder", false, 0.0);
 	private PairedDouble rightEncoder = PairedDoubleFactory.getInstance().createPairedDouble("rightEncoder", false, 0.0);
 	private Vector3f lastLeftLocation = Vector3f.ZERO;
 	private Vector3f lastRightLocation = Vector3f.ZERO;
+	private float rightAngle = FastMath.PI / 2;
 	private final float ROBOT_ACCELERATION = 150f;
+	
 	private final ActionListener actionListener = new ActionListener() {
 
 		@Override
@@ -109,18 +119,67 @@ public class Robot extends BaseAppState {
 
 		app.getPhysicsSpace().setGravity(new Vector3f(0f, 0f, Z_GRAVITY));
 		assetManager = app.getAssetManager();
-		
 		robotNode = new Node("vehicleNode");
 		robotBase = assetManager.loadModel("Models/RobotBase/RobotDriveBase.blend");
 		robotBase.scale(.5f);
 		robotShape = new CompoundCollisionShape();
 		Geometry robot_geo = (Geometry)((Node)((Node)((Node)robotBase).getChild(0)).getChild(0)).getChild(0);
 		robot_geo.setLocalRotation(new Quaternion(1, 0, 0, 1));
-		((CompoundCollisionShape)robotShape).addChildShape(new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
+		((CompoundCollisionShape)robotShape).addChildShape(new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)),
+				new Vector3f(0f, 0f, 0f));
 		robotControl = new VehicleControl(robotShape, 60);
 		robotNode.attachChild(robotBase);
-		robotBase.addControl(robotControl);
+		robotNode.addControl(robotControl);
+		
+//		gives color to hab lifters to make them easier to see
+		Material yellowColor = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		yellowColor.setBoolean("UseMaterialColors", true);
+		yellowColor.setColor("Diffuse", ColorRGBA.Yellow);
+		
+		Material orangeColor = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		orangeColor.setBoolean("UseMaterialColors", true);
+		orangeColor.setColor("Diffuse", ColorRGBA.Orange);
+		
+		habClimberNode = new Node("climbingNode");
+		habLifter1 = assetManager.loadModel("Models/RobotBase/habLifter1.blend");
+		habLifter1.scale(0.15f);
+		habLifter1.setLocalTranslation(0.25f,0,.31f);
+		habLifter1.rotate(FastMath.HALF_PI * 2, 0, FastMath.HALF_PI * 2);
+		habLifter1.setMaterial(yellowColor);
+		lifterShape = new BoxCollisionShape();
+		RigidBodyControl lifterCtrl = new RigidBodyControl(lifterShape, 1f);
+		habLifter1.addControl(lifterCtrl);
+		app.getPhysicsSpace().add(habLifter1);
+		lifterCtrl.setFriction(0.1f);
+		lifterCtrl.setDamping(0.01f, 0.01f);
+		habClimberNode.attachChild(habLifter1);
 
+		habLifter2 = assetManager.loadModel("Models/RobotBase/habLifter1.blend");
+		habLifter2.scale(0.15f);
+		habLifter2.setLocalTranslation(3.8f, -.32f, .5f);
+		habLifter2.rotate(FastMath.HALF_PI ,0,FastMath.HALF_PI * 2);
+		habLifter2.setMaterial(orangeColor);
+		lifterShape = new BoxCollisionShape();
+		habLifter2.addControl(lifterCtrl);
+		app.getPhysicsSpace().add(habLifter2);
+		lifterCtrl.setFriction(0.1f);
+		lifterCtrl.setDamping(0.01f, 0.01f);
+		habClimberNode.attachChild(habLifter2);	
+		
+		leadScrew = assetManager.loadModel("Models/RobotBase/leadScrew.blend");
+		leadScrew.setLocalTranslation(4f, 0, 2f);
+		leadScrew.scale(0.3f);
+		leadScrew.rotate(FastMath.HALF_PI ,0,0);
+		leadScrew.setMaterial(yellowColor);
+		rootNode.attachChild(leadScrew);
+		screwShape = new BoxCollisionShape();
+		RigidBodyControl screwCtrl = new RigidBodyControl(screwShape, 1f);
+		leadScrew.addControl(screwCtrl);
+		app.getPhysicsSpace().add(screwCtrl);
+		screwCtrl.setFriction(0.1f);
+		screwCtrl.setDamping(0.01f, 0.01f);
+		habClimberNode.attachChild(leadScrew);
+		
 		float stiffness = 800.0f;
 		float compValue = .6f;
 		float dampValue = .7f;
@@ -132,9 +191,9 @@ public class Robot extends BaseAppState {
 		robotControl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
 		robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
 		addWheels();
-		robotBase.rotate(FastMath.HALF_PI, 0f, 0f);
+		robotNode.attachChild(habClimberNode);
 		rootNode.attachChild(robotNode);
-		app.getPhysicsSpace().add(robotBase);
+		app.getPhysicsSpace().add(robotNode);
 
 		robotControl.steer(0, -.25f);
 		robotControl.steer(1, .25f);
