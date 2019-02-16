@@ -7,6 +7,9 @@ import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.VehicleControl;
+import com.jme3.collision.Collidable;
+import com.jme3.collision.CollisionResult;
+import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -15,6 +18,7 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
+import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -40,6 +44,8 @@ public class Robot extends BaseAppState {
 	private Spatial leadScrew;
 	private VehicleControl robotControl;
 	private CollisionShape robotShape;
+	private CollisionShape lifterShape;
+	private CollisionShape screwShape;
 	private final float Z_GRAVITY = -9.81f;
 	private PairedDouble accelerationValueLeft = PairedDoubleFactory.getInstance().createPairedDouble("leftSideDrives", true, 0.0);
 	private PairedDouble accelerationValueRight = PairedDoubleFactory.getInstance().createPairedDouble("rightSideDrives", true, 0.0);
@@ -55,12 +61,18 @@ public class Robot extends BaseAppState {
 	private boolean lifterMoveUp = false;
 	private boolean leadScrewDown = false;
 	private boolean leadScrewUp = false;
-	private final float ROBOT_ACCELERATION = 150f;
 	private SimUtilities utilities = new SimUtilities();
 	HatchLogic hatchLogic;
 	private PairedDouble gearShifter = PairedDoubleFactory.getInstance().createPairedDouble("gearShift", true);
 	private float rightAngle = FastMath.HALF_PI;
 	private float robotAcceleration = 150f;
+	private Ray centerLeftSensor;
+	private Ray centerRightSensor;
+	private Ray leftSensor;
+	private Ray rightSensor;
+	private Ray leftPerpendicularSensor;
+	private Ray rightPerpendicularSensor;
+	private PairedDouble isCenterLeftSensingTape = PairedDoubleFactory.getInstance().createPairedDouble("centerTapeSensor", false, 1.0);
 
 	private final ActionListener actionListener = new ActionListener() {
 
@@ -132,6 +144,7 @@ public class Robot extends BaseAppState {
 
 		app.getPhysicsSpace().setGravity(new Vector3f(0f, 0f, Z_GRAVITY));
 		assetManager = app.getAssetManager();
+
 		robotNode = new Node("vehicleNode");
 		robotBase = assetManager.loadModel("Models/RobotBase/RobotDriveBase.blend");
 		robotBase.scale(.5f);
@@ -188,9 +201,9 @@ public class Robot extends BaseAppState {
 		robotControl.steer(1, .25f);
 		robotControl.steer(2, .25f);
 		robotControl.steer(3, -.25f);
+		centerLeftSensor = new Ray(robotControl.getPhysicsLocation(), new Vector3f(0, 0, -1));
 
 		setupKeyControls();
-		// app.pause();
 		hatchLogic = app.getStateManager().getState(HatchLogic.class);
 		setEncoders(false);
 	}
@@ -221,8 +234,12 @@ public class Robot extends BaseAppState {
 		robotControl.accelerate(2, (float) (robotAcceleration * accelerationValueLeft.value));
 		robotControl.accelerate(1, (float) (robotAcceleration * accelerationValueRight.value));
 		robotControl.accelerate(3, (float) (robotAcceleration * accelerationValueRight.value));
-		
+
 		setEncoders(true);
+
+		checkRays();
+
+		hatchLogic.update(tpf);
 		
 		if (lifterMoveDown) {
 			habLifter1.rotate(-lifterChange * tpf, 0f, 0f);
@@ -246,6 +263,33 @@ public class Robot extends BaseAppState {
 			
 		hatchLogic.update(tpf);
 	}
+
+	private void checkRays() {
+		centerLeftSensor.setOrigin(robotControl.getPhysicsLocation());
+		Collidable[] tape = app.getStateManager().getState(FieldAppState.class).getTapeMarks();
+		CollisionResults collisionResult = new CollisionResults();
+		for(int i = 0; i < tape.length; i++) {
+			if(tape[i].collideWith(centerLeftSensor, collisionResult) > 0) {
+				isCenterLeftSensingTape.value = 0;
+				break;
+			}else if(i == tape.length-1){
+				isCenterLeftSensingTape.value = 1;
+			}
+		}
+
+
+	}
+
+	private void wheel(float wheelX, float wheelY, float wheelZ) {
+		Material wheelColor = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		wheelColor.setBoolean("UseMaterialColors", true);
+		wheelColor.setColor("Diffuse", ColorRGBA.Yellow);
+
+//		Cylinder wheel1 = new Cylinder(100, 100, 0.25f, 0.625f, true, false);
+//		wheel1.setMaterial(wheelColor);
+		
+		
+		}
 	
 	private void setEncoders(boolean notFirstRun) {
 		Vector3f currentLeftLocation = robotControl.getPhysicsLocation();
@@ -259,7 +303,6 @@ public class Robot extends BaseAppState {
 
 		currentRightLocation.setX(currentRightLocation.getX() - xOffset);
 		currentRightLocation.setY(currentRightLocation.getY() - yOffset);
-
 		if(notFirstRun) {
 			leftEncoder.value += currentLeftLocation.distance(lastLeftLocation)*41.52;
 			rightEncoder.value += currentRightLocation.distance(lastRightLocation)*41.52;
@@ -278,7 +321,7 @@ public class Robot extends BaseAppState {
 		float xOffset = 0;
 		float yOffset = 0;
 
-		if (robotControl.getPhysicsRotation().toAngles(null)[0] > 0) {
+		if(robotControl.getPhysicsRotation().toAngles(null)[0] > 0) {
 			xOffset = (float) (FastMath.sin(FastMath.abs(robotZRot)) * mainOffset);
 		} else {
 			xOffset = -1f * (float) (FastMath.sin(FastMath.abs(robotZRot)) * mainOffset);
@@ -332,7 +375,7 @@ public class Robot extends BaseAppState {
 		manager.addMapping("rightDrivesBackward", new KeyTrigger(KeyInput.KEY_D));
 		manager.addMapping("pause", new KeyTrigger(KeyInput.KEY_P));
 		manager.addMapping("reset", new KeyTrigger(KeyInput.KEY_R));
-		manager.addMapping("printInfo", new KeyTrigger(KeyInput.KEY_Z));
+		manager.addMapping("printInfo", new KeyTrigger(KeyInput.KEY_I));
 		manager.addMapping("lifterDown", new KeyTrigger(KeyInput.KEY_Z));
 		manager.addMapping("lifterUp", new KeyTrigger(KeyInput.KEY_X));
 		manager.addMapping("leadScrewDown", new KeyTrigger(KeyInput.KEY_C));
@@ -403,7 +446,6 @@ public class Robot extends BaseAppState {
 	protected void onEnable() {
 
 	}
-
 }
 
 

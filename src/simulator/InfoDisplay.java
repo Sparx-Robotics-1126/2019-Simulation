@@ -83,7 +83,6 @@ public class InfoDisplay extends BaseAppState {
 		} else {
 			displayText += String.format("\nthe time is %.2f minutes", totalSeconds / 60);
 		}
-
 		for (int a = 0; a < networkTableKeyVec.size(); a++) {
 			String networkTableKeyString = networkTableKeyVec.get(a);
 			displayText += "\nNetwork table " + networkTableKeyString + " is "

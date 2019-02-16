@@ -1,6 +1,7 @@
 package simulator;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
@@ -15,28 +16,45 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.sun.webkit.ThemeClient;
 
+//TODO put down stuff doesn't really work 100% but there are more important things
+//maybe I'll take a look at it later
 public class HatchLogic extends BaseAppState {
 	private SimMain app;
 	private final Vector3f[] HATCH_POSITIONS = {
 			//hatch positions on left side
-			new Vector3f(0.5686435f, -0.58888614f, 0.6995726f),
-			new Vector3f(1.0236804f, -0.58888614f, 0.6995726f), 
-			new Vector3f(1.5357443f, -0.58888614f, 0.6995726f), 
+			new Vector3f(0.5686435f, -0.58888614f, 0.4826f),
+			new Vector3f(1.0236804f, -0.58888614f, 0.4826f), 
+			new Vector3f(1.5357443f, -0.58888614f, 0.4826f), 
 
-			new Vector3f(-0.568f, -0.58888614f, 0.6995726f), 
-			new Vector3f(-1.023f, -0.58888614f, 0.6995726f),
-			new Vector3f(-1.53f, -0.58888614f, 0.6995726f), 
-			
+			new Vector3f(-0.568f, -0.58888614f, 0.4826f), 
+			new Vector3f(-1.023f, -0.58888614f, 0.4826f),
+			new Vector3f(-1.53f, -0.58888614f, 0.4826f), 
+
 			//supposed to be right side
-			new Vector3f(1.6084193f, 0.9f, 0.699587f),
-			new Vector3f(1.0872313f, 0.9f, 0.699587f),
-			new Vector3f(0.54335785f, 0.9f, 0.699587f),
-			
-			new Vector3f(-0.470719f, 0.9f, 0.699587f),
-			new Vector3f(-0.9991004f, 0.9f, 0.699587f),
-			new Vector3f(-1.5221257f, 0.9f, 0.699587f)
-			};
+			new Vector3f(1.6084193f, 0.9f, 0.4826f),
+			new Vector3f(1.0872313f, 0.9f, 0.4826f),
+			new Vector3f(0.54335785f, 0.9f, 0.4826f),
+
+			new Vector3f(-0.470719f, 0.9f, 0.4826f),
+			new Vector3f(-0.9991004f, 0.9f, 0.4826f),
+			new Vector3f(-1.5221257f, 0.9f, 0.4826f),
+
+			//rocket ships
+			new Vector3f(-2.3483214f, -2.979838f, 0.7995826f),
+			new Vector3f(2.3483214f, -2.979838f, 0.7995826f),
+			new Vector3f(2.4085102f, 3.3236604f, 0.79957944f),
+			new Vector3f(-2.3036504f, 3.318036f, 0.7995946f),
+
+			//Cargo ends
+			new Vector3f(2.7003956f, -0.100122765f, 0.4826f),
+			new Vector3f(2.6530423f, 0.40617636f, 0.4826f),
+
+			new Vector3f(-2.7003956f, -0.100122765f, 0.4826f),
+			new Vector3f(-2.6530423f, 0.40617636f, 0.4826f),
+
+	};
 	private float HATCH_HOLDING_DISTANCE = 0.5f;
 	private VehicleControl robotControl;
 	private final float Z_GRAVITY = -9.81f;
@@ -45,36 +63,35 @@ public class HatchLogic extends BaseAppState {
 	Robot robot;
 	SimUtilities utilities = new SimUtilities();
 	private final ActionListener actionListener = new ActionListener() {
-		
-	@Override
-	public void onAction(String name, boolean pressed, float tpf) {
-		if(name.equals("reset") && pressed) {
-			if(linkedHatch != null) {
-				unlinkHatch();
-			}
-		}
 
-		else if(name.equals("pickupHatch") && pressed) {
-			detectHatch();
-		} else if(name.equals("dropHatch") && pressed) {
-			if(linkedHatch != null) {
-				unlinkHatch();
+		@Override
+		public void onAction(String name, boolean pressed, float tpf) {
+			if(name.equals("reset") && pressed) {
+				if(linkedHatch != null) {
+					unlinkHatch();
+				}
+			}
+
+			else if(name.equals("pickupHatch") && pressed) {
+				detectHatch();
+			} else if(name.equals("dropHatch") && pressed) {
+				if(linkedHatch != null) {
+					unlinkHatch();
+				}
 			}
 		}
-	}
 	};
-	
-	
-	
+
+
+
 	@Override
 	public void update(float tpf) {
-		
-		
 		if(linkedHatch != null) {
 			moveHatch();
-			if(utilities.distanceTo(robotControl.getPhysicsLocation(), linkedHatch.getPhysicsLocation()) > HATCH_PICKUP_RANGE) {
-				unlinkHatch();
-			}
+			//			this condition never got triggered so I removed it for efficiency, we might need to add it back but idk sooo
+			//			if(utilities.distanceTo(robotControl.getPhysicsLocation(), linkedHatch.getPhysicsLocation()) > HATCH_PICKUP_RANGE) {
+			//				unlinkHatch();
+			//			}
 		}
 	}
 
@@ -85,10 +102,8 @@ public class HatchLogic extends BaseAppState {
 		robot = app.getStateManager().getState(Robot.class);
 		robotControl = robot.getRobotControl();
 	}
-	
-	
-	
-	
+
+
 	private void detectHatch() {
 		FieldAppState field = app.getStateManager().getState(FieldAppState.class);
 		ArrayList<RigidBodyControl> hatchList = field.getHatchCtrlList();
@@ -102,7 +117,7 @@ public class HatchLogic extends BaseAppState {
 			if(distance < HATCH_PICKUP_RANGE && distance < smallest && robotIsFacingHatch(ctrl)) {
 				smallest = distance;
 				operatingCtrl = ctrl;
-				
+
 			}
 		}
 		if(operatingCtrl != null) {
@@ -115,7 +130,7 @@ public class HatchLogic extends BaseAppState {
 		float distanceInFront = 1f;
 		//		Vector3f rotCol = robotControl.getPhysicsRotation().getRotationColumn(2);
 		while(distanceInFront < HATCH_PICKUP_RANGE) {
-			if(utilities.distanceTo(hatch.getPhysicsLocation(), utilities.locInFrontOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), distanceInFront)) < 1f) {
+			if(utilities.distanceTo(hatch.getPhysicsLocation(), utilities.getVectorOfPointAtAngleToItem(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0f, distanceInFront, 0.4826f)) < 1f) {
 				return true;
 			}
 			distanceInFront += 0.1;
@@ -153,7 +168,7 @@ public class HatchLogic extends BaseAppState {
 
 		return bestPoss;
 	}
-	
+
 	private Quaternion hatchDropoffRotation() {
 		float hatchZRot = Math.abs(robotControl.getPhysicsRotation().toAngles(null)[2]);
 		hatchZRot = (hatchZRot < (FastMath.PI / 4)) ? 0f: (float)(FastMath.PI / 2);
@@ -165,20 +180,20 @@ public class HatchLogic extends BaseAppState {
 		final float TRANSLATE_SPEED = 1f;
 		Vector3f translateVector = createItemTranslationVector(robotControl, linkedHatch).mult(TRANSLATE_SPEED);
 		Quaternion translateQuat = createItemRotationQuaternion(robotControl, linkedHatch);
-		linkedHatch.setPhysicsLocation(linkedHatch.getPhysicsLocation().add(translateVector));
+		linkedHatch.setPhysicsLocation(linkedHatch.getPhysicsLocation().add(translateVector.mult(0.1f)));
 		linkedHatch.setPhysicsRotation(translateQuat);
 	}
-	
-	
-	
+
+
+
 	private Quaternion createItemRotationQuaternion(VehicleControl robot, RigidBodyControl item) {
-		//I made this by mistake but it works so ¯\_(O_O)_/¯
+		//I made this by mistake but it works so ï¿½\_(O_O)_/ï¿½
 		float robotYRot = robot.getPhysicsRotation().toAngles(null)[1];
 		return new Quaternion(new float[] {robotYRot, robot.getPhysicsRotation().toAngles(null)[1], robot.getPhysicsRotation().toAngles(null)[2]}); 
 	}
 
 	private Vector3f createItemTranslationVector(VehicleControl robot, RigidBodyControl item) {
-		Vector3f hatchHoldingPosition = utilities.locInFrontOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), HATCH_HOLDING_DISTANCE);
+		Vector3f hatchHoldingPosition = utilities.getVectorOfPointAtAngleToItem(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0, HATCH_HOLDING_DISTANCE, 0.4826f);
 		Vector3f ret = new Vector3f();
 		Vector3f itemLoc = item.getPhysicsLocation();
 		ret.setX(hatchHoldingPosition.getX() - itemLoc.getX());
@@ -187,7 +202,7 @@ public class HatchLogic extends BaseAppState {
 
 		return ret;
 	}
-	
+
 	private void getControls() {
 		InputManager manager = app.getInputManager();
 
@@ -205,15 +220,15 @@ public class HatchLogic extends BaseAppState {
 				"rightDrivesForward", "rightDrivesBackward", "pause", "reset", "pickupHatch",
 				"dropHatch", "printInfo");
 	}
-	
+
 	public RigidBodyControl getHatch() {
 		return linkedHatch;
 	}
-	
+
 	public void dropHatch() {
 		unlinkHatch();
 	}
-	
+
 	public void pickupHatch() {
 		detectHatch();
 	}
@@ -222,7 +237,7 @@ public class HatchLogic extends BaseAppState {
 		// TODO Auto-generated method stub
 		//not doing these hehehe
 	}
-	
+
 	@Override
 	protected void onDisable() {
 		// TODO Auto-generated method stub
@@ -233,8 +248,8 @@ public class HatchLogic extends BaseAppState {
 	protected void onEnable() {
 		// TODO Auto-generated method stub
 		//not doing these hehehe
-		
+
 	}
-	
+
 
 }
