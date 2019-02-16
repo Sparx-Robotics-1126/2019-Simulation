@@ -351,7 +351,7 @@ public class Robot extends BaseAppState {
 		manager.addMapping("rightDrivesBackward", new KeyTrigger(KeyInput.KEY_D));
 		manager.addMapping("pause", new KeyTrigger(KeyInput.KEY_P));
 		manager.addMapping("reset", new KeyTrigger(KeyInput.KEY_R));
-		manager.addMapping("printInfo", new KeyTrigger(KeyInput.KEY_Z));
+		manager.addMapping("printInfo", new KeyTrigger(KeyInput.KEY_I));
 		manager.addMapping("lifterDown", new KeyTrigger(KeyInput.KEY_Z));
 		manager.addMapping("lifterUp", new KeyTrigger(KeyInput.KEY_X));
 		manager.addMapping("leadScrewDown", new KeyTrigger(KeyInput.KEY_C));

@@ -41,7 +41,7 @@ public class SimUtilities {
 	 * Gets a position a certain distance in front of the "head" of an object
 	 * @param objectLoc - location of object (Vector3f)
 	 * @param objectRot - rotation of object (Quaternion)
-	 * @param angleChange - The angle you want the object to be held at along arc
+	 * @param angleChange - The angle you want the object to be held at along arc in radians
 	 * @param offset - How far in front of the object the position should be
 	 * @param height - the height at which the vector will be pointing to relative to objectsLoc
 	 * @return - Vector3f a certain distance at the angle specified
