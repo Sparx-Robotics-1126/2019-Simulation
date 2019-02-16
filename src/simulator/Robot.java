@@ -6,7 +6,6 @@ import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
 import com.jme3.bullet.collision.shapes.BoxCollisionShape;
-import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -46,13 +45,12 @@ public class Robot extends BaseAppState {
 	private PairedDouble accelerationValueRight = PairedDoubleFactory.getInstance()
 			.createPairedDouble("rightSideDrives", true, 0.0);
 	private PairedDouble leftEncoder = PairedDoubleFactory.getInstance().createPairedDouble("leftEncoder", false, 0.0);
-<<<<<<< HEAD
 	private PairedDouble rightEncoder = PairedDoubleFactory.getInstance().createPairedDouble("rightEncoder", false,
 			0.0);
 	private Vector3f lastLeftLocation = Vector3f.ZERO;
 	private Vector3f lastRightLocation = Vector3f.ZERO;
 	private float lifterChange = FastMath.HALF_PI / 3;
-	private float leadScrewPosition = 2f;
+	private float leadScrewPosition = -0.75f;
 	private float leadScrewChange = 0.25f;
 	private boolean lifterMoveDown = false;
 	private boolean lifterMoveUp = false;
@@ -60,16 +58,8 @@ public class Robot extends BaseAppState {
 	private boolean leadScrewUp = false;
 	private final float ROBOT_ACCELERATION = 150f;
 
-=======
-	private PairedDouble rightEncoder = PairedDoubleFactory.getInstance().createPairedDouble("rightEncoder", false, 0.0);
-	private Vector3f lastLeftLocation;
-	private Vector3f lastRightLocation;
-	private PairedDouble gearShifter = PairedDoubleFactory.getInstance().createPairedDouble("gearShift", true);
-	private float rightAngle = FastMath.HALF_PI;
-	private float robotAcceleration = 150f;
-	
->>>>>>> c8f52a24d049abede806a73d3d2daac00ccf8cda
 	private final ActionListener actionListener = new ActionListener() {
+
 		@Override
 		public void onAction(String name, boolean pressed, float tpf) {
 			if (name.equals("leftDrivesForward") && pressed) {
@@ -101,9 +91,11 @@ public class Robot extends BaseAppState {
 				robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
 				accelerationValueRight.value = 0;
 				accelerationValueLeft.value = 0;
-				leadScrewPosition = 2f;
-				habLifter1.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
-				habLifter2.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
+				leadScrew.setLocalTranslation(0f, leadScrewPosition, -0.2f);
+				habLifter1
+						.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
+				habLifter2
+						.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
 				if (linkedHatch != null) {
 					unlinkHatch((Spatial) linkedHatch.getUserObject());
 				}
@@ -135,68 +127,35 @@ public class Robot extends BaseAppState {
 
 		app.getPhysicsSpace().setGravity(new Vector3f(0f, 0f, Z_GRAVITY));
 		assetManager = app.getAssetManager();
-		
 		robotNode = new Node("vehicleNode");
 		robotBase = assetManager.loadModel("Models/RobotBase/RobotDriveBase.blend");
 		robotBase.scale(.5f);
 		robotShape = new CompoundCollisionShape();
-<<<<<<< HEAD
 		Geometry robot_geo = (Geometry) ((Node) ((Node) ((Node) robotBase).getChild(0)).getChild(0)).getChild(0);
 		robot_geo.setLocalRotation(new Quaternion(1, 0, 0, 1));
 		((CompoundCollisionShape) robotShape)
 				.addChildShape(new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
-=======
-		Geometry robot_geo = (Geometry)((Node)((Node)((Node)robotBase).getChild(0)).getChild(0)).getChild(0);
-		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2), new Vector3f(-.2f, 0f, 0f));//new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
-		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2), new Vector3f(.2f, 0f, 0f));
-		robot_geo.setLocalRotation(new Quaternion(1, 0, 0, 1));
->>>>>>> c8f52a24d049abede806a73d3d2daac00ccf8cda
 		robotControl = new VehicleControl(robotShape, 60);
 		robotNode.attachChild(robotBase);
 		robotNode.addControl(robotControl);
 
-		Material yellowColor = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		yellowColor.setBoolean("UseMaterialColors", true);
-		yellowColor.setColor("Diffuse", ColorRGBA.Yellow);
-
-		Material orangeColor = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		orangeColor.setBoolean("UseMaterialColors", true);
-		orangeColor.setColor("Diffuse", ColorRGBA.Orange);
-
 		habClimberNode = new Node("climbingNode");
 		habLifter1 = assetManager.loadModel("Models/RobotBase/habLifter1.blend");
 		habLifter1.scale(0.15f);
-<<<<<<< HEAD
 		habLifter1.setLocalTranslation(0.25f, 0, .31f);
 		habLifter1.rotate(FastMath.HALF_PI * 2, 0, FastMath.HALF_PI * 2);
-=======
-		habLifter1.setLocalTranslation(0.25f,0,.31f);
-		habLifter1.rotate(rightAngle * 2, 0, rightAngle * 2);
->>>>>>> c8f52a24d049abede806a73d3d2daac00ccf8cda
-		habLifter1.setMaterial(yellowColor);
 		habClimberNode.attachChild(habLifter1);
 
 		habLifter2 = assetManager.loadModel("Models/RobotBase/habLifter1.blend");
 		habLifter2.scale(0.15f);
-<<<<<<< HEAD
 		habLifter2.setLocalTranslation(-0.25f, 0f, .31f);
 		habLifter2.rotate(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2);
-=======
-		habLifter2.setLocalTranslation(3.8f, -.32f, .5f);
-		habLifter2.rotate(rightAngle ,0,rightAngle * 2);
->>>>>>> c8f52a24d049abede806a73d3d2daac00ccf8cda
-		habLifter2.setMaterial(orangeColor);
 		habClimberNode.attachChild(habLifter2);
 
 		leadScrew = assetManager.loadModel("Models/RobotBase/leadScrew.blend");
-		leadScrew.setLocalTranslation(4f, 0, leadScrewPosition);
+		leadScrew.setLocalTranslation(0f, leadScrewPosition, -0.2f);
 		leadScrew.scale(0.3f);
-<<<<<<< HEAD
-		leadScrew.rotate(FastMath.HALF_PI, 0, 0);
-=======
-		leadScrew.rotate(rightAngle ,0,0);
->>>>>>> c8f52a24d049abede806a73d3d2daac00ccf8cda
-		leadScrew.setMaterial(yellowColor);
+		leadScrew.rotate(FastMath.HALF_PI * 2, 0, 0);
 		rootNode.attachChild(leadScrew);
 		habClimberNode.attachChild(leadScrew);
 
@@ -221,45 +180,15 @@ public class Robot extends BaseAppState {
 		robotControl.steer(3, -.25f);
 
 		getControls();
-<<<<<<< HEAD
 		// app.pause();
-=======
-
-		setEncoders(false);
->>>>>>> c8f52a24d049abede806a73d3d2daac00ccf8cda
 	}
 
 	@Override
 	public void update(float tpf) {
-<<<<<<< HEAD
 		robotControl.accelerate(0, (float) (ROBOT_ACCELERATION * accelerationValueLeft.value));
 		robotControl.accelerate(2, (float) (ROBOT_ACCELERATION * accelerationValueLeft.value));
 		robotControl.accelerate(1, (float) (ROBOT_ACCELERATION * accelerationValueRight.value));
 		robotControl.accelerate(3, (float) (ROBOT_ACCELERATION * accelerationValueRight.value));
-=======
-		robotAcceleration = (float)(gearShifter.value * 150 + 150);
-		robotControl.accelerate(0, (float) (robotAcceleration * accelerationValueLeft.value));
-		robotControl.accelerate(2, (float) (robotAcceleration * accelerationValueLeft.value));
-		robotControl.accelerate(1, (float) (robotAcceleration * accelerationValueRight.value));
-		robotControl.accelerate(3, (float) (robotAcceleration * accelerationValueRight.value));
-		
-		setEncoders(true);
-		
-		if(linkedHatch != null) {
-			hatchHoldingPosition = locInFrontOfRobot(0.5f);
-			hatchPickedUp = false;
-			linkedHatch.setGravity(new Vector3f(0, 0, 0));
-
-			pickupHatch();
-
-			if(distanceTo(robotControl.getPhysicsLocation(), linkedHatch.getPhysicsLocation()) > HATCH_PICKUP_RANGE) {
-				unlinkHatch((Spatial)linkedHatch.getUserObject());
-			}
-		}
-	}
-	
-	private void setEncoders(boolean notFirstRun) {
->>>>>>> c8f52a24d049abede806a73d3d2daac00ccf8cda
 		Vector3f currentLeftLocation = robotControl.getPhysicsLocation();
 		Vector3f currentRightLocation = robotControl.getPhysicsLocation();
 		float[] offsets = getOffsets(.25f);
@@ -268,10 +197,10 @@ public class Robot extends BaseAppState {
 
 		currentLeftLocation.setX(currentLeftLocation.getX() + xOffset);
 		currentLeftLocation.setY(currentLeftLocation.getY() + yOffset);
+		currentLeftLocation.setZ(currentLeftLocation.getZ() + 0.75f);
 
 		currentRightLocation.setX(currentRightLocation.getX() - xOffset);
 		currentRightLocation.setY(currentRightLocation.getY() - yOffset);
-<<<<<<< HEAD
 		currentRightLocation.setZ(currentRightLocation.getZ() + 0.75f);
 
 		leftEncoder.value += currentLeftLocation.distance(lastLeftLocation);
@@ -294,8 +223,7 @@ public class Robot extends BaseAppState {
 			leadScrewPosition += leadScrewChange * tpf;
 		}
 
-		if(leadScrewUp || leadScrewDown)
-		{
+		if (leadScrewUp || leadScrewDown) {
 			leadScrew.setLocalTranslation(leadScrew.getLocalTranslation().x, leadScrewPosition,
 					leadScrew.getLocalTranslation().z);
 		}
@@ -313,19 +241,6 @@ public class Robot extends BaseAppState {
 		}
 	}
 
-=======
-		
-		if(notFirstRun) {
-			leftEncoder.value += (currentLeftLocation.distance(lastLeftLocation)*41.52);
-			rightEncoder.value += (currentRightLocation.distance(lastRightLocation)*41.52);
-		}
-		
-		lastLeftLocation = currentLeftLocation;
-		lastRightLocation = currentRightLocation;		
-	}
-
-	
->>>>>>> c8f52a24d049abede806a73d3d2daac00ccf8cda
 	private Vector3f locInFrontOfRobot(float offset) {
 		Vector3f holdingPosition = robotControl.getPhysicsLocation();
 		float robotZRot = robotControl.getPhysicsRotation().toAngles(null)[2];
@@ -352,11 +267,7 @@ public class Robot extends BaseAppState {
 	}
 
 	private float[] getOffsets(float mainOffset) {
-<<<<<<< HEAD
 		float robotZRot = robotControl.getPhysicsRotation().toAngles(null)[2] + FastMath.HALF_PI;
-=======
-		float robotZRot  = robotControl.getPhysicsRotation().toAngles(null)[2] + rightAngle;
->>>>>>> c8f52a24d049abede806a73d3d2daac00ccf8cda
 		float xOffset = 0;
 		float yOffset = 0;
 
@@ -468,7 +379,7 @@ public class Robot extends BaseAppState {
 		Vector3f wheelAxle = new Vector3f(-1, 0, 0);
 		float radius = .06f;
 		float restLength = .1f;
-		float yOff = -.1f;
+		float yOff = .0f;
 		float xOff = .4f;
 		float zOff = .25f;
 
@@ -512,7 +423,7 @@ public class Robot extends BaseAppState {
 
 		manager.addListener(actionListener, "leftDrivesForward", "leftDrivesBackward", "rightDrivesForward",
 				"rightDrivesBackward", "pause", "reset", "pickupHatch", "dropHatch", "printInfo");
-		manager.addListener(keyListener, "lifterDown", "lifterUp","leadScrewUp","leadScrewDown");
+		manager.addListener(keyListener, "lifterDown", "lifterUp", "leadScrewUp", "leadScrewDown");
 	}
 
 	private final ActionListener keyListener = new ActionListener() {
