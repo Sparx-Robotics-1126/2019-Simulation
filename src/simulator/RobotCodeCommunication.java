@@ -29,7 +29,7 @@ public class RobotCodeCommunication extends Thread{
 			NetworkTableInstance.getDefault().startClient("localhost");
 
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -89,7 +89,7 @@ public class RobotCodeCommunication extends Thread{
 						if(pairedDoubleObject.updatesFromTable()) {
 							pairedDoubleObject.update();
 						} else{
-							table.getSubTable(pairedDoubleObject.getConnection()).getEntry(".value").setDouble(pairedDoubleObject.value);
+							table.getSubTable(pairedDoubleObject.getConnection()).getEntry("Value").setDouble(pairedDoubleObject.value);
 						}
 					}
 				});

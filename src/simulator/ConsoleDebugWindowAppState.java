@@ -40,6 +40,8 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		console.registerCommand("hideTable", commandListener);
 		console.registerCommand("pair", commandListener);
 		console.registerCommand("unpair", commandListener);
+		console.registerCommand("saveProperties", commandListener);
+		console.registerCommand("loadProperties", commandListener);
 		console.registerCommand("clear", commandListener);
 	}
 
