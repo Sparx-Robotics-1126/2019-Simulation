@@ -1,6 +1,5 @@
 package simulator;
 
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -42,31 +41,39 @@ public class SimUtilities {
 	 * Gets a position a certain distance in front of the "head" of an object
 	 * @param objectLoc - location of object (Vector3f)
 	 * @param objectRot - rotation of object (Quaternion)
+	 * @param angleChange - The angle you want the object to be held at along arc
 	 * @param offset - How far in front of the object the position should be
-	 * @return - Vector3f a certain distance in front
+	 * @param height - the height at which the vector will be pointing to relative to objectsLoc
+	 * @return - Vector3f a certain distance at the angle specified
 	 */
-	public Vector3f locInFrontOfObject(Vector3f objectLoc, Quaternion objectRot, float offset) {
+	public Vector3f getVectorOfPointAtAngleToItem(Vector3f objectLoc, Quaternion objectRot, float angleChange, float offset, float height) {
 		float itemZRot  = objectRot.toAngles(null)[2];
+		float itemXRot = objectRot.toAngles(null)[0];
 		float xOffset = 0;
 		float yOffset = 0;
 
+		if(itemXRot <= 0) {
+			itemZRot -= angleChange;
+		}else {
+			itemZRot += angleChange;
+		}
+		
 		if(itemZRot > 0) {
-			xOffset = (float) (Math.sin(Math.abs(itemZRot)) * offset);
+			xOffset = (float) (FastMath.sin(itemZRot) * offset);
 		} else {
-			xOffset = -1f * (float)(Math.sin(Math.abs(itemZRot)) * offset);
+			xOffset = -1f * (float)(FastMath.sin(FastMath.abs(itemZRot)) * offset);
 		}
 
 		if(objectRot.toAngles(null)[0] > 0) {
-			yOffset = -1f * (float) (Math.cos(itemZRot) * offset);
+			yOffset = -1f * (float) (FastMath.cos(itemZRot) * offset);
 		} else {
-			yOffset = (float) (Math.cos(itemZRot) * offset);
+			yOffset = (float) (FastMath.cos(itemZRot) * offset);
 		}	
 
 		objectLoc.setX(objectLoc.getX() + xOffset);
 		objectLoc.setY(objectLoc.getY() + yOffset);
-		objectLoc.setZ(objectLoc.getZ() + 0.4826f);
+		objectLoc.setZ(objectLoc.getZ() + height);
 
 		return objectLoc;
 	}
-	
 }

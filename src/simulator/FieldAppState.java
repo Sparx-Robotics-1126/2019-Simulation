@@ -11,6 +11,7 @@ import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.util.CollisionShapeFactory;
+import com.jme3.collision.Collidable;
 import com.jme3.light.DirectionalLight;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
@@ -41,7 +42,8 @@ public class FieldAppState extends BaseAppState {
 	private final float CARGO_SET_Y_POS = 2.0f;
 	private final float[] HAB_HEIGHTS = {.04f, .115f, .28f};
 	private final float HAB_WIDTH = 1.625f;
-
+	private Collidable[] tapeMarks;
+	
 	@Override
 	protected void initialize(Application _app) {
 		app = (SimMain) _app;
@@ -50,6 +52,7 @@ public class FieldAppState extends BaseAppState {
 
 		createField();
 		createFloor();
+		createVisionTargets();
 		createHabs();
 		createCargoPieces();
 		createHatch(1f, -2f, 0.5f);
@@ -89,6 +92,66 @@ public class FieldAppState extends BaseAppState {
 		}
 	}
 
+	private void createVisionTargets() {
+		Material tapeMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
+		tapeMaterial.setBoolean("UseMaterialColors", true);
+		tapeMaterial.setColor("Diffuse", ColorRGBA.White);
+		int index = 0;
+		tapeMarks = new Collidable[12];
+		
+		for(int i = 0; i < 3; i++) { //Left and right in name scheme of geometry are of perspective of blue alliance wall
+			Geometry visionTarget = new Geometry("Vision Target Blue Left " + i, new Box(.05f, .4064f, .0001f));
+			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.05f, .4064f, .0001f)), 0);
+			visionTarget.addControl(visionCtrl);
+			visionTarget.setMaterial(tapeMaterial);
+			visionCtrl.setPhysicsLocation(new Vector3f((float)(.535*i-1.54), 1.2f, .06f));
+			app.getPhysicsSpace().add(visionCtrl);
+			rootNode.attachChild(visionTarget);	
+			tapeMarks[index] = visionTarget;
+			index++;
+		}
+		
+		for(int i = 0; i < 3; i++) {
+			Geometry visionTarget = new Geometry("Vision Target Blue Right " + i, new Box(.05f, .4064f, .0001f));
+			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.05f, .4064f, .0001f)), 0);
+			visionTarget.addControl(visionCtrl);
+			visionTarget.setMaterial(tapeMaterial);
+			visionCtrl.setPhysicsLocation(new Vector3f((float)(.535*i-1.54), -.93f, .06f));
+			app.getPhysicsSpace().add(visionCtrl);
+			rootNode.attachChild(visionTarget);	
+			tapeMarks[index] = visionTarget;
+			index++;
+		}
+		
+		for(int i = 0; i < 3; i++) {
+			Geometry visionTarget = new Geometry("Vision Target Red Left " + i, new Box(.05f, .4064f, .0001f));
+			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.05f, .4064f, .0001f)), 0);
+			visionTarget.addControl(visionCtrl);
+			visionTarget.setMaterial(tapeMaterial);
+			visionCtrl.setPhysicsLocation(new Vector3f((float)(-.535*i+1.62), 1.28f, .06f));
+			app.getPhysicsSpace().add(visionCtrl);
+			rootNode.attachChild(visionTarget);	
+			tapeMarks[index] = visionTarget;
+			index++;
+		}
+		
+		for(int i = 0; i < 3; i++) {
+			Geometry visionTarget = new Geometry("Vision Target Red Right " + i, new Box(.05f, .4064f, .0001f));
+			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.05f, .4064f, .0001f)), 0);
+			visionTarget.addControl(visionCtrl);
+			visionTarget.setMaterial(tapeMaterial);
+			visionCtrl.setPhysicsLocation(new Vector3f((float)(-.535*i+1.62), -.93f, .06f));
+			app.getPhysicsSpace().add(visionCtrl);
+			rootNode.attachChild(visionTarget);	
+			tapeMarks[index] = visionTarget;
+			index++;
+		}
+	}
+
+	public Collidable[] getTapeMarks() {
+		return tapeMarks;
+	}
+	
 	@Override
 	protected void cleanup(Application _app) {
 

@@ -115,7 +115,7 @@ public class HatchLogic extends BaseAppState {
 		float distanceInFront = 1f;
 		//		Vector3f rotCol = robotControl.getPhysicsRotation().getRotationColumn(2);
 		while(distanceInFront < HATCH_PICKUP_RANGE) {
-			if(utilities.distanceTo(hatch.getPhysicsLocation(), utilities.locInFrontOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), distanceInFront)) < 1f) {
+			if(utilities.distanceTo(hatch.getPhysicsLocation(), utilities.getVectorOfPointAtAngleToItem(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0f, distanceInFront, 0.4826f)) < 1f) {
 				return true;
 			}
 			distanceInFront += 0.1;
@@ -178,7 +178,7 @@ public class HatchLogic extends BaseAppState {
 	}
 
 	private Vector3f createItemTranslationVector(VehicleControl robot, RigidBodyControl item) {
-		Vector3f hatchHoldingPosition = utilities.locInFrontOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), HATCH_HOLDING_DISTANCE);
+		Vector3f hatchHoldingPosition = utilities.getVectorOfPointAtAngleToItem(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0, HATCH_HOLDING_DISTANCE, 0.4826f);
 		Vector3f ret = new Vector3f();
 		Vector3f itemLoc = item.getPhysicsLocation();
 		ret.setX(hatchHoldingPosition.getX() - itemLoc.getX());
