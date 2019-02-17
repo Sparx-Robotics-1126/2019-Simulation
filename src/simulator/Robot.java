@@ -7,9 +7,6 @@ import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.VehicleControl;
-import com.jme3.collision.Collidable;
-import com.jme3.collision.CollisionResult;
-import com.jme3.collision.CollisionResults;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -18,7 +15,6 @@ import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
-import com.jme3.math.Ray;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
@@ -61,18 +57,11 @@ public class Robot extends BaseAppState {
 	private boolean lifterMoveUp = false;
 	private boolean leadScrewDown = false;
 	private boolean leadScrewUp = false;
-	private SimUtilities utilities = new SimUtilities();
-	HatchLogic hatchLogic;
+	private HatchLogic hatchLogic;
 	private PairedDouble gearShifter = PairedDoubleFactory.getInstance().createPairedDouble("gearShift", true);
 	private float rightAngle = FastMath.HALF_PI;
 	private float robotAcceleration = 150f;
-	private Ray centerLeftSensor;
-	private Ray centerRightSensor;
-	private Ray leftSensor;
-	private Ray rightSensor;
-	private Ray leftPerpendicularSensor;
-	private Ray rightPerpendicularSensor;
-	private PairedDouble isCenterLeftSensingTape = PairedDoubleFactory.getInstance().createPairedDouble("centerTapeSensor", false, 1.0);
+		
 
 	private final ActionListener actionListener = new ActionListener() {
 
@@ -122,7 +111,7 @@ public class Robot extends BaseAppState {
 
 
 			else if(name.equals("printInfo") && pressed) {
-				System.out.println(utilities.quaternionToString(robotControl.getPhysicsRotation()));
+				System.out.println(SimUtilities.quaternionToString(robotControl.getPhysicsRotation()));
 				System.out.println("Hatch location: " + (hatchLogic.getHatch() == null ? " no attached hatch": hatchLogic.getHatch().getPhysicsLocation().toString()));
 				
 				
@@ -157,7 +146,9 @@ public class Robot extends BaseAppState {
 		robotControl = new VehicleControl(robotShape, 60);
 		robotNode.attachChild(robotBase);
 		robotNode.addControl(robotControl);
-
+		RaySensorsControl rays = new RaySensorsControl(app, robotControl);
+		robotNode.addControl(rays);
+		
 		createWheels();
 		
 		habClimberNode = new Node("climbingNode");
@@ -201,9 +192,9 @@ public class Robot extends BaseAppState {
 		robotControl.steer(1, .25f);
 		robotControl.steer(2, .25f);
 		robotControl.steer(3, -.25f);
-		centerLeftSensor = new Ray(robotControl.getPhysicsLocation(), new Vector3f(0, 0, -1));
-
-		setupKeyControls();
+		
+		
+		setUpKeyControls();
 		hatchLogic = app.getStateManager().getState(HatchLogic.class);
 		setEncoders(false);
 	}
@@ -237,8 +228,6 @@ public class Robot extends BaseAppState {
 
 		setEncoders(true);
 
-		checkRays();
-
 		hatchLogic.update(tpf);
 		
 		if (lifterMoveDown) {
@@ -263,33 +252,6 @@ public class Robot extends BaseAppState {
 			
 		hatchLogic.update(tpf);
 	}
-
-	private void checkRays() {
-		centerLeftSensor.setOrigin(robotControl.getPhysicsLocation());
-		Collidable[] tape = app.getStateManager().getState(FieldAppState.class).getTapeMarks();
-		CollisionResults collisionResult = new CollisionResults();
-		for(int i = 0; i < tape.length; i++) {
-			if(tape[i].collideWith(centerLeftSensor, collisionResult) > 0) {
-				isCenterLeftSensingTape.value = 0;
-				break;
-			}else if(i == tape.length-1){
-				isCenterLeftSensingTape.value = 1;
-			}
-		}
-
-
-	}
-
-	private void wheel(float wheelX, float wheelY, float wheelZ) {
-		Material wheelColor = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
-		wheelColor.setBoolean("UseMaterialColors", true);
-		wheelColor.setColor("Diffuse", ColorRGBA.Yellow);
-
-//		Cylinder wheel1 = new Cylinder(100, 100, 0.25f, 0.625f, true, false);
-//		wheel1.setMaterial(wheelColor);
-		
-		
-		}
 	
 	private void setEncoders(boolean notFirstRun) {
 		Vector3f currentLeftLocation = robotControl.getPhysicsLocation();
@@ -366,7 +328,7 @@ public class Robot extends BaseAppState {
 		}
 	}
 
-	private void setupKeyControls() {
+	private void setUpKeyControls() {
 		InputManager manager = app.getInputManager();
 
 		manager.addMapping("leftDrivesForward", new KeyTrigger(KeyInput.KEY_Q));

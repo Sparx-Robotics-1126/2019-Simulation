@@ -17,7 +17,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 	private ConsoleAppState console;
 	private RobotCodeCommunication robotCodeComm;
 	private PairedDoubleFactory pairedDoubleCreator = PairedDoubleFactory.getInstance();
-	
+
 	@Override
 	protected void cleanup(Application arg0) {
 	}
@@ -33,6 +33,8 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		console.registerCommand("cam", commandListener);
 		console.registerCommand("hide", commandListener);
 		console.registerCommand("phyDebug", commandListener);
+		console.registerCommand("displayDouble", commandListener);
+		console.registerCommand("hideDouble", commandListener);
 		console.registerCommand("startTables", commandListener);
 		console.registerCommand("listTables", commandListener);
 		console.registerCommand("listObjects", commandListener);
@@ -55,6 +57,8 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				console.appendConsole("clear: removes text from console");
 				console.appendConsole("cam: display camera location.");
 				console.appendConsole("phyDebug true/false: enable/disable physics debug.");
+				console.appendConsole("displayDouble simObject: Displays specified object and its value");
+				console.appendConsole("hideDouble simObject: Hides the specified value being shown");
 				console.appendConsole("clear: clears text");
 				console.appendConsole("escape: exits console");
 				console.appendConsole("`: starts console");
@@ -97,11 +101,25 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				if(!robotCodeComm.isStarted()) {
 					console.appendConsole(robotCodeComm.runTables() ? "Network table client successfully started" : "Network table client failed to start; nothing to connect to.");
 				}
+			} else if(evt.getCommand().equals("displayDouble")){
+				String parameter = evt.getParser().get(0);
+				if(parameter != null && PairedDoubleFactory.getInstance().pairedDoubleNames().contains(parameter)) {
+					InfoDisplay id = app.getStateManager().getState(InfoDisplay.class);
+					id.addDisplayedPairedDouble(parameter);
+				} else{
+					console.appendConsole("You need an object from listObjects as a parameter!");
+				}
+			} else if(evt.getCommand().equals("hideDouble")){
+				String parameter = evt.getParser().get(0);
+				if(parameter != null) {
+					InfoDisplay info = app.getStateManager().getState(InfoDisplay.class);
+					info.removeDisplayedPairedDouble(parameter);
+				}
 			} else if (evt.getCommand().equals("hideTable")){
 				if(evt.getParser().get(0) != null) {
 					InfoDisplay id = app.getStateManager().getState(InfoDisplay.class);
 					boolean removed = id.removeNetworkTableValue(evt.getParser().get(0));
-					
+
 					if(removed == false) {
 						console.appendConsoleError("You were unable to remove the display table key");
 					}
@@ -122,8 +140,8 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 					}
 				} else if(evt.getCommand().equals("displayTable")) {
 					String parameter = evt.getParser().get(0);
-					if(parameter != null || !robotCodeComm.keys().contains(parameter)) {
-						app.getStateManager().getState(InfoDisplay.class).setDisplayedNetworkValue(parameter);
+					if(parameter != null && robotCodeComm.keys().contains(parameter)) {
+							app.getStateManager().getState(InfoDisplay.class).addNetworkTableValue(parameter);
 					} else{
 						console.appendConsoleError("You must specify a network table key, all keys can be found with listTables command");
 					}

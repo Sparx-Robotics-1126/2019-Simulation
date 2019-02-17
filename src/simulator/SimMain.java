@@ -8,11 +8,8 @@ import com.jme3.bullet.BulletAppState;
 import com.jme3.bullet.PhysicsSpace;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.Vector3f;
-import com.jme3.renderer.RenderManager;
-import com.jme3.renderer.Renderer;
-import com.jme3.renderer.ViewPort;
 import com.jme3.scene.plugins.blender.BlenderLoader;
-import com.jme3.terrain.noise.Color;
+
 import strongdk.jme.appstate.console.ConsoleAppState;
 
 public class SimMain extends SimpleApplication {

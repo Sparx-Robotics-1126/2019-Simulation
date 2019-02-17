@@ -74,6 +74,15 @@ public class PairedDoubleFactory {
 		}
 	}
 
+	public PairedDouble getPairedDouble(String name) {
+		for(PairedDouble dbl: doubles) {
+			if(dbl.getName().equals(name)) {
+				return dbl;
+			}
+		}
+		return null;
+	}
+	
 	public PairedDouble createPairedDouble(String name, boolean updateFromTable) {
 		return createPairedDouble(name, updateFromTable, 0);
 	}

@@ -1,7 +1,6 @@
 package simulator;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
@@ -61,7 +60,6 @@ public class HatchLogic extends BaseAppState {
 	private final float HATCH_PICKUP_RANGE = 2f;
 	private boolean translatingHatch = true;
 	Robot robot;
-	SimUtilities utilities = new SimUtilities();
 	private final ActionListener actionListener = new ActionListener() {
 
 		@Override
@@ -116,7 +114,7 @@ public class HatchLogic extends BaseAppState {
 		RigidBodyControl operatingCtrl = null;
 
 		for(RigidBodyControl ctrl: hatchList) {
-			float distance = utilities.distanceTo(robotControl.getPhysicsLocation(), ctrl.getPhysicsLocation());
+			float distance = SimUtilities.distanceTo(robotControl.getPhysicsLocation(), ctrl.getPhysicsLocation());
 
 			if(distance < HATCH_PICKUP_RANGE && distance < smallest && robotIsFacingHatch(ctrl)) {
 				smallest = distance;
@@ -134,7 +132,7 @@ public class HatchLogic extends BaseAppState {
 		float distanceInFront = 1f;
 		//		Vector3f rotCol = robotControl.getPhysicsRotation().getRotationColumn(2);
 		while(distanceInFront < HATCH_PICKUP_RANGE) {
-			if(utilities.distanceTo(hatch.getPhysicsLocation(), utilities.getVectorOfPointAtAngleToItem(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0f, distanceInFront, 0.4826f)) < 1f) {
+			if(SimUtilities.distanceTo(hatch.getPhysicsLocation(), SimUtilities.Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0f, distanceInFront, 0.4826f)) < 1f) {
 				return true;
 			}
 			distanceInFront += 0.1;
@@ -164,7 +162,7 @@ public class HatchLogic extends BaseAppState {
 		float lowest = Float.MAX_VALUE;
 		Vector3f bestPoss = null;
 		for(Vector3f dropoffPos: HATCH_POSITIONS) {
-			float distBetween = Math.abs(utilities.distanceTo(dropoffPos, hatchLocation));
+			float distBetween = Math.abs(SimUtilities.distanceTo(dropoffPos, hatchLocation));
 			if(distBetween < 0.5f && distBetween < lowest) {
 				lowest = distBetween;
 				bestPoss = dropoffPos;
@@ -198,7 +196,7 @@ public class HatchLogic extends BaseAppState {
 
 	private boolean shouldTranslate() {
 //		System.out.println(utilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()));
-		if(utilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()) < 0.75f) {
+		if(SimUtilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()) < 0.75f) {
 			return false;
 			
 		} else {
@@ -213,7 +211,7 @@ public class HatchLogic extends BaseAppState {
 	}
 
 	private Vector3f createItemTranslationVector(VehicleControl robot, RigidBodyControl item) {
-		Vector3f hatchHoldingPosition = utilities.getVectorOfPointAtAngleToItem(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0, HATCH_HOLDING_DISTANCE, 0.4826f);
+		Vector3f hatchHoldingPosition = SimUtilities.Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0, HATCH_HOLDING_DISTANCE, 0.4826f);
 		Vector3f ret = new Vector3f();
 		Vector3f itemLoc = item.getPhysicsLocation();
 		ret.setX(hatchHoldingPosition.getX() - itemLoc.getX());
@@ -254,21 +252,17 @@ public class HatchLogic extends BaseAppState {
 	}
 	@Override
 	protected void cleanup(Application arg0) {
-		// TODO Auto-generated method stub
 		//not doing these hehehe
 	}
 
 	@Override
 	protected void onDisable() {
-		// TODO Auto-generated method stub
 		//not doing these hehehe
 	}
 
 	@Override
 	protected void onEnable() {
-		// TODO Auto-generated method stub
 		//not doing these hehehe
-
 	}
 
 

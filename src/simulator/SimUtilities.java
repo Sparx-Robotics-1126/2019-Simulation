@@ -1,5 +1,6 @@
 package simulator;
 
+import com.jme3.bullet.control.VehicleControl;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
@@ -15,7 +16,7 @@ public class SimUtilities {
 	 * @param quat - Quaternion to print
 	 * @return - String representation of converted quaternion
 	 */
-	public String quaternionToString(Quaternion quat) {
+	public static String quaternionToString(Quaternion quat) {
 		String resp = "";
 		resp += "\nX Rot: " + quat.toAngles(null)[0];
 		resp += "\nY Rot: " + quat.toAngles(null)[1];
@@ -23,6 +24,11 @@ public class SimUtilities {
 		return resp;
 	}
 	
+	public static Vector3f getPerpendicularDirection(VehicleControl robotControl, boolean rightSide) {
+		if(rightSide)
+			return Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 1.57f, .25f, 0);
+		return Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), FastMath.HALF_PI, .25f, 0);
+	}
 	
 	/**
 	 * Distance between two Vector3f objects
@@ -30,7 +36,7 @@ public class SimUtilities {
 	 * @param loc2 - vector distance 2
 	 * @return distance
 	 */
-	public float distanceTo(Vector3f loc1, Vector3f loc2) {
+	public static float distanceTo(Vector3f loc1, Vector3f loc2) {
 		float xDist = (float) Math.pow(loc1.getX() - loc2.getX(), 2);
 		float yDist = (float) Math.pow(loc1.getY() - loc2.getY(), 2);
 		float zDist = (float) Math.pow(loc1.getZ() - loc2.getZ(), 2);
@@ -46,7 +52,7 @@ public class SimUtilities {
 	 * @param height - the height at which the vector will be pointing to relative to objectsLoc
 	 * @return - Vector3f a certain distance at the angle specified
 	 */
-	public Vector3f getVectorOfPointAtAngleToItem(Vector3f objectLoc, Quaternion objectRot, float angleChange, float offset, float height) {
+	public static Vector3f Griebel_DeweyMethod(Vector3f objectLoc, Quaternion objectRot, float angleChange, float offset, float height) {
 		float itemZRot  = objectRot.toAngles(null)[2];
 		float itemXRot = objectRot.toAngles(null)[0];
 		float xOffset = 0;

@@ -42,7 +42,8 @@ public class FieldAppState extends BaseAppState {
 	private final float CARGO_SET_Y_POS = 2.0f;
 	private final float[] HAB_HEIGHTS = {.04f, .115f, .28f};
 	private final float HAB_WIDTH = 1.625f;
-	private Collidable[] tapeMarks;
+	private Spatial field;
+	private Node tapeTargets;
 	
 	@Override
 	protected void initialize(Application _app) {
@@ -96,8 +97,7 @@ public class FieldAppState extends BaseAppState {
 		Material tapeMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		tapeMaterial.setBoolean("UseMaterialColors", true);
 		tapeMaterial.setColor("Diffuse", ColorRGBA.White);
-		int index = 0;
-		tapeMarks = new Collidable[12];
+		tapeTargets = new Node();
 		
 		for(int i = 0; i < 3; i++) { //Left and right in name scheme of geometry are of perspective of blue alliance wall
 			Geometry visionTarget = new Geometry("Vision Target Blue Left " + i, new Box(.05f, .4064f, .0001f));
@@ -106,9 +106,7 @@ public class FieldAppState extends BaseAppState {
 			visionTarget.setMaterial(tapeMaterial);
 			visionCtrl.setPhysicsLocation(new Vector3f((float)(.535*i-1.54), 1.2f, .06f));
 			app.getPhysicsSpace().add(visionCtrl);
-			rootNode.attachChild(visionTarget);	
-			tapeMarks[index] = visionTarget;
-			index++;
+			tapeTargets.attachChild(visionTarget);
 		}
 		
 		for(int i = 0; i < 3; i++) {
@@ -118,9 +116,7 @@ public class FieldAppState extends BaseAppState {
 			visionTarget.setMaterial(tapeMaterial);
 			visionCtrl.setPhysicsLocation(new Vector3f((float)(.535*i-1.54), -.93f, .06f));
 			app.getPhysicsSpace().add(visionCtrl);
-			rootNode.attachChild(visionTarget);	
-			tapeMarks[index] = visionTarget;
-			index++;
+			tapeTargets.attachChild(visionTarget);
 		}
 		
 		for(int i = 0; i < 3; i++) {
@@ -130,9 +126,7 @@ public class FieldAppState extends BaseAppState {
 			visionTarget.setMaterial(tapeMaterial);
 			visionCtrl.setPhysicsLocation(new Vector3f((float)(-.535*i+1.62), 1.28f, .06f));
 			app.getPhysicsSpace().add(visionCtrl);
-			rootNode.attachChild(visionTarget);	
-			tapeMarks[index] = visionTarget;
-			index++;
+			tapeTargets.attachChild(visionTarget);
 		}
 		
 		for(int i = 0; i < 3; i++) {
@@ -142,14 +136,18 @@ public class FieldAppState extends BaseAppState {
 			visionTarget.setMaterial(tapeMaterial);
 			visionCtrl.setPhysicsLocation(new Vector3f((float)(-.535*i+1.62), -.93f, .06f));
 			app.getPhysicsSpace().add(visionCtrl);
-			rootNode.attachChild(visionTarget);	
-			tapeMarks[index] = visionTarget;
-			index++;
+			tapeTargets.attachChild(visionTarget);
 		}
+		
+		rootNode.attachChild(tapeTargets);
 	}
+	
+	public Spatial getField() {
+		return field;
+	}	
 
-	public Collidable[] getTapeMarks() {
-		return tapeMarks;
+	public Node getTapeMarks() {
+		return tapeTargets;
 	}
 	
 	@Override
@@ -168,7 +166,7 @@ public class FieldAppState extends BaseAppState {
 	}
 
 	private void createField() {
-		Spatial field = assetManager.loadModel("Models/Field/FieldWithoutFloor.blend");
+		field = assetManager.loadModel("Models/Field/FieldWithoutFloor.blend");
 		field.rotate(FastMath.PI / 2, 0, 0); 
 		CollisionShape fieldShape = CollisionShapeFactory.createMeshShape(field);
 		RigidBodyControl ctrl2 = new RigidBodyControl(fieldShape, 0);

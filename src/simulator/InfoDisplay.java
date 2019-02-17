@@ -25,6 +25,7 @@ public class InfoDisplay extends BaseAppState {
 	private float totalSeconds;
 	private float speed;
 	private Vector<String> networkTableKeyVec = new Vector<String>();
+	private Vector<String> pairedDoubleVec = new Vector<String>();
 	private RobotCodeCommunication robotComm;
 	
 	protected void initialize(Application _app) {
@@ -87,7 +88,12 @@ public class InfoDisplay extends BaseAppState {
 			String networkTableKeyString = networkTableKeyVec.get(a);
 			displayText += "\nNetwork table " + networkTableKeyString + " is "
 					+ robotComm.getValue(networkTableKeyString);
-		}	
+		}
+		for (int a = 0; a < pairedDoubleVec.size(); a++) {
+			String pairedDoubleName = pairedDoubleVec.get(a);
+			displayText += "\nDouble value " + pairedDoubleName + " is "
+					+ PairedDoubleFactory.getInstance().getPairedDouble(pairedDoubleName).value;
+		}
 		
 		scrollingBitmapText.setText(displayText);
 	}
@@ -96,8 +102,16 @@ public class InfoDisplay extends BaseAppState {
 		return networkTableKeyVec.remove(networkTableKey);
 	}
 	
-	public void setDisplayedNetworkValue(String networkTableKey) {
-		networkTableKeyVec.add(networkTableKey);
+	public boolean addNetworkTableValue(String networkTableKey) {
+		return networkTableKeyVec.add(networkTableKey);
+	}
+	
+	public boolean removeDisplayedPairedDouble(String pairedDouble) {
+		return pairedDoubleVec.remove(pairedDouble);
+	}
+	
+	public boolean addDisplayedPairedDouble(String networkTableKey) {
+		return pairedDoubleVec.add(networkTableKey);
 	}
 	
 	@Override

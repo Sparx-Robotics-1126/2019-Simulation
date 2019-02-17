@@ -57,7 +57,6 @@ public class MoveControl extends AbstractControl{
 	
 	@Override
 	protected void controlUpdate(float arg0) {
-		// TODO Auto-generated method stub
 	}
 	
 	public void setSpeed(float speed) {
