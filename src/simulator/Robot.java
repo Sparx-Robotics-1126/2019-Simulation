@@ -28,6 +28,7 @@ public class Robot extends BaseAppState {
 	private Node robotNode;
 	private Node habClimberNode;
 	private Spatial robotBase;
+	private RaySensorsControl rays; 
 	private AssetManager assetManager;
 
 	private final Vector3f[] HATCH_POSITIONS = { new Vector3f(0.5686435f, -0.58888614f, 0.6995726f),
@@ -46,8 +47,7 @@ public class Robot extends BaseAppState {
 	private PairedDouble accelerationValueLeft = PairedDoubleFactory.getInstance().createPairedDouble("leftSideDrives", true, 0.0);
 	private PairedDouble accelerationValueRight = PairedDoubleFactory.getInstance().createPairedDouble("rightSideDrives", true, 0.0);
 	private PairedDouble leftEncoder = PairedDoubleFactory.getInstance().createPairedDouble("leftEncoder", false, 0.0);
-	private PairedDouble rightEncoder = PairedDoubleFactory.getInstance().createPairedDouble("rightEncoder", false,
-			0.0);
+	private PairedDouble rightEncoder = PairedDoubleFactory.getInstance().createPairedDouble("rightEncoder", false, 0.0);
 	private Vector3f lastLeftLocation = Vector3f.ZERO;
 	private Vector3f lastRightLocation = Vector3f.ZERO;
 	private float lifterChange = FastMath.HALF_PI / 3;
@@ -146,7 +146,7 @@ public class Robot extends BaseAppState {
 		robotControl = new VehicleControl(robotShape, 60);
 		robotNode.attachChild(robotBase);
 		robotNode.addControl(robotControl);
-		RaySensorsControl rays = new RaySensorsControl(app, robotControl);
+		rays = new RaySensorsControl(app, robotControl);
 		robotNode.addControl(rays);
 		
 		createWheels();
@@ -198,6 +198,12 @@ public class Robot extends BaseAppState {
 		hatchLogic = app.getStateManager().getState(HatchLogic.class);
 		setEncoders(false);
 	}
+	
+	
+	public void toggleRays(boolean toggle) {
+		rays.toggleDebugLines(toggle);
+	}
+	
 	private void createWheels() {
 		wheel(.325f,-.15f,0.25f);
 		wheel(.325f,-.15f,-0.25f);
@@ -205,6 +211,7 @@ public class Robot extends BaseAppState {
 		wheel(-0.325f,-.15f,-0.25f);
 		
 	}
+	
 	private void wheel(float wheelX, float wheelY, float wheelZ) {
 		Material wheelColor = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		wheelColor.setBoolean("UseMaterialColors", true);
@@ -216,7 +223,7 @@ public class Robot extends BaseAppState {
 		wheelGeometry.setLocalTranslation(wheelX, wheelY, wheelZ);
 		wheelGeometry.rotate(0, FastMath.HALF_PI, 0);
 		robotNode.attachChild(wheelGeometry);
-		}
+	}
 	
 	@Override
 	public void update(float tpf) {

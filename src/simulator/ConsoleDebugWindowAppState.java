@@ -35,6 +35,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		console.registerCommand("phyDebug", commandListener);
 		console.registerCommand("displayDouble", commandListener);
 		console.registerCommand("hideDouble", commandListener);
+		console.registerCommand("debugLines", commandListener);
 		console.registerCommand("startTables", commandListener);
 		console.registerCommand("listTables", commandListener);
 		console.registerCommand("listObjects", commandListener);
@@ -65,7 +66,8 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				console.appendConsole("up: copys previous input");
 				console.appendConsole("PgUp: scrolls history up");
 				console.appendConsole("PgDown: scrolls history down");
-
+				console.appendConsole("debugLines raysOn: The rays showing sensors turn on or off");
+				
 				if(!robotCodeComm.isStarted()) {
 					console.appendConsole("startTables: starts the network tables.");
 				}else {
@@ -96,6 +98,16 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 					physics.setDebugEnabled(false);
 				} else {
 					console.appendConsoleError("You must specify either 'true' or 'false' for the phyDebug command.");
+				}
+			} else if(evt.getCommand().equals("debugLines")){
+				String parameter = evt.getParser().get(0);
+				if(parameter != null) {
+					if(parameter.equalsIgnoreCase("true"))
+						app.getStateManager().getState(Robot.class).toggleRays(true);
+					else if(parameter.equalsIgnoreCase("false"))
+						app.getStateManager().getState(Robot.class).toggleRays(true);
+					else
+						console.appendConsoleError("You must specify either 'true' or 'false'.");
 				}
 			} else if(evt.getCommand().equals("startTables")) {
 				if(!robotCodeComm.isStarted()) {

@@ -25,9 +25,32 @@ public class SimUtilities {
 	}
 	
 	public static Vector3f getPerpendicularDirection(VehicleControl robotControl, boolean rightSide) {
+		float itemZRot  = robotControl.getPhysicsRotation().toAngles(null)[2];
+		float itemXRot = robotControl.getPhysicsRotation().toAngles(null)[0];
+		float xOffset = 0;
+		float yOffset = 0;
+
+		if(itemXRot <= 0) {
+			itemZRot -= FastMath.HALF_PI;
+		}else {
+			itemZRot += FastMath.HALF_PI;
+		}
+		
+		if(itemZRot > 0) {
+			xOffset = (float) (FastMath.sin(itemZRot));
+		} else {
+			xOffset = -1f * (float)(FastMath.sin(FastMath.abs(itemZRot)));
+		}
+
+		if(robotControl.getPhysicsRotation().toAngles(null)[0] > 0) {
+			yOffset = -1f * (float) (FastMath.cos(itemZRot));
+		} else {
+			yOffset = (float) (FastMath.cos(itemZRot));
+		}	
 		if(rightSide)
-			return Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 1.57f, .25f, 0);
-		return Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), FastMath.HALF_PI, .25f, 0);
+			return new Vector3f(xOffset, yOffset, 0);
+		else
+			return new Vector3f(-xOffset, -yOffset, 0);
 	}
 	
 	/**
