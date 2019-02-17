@@ -317,6 +317,7 @@ public class FieldAppState extends BaseAppState {
 	
 	private void createHatch(float x, float y, float z) {
 		hatch = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
+		hatch.scale(.5f);
 		rootNode.attachChild(hatch);
 		hatch.move(x,y,z);
 		hatch.rotate(0, 0, FastMath.PI / 2);
