@@ -53,6 +53,7 @@ public class Robot extends BaseAppState {
 	private boolean leadScrewDown = false;
 	private boolean leadScrewUp = false;
 	private HatchLogic hatchLogic;
+	private HabLogic habLogic;
 	private PairedDouble pickUpHatch = PairedDoubleFactory.getInstance().createPairedDouble("hatchFlipper", true, 0.0);
 	private PairedDouble gearShifter = PairedDoubleFactory.getInstance().createPairedDouble("gearShift", true, 0.0);
 	private float rightAngle = FastMath.HALF_PI;
@@ -100,7 +101,6 @@ public class Robot extends BaseAppState {
 				accelerationValueRight.value = 0;
 				accelerationValueLeft.value = 0;
 				leadScrew.setLocalTranslation(0f, leadScrewPosition, -0.2f);
-				hatchLogic.dropHatch();
 				leadScrewPosition = 2f;
 				habLifter1.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
 				habLifter2.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
@@ -115,6 +115,7 @@ public class Robot extends BaseAppState {
 
 			else if(name.equals("printInfo") && pressed) {
 				System.out.println(SimUtilities.quaternionToString(robotControl.getPhysicsRotation()));
+				System.out.println("Robot Position: " + robotControl.getPhysicsLocation().toString());
 				System.out.println("Hatch location: " + (hatchLogic.getHatch() == null ? " no attached hatch": hatchLogic.getHatch().getPhysicsLocation().toString()));
 
 
@@ -210,6 +211,8 @@ public class Robot extends BaseAppState {
 
 		setUpKeyControls();
 		hatchLogic = app.getStateManager().getState(HatchLogic.class);
+		habLogic = app.getStateManager().getState(HabLogic.class);
+		
 		setEncoders(false);
 	}
 
@@ -241,6 +244,7 @@ public class Robot extends BaseAppState {
 
 	@Override
 	public void update(float tpf) {
+		habLogic = app.getStateManager().getState(HabLogic.class);
 		robotAcceleration = (float)(gearShifter.value * 150 + 150);
 		robotControl.accelerate(0, (float) (robotAcceleration * accelerationValueLeft.value));
 		robotControl.accelerate(2, (float) (robotAcceleration * accelerationValueLeft.value));
@@ -277,6 +281,7 @@ public class Robot extends BaseAppState {
 			}
 		}
 		hatchLogic.update(tpf);
+		habLogic.update(tpf);
 	}
 
 	private void setEncoders(boolean notFirstRun) {

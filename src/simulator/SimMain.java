@@ -25,7 +25,8 @@ public class SimMain extends SimpleApplication {
 				new HelpDisplay(),
 				new InfoDisplay(),
 				new ConsoleDebugWindowAppState(),
-				new HatchLogic()
+				new HatchLogic(),
+				new HabLogic()
 				);
 		bulletAppState = new BulletAppState();
 		getStateManager().attach(bulletAppState);
