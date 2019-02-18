@@ -53,7 +53,7 @@ public class HatchLogic extends BaseAppState {
 			new Vector3f(-2.6530423f, 0.40617636f, 0.4826f),
 
 	};
-	private float HATCH_HOLDING_DISTANCE = 0.5f;
+	private float HATCH_HOLDING_DISTANCE = .35f;//0.5f;
 	private VehicleControl robotControl;
 	private final float Z_GRAVITY = -9.81f;
 	private RigidBodyControl linkedHatch = null;
@@ -197,8 +197,7 @@ public class HatchLogic extends BaseAppState {
 	private boolean shouldTranslate() {
 //		System.out.println(utilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()));
 		if(SimUtilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()) < 0.75f) {
-			return false;
-			
+			return false;	
 		} else {
 			return true;
 		}
@@ -211,7 +210,7 @@ public class HatchLogic extends BaseAppState {
 	}
 
 	private Vector3f createItemTranslationVector(VehicleControl robot, RigidBodyControl item) {
-		Vector3f hatchHoldingPosition = SimUtilities.Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0, HATCH_HOLDING_DISTANCE, 0.4826f);
+		Vector3f hatchHoldingPosition = SimUtilities.Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0, HATCH_HOLDING_DISTANCE, .20f);//0.4826f);
 		Vector3f ret = new Vector3f();
 		Vector3f itemLoc = item.getPhysicsLocation();
 		ret.setX(hatchHoldingPosition.getX() - itemLoc.getX());
@@ -250,6 +249,7 @@ public class HatchLogic extends BaseAppState {
 	public void pickupHatch() {
 		detectHatch();
 	}
+	
 	@Override
 	protected void cleanup(Application arg0) {
 		//not doing these hehehe
