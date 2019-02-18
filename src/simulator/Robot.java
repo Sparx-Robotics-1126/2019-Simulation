@@ -58,10 +58,11 @@ public class Robot extends BaseAppState {
 	private boolean leadScrewDown = false;
 	private boolean leadScrewUp = false;
 	private HatchLogic hatchLogic;
-	private PairedDouble gearShifter = PairedDoubleFactory.getInstance().createPairedDouble("gearShift", true);
+	private PairedDouble pickUpHatch = PairedDoubleFactory.getInstance().createPairedDouble("hatchFlipper", true, 0.0);
+	private PairedDouble gearShifter = PairedDoubleFactory.getInstance().createPairedDouble("gearShift", true, 0.0);
 	private float rightAngle = FastMath.HALF_PI;
 	private float robotAcceleration = 150f;
-		
+
 
 	private final ActionListener actionListener = new ActionListener() {
 
@@ -113,8 +114,8 @@ public class Robot extends BaseAppState {
 			else if(name.equals("printInfo") && pressed) {
 				System.out.println(SimUtilities.quaternionToString(robotControl.getPhysicsRotation()));
 				System.out.println("Hatch location: " + (hatchLogic.getHatch() == null ? " no attached hatch": hatchLogic.getHatch().getPhysicsLocation().toString()));
-				
-				
+
+
 			}
 		}
 	};
@@ -122,14 +123,14 @@ public class Robot extends BaseAppState {
 	public Spatial getRobotBase() {
 		return robotBase;
 	}
-	
+
 
 	@Override
 	protected void initialize(Application _app) {
 
 		app = (SimMain) _app;
 		Node rootNode = app.getRootNode();
-		
+
 
 		app.getPhysicsSpace().setGravity(new Vector3f(0f, 0f, Z_GRAVITY));
 		assetManager = app.getAssetManager();
@@ -148,9 +149,9 @@ public class Robot extends BaseAppState {
 		robotNode.addControl(robotControl);
 		rays = new RaySensorsControl(app, robotControl);
 		robotNode.addControl(rays);
-		
+
 		createWheels();
-		
+
 		habClimberNode = new Node("climbingNode");
 		habLifter1 = assetManager.loadModel("Models/RobotBase/habLifter1.blend");
 		habLifter1.scale(0.15f);
@@ -171,8 +172,8 @@ public class Robot extends BaseAppState {
 		rootNode.attachChild(leadScrew);
 		habClimberNode.attachChild(leadScrew);
 
-		
-		
+
+
 		float stiffness = 800.0f;
 		float compValue = .6f;
 		float dampValue = .7f;
@@ -192,31 +193,31 @@ public class Robot extends BaseAppState {
 		robotControl.steer(1, .25f);
 		robotControl.steer(2, .25f);
 		robotControl.steer(3, -.25f);
-		
-		
+
+
 		setUpKeyControls();
 		hatchLogic = app.getStateManager().getState(HatchLogic.class);
 		setEncoders(false);
 	}
-	
-	
+
+
 	public void toggleRays(boolean toggle) {
 		rays.toggleDebugLines(toggle);
 	}
-	
+
 	private void createWheels() {
 		wheel(.325f,-.15f,0.25f);
 		wheel(.325f,-.15f,-0.25f);
 		wheel(-0.325f,-.15f,0.25f);
 		wheel(-0.325f,-.15f,-0.25f);
-		
+
 	}
-	
+
 	private void wheel(float wheelX, float wheelY, float wheelZ) {
 		Material wheelColor = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		wheelColor.setBoolean("UseMaterialColors", true);
 		wheelColor.setColor("Diffuse", ColorRGBA.Yellow);
-		
+
 		Cylinder wheel = new Cylinder(100, 100, 0.125f, 0.0625f, true, false);
 		Geometry wheelGeometry = new Geometry("wheel", wheel);
 		wheelGeometry.setMaterial(wheelColor);
@@ -224,7 +225,7 @@ public class Robot extends BaseAppState {
 		wheelGeometry.rotate(0, FastMath.HALF_PI, 0);
 		robotNode.attachChild(wheelGeometry);
 	}
-	
+
 	@Override
 	public void update(float tpf) {
 		robotAcceleration = (float)(gearShifter.value * 150 + 150);
@@ -235,8 +236,6 @@ public class Robot extends BaseAppState {
 
 		setEncoders(true);
 
-		hatchLogic.update(tpf);
-		
 		if (lifterMoveDown) {
 			habLifter1.rotate(-lifterChange * tpf, 0f, 0f);
 			habLifter2.rotate(-lifterChange * tpf, 0f, 0f);
@@ -256,10 +255,17 @@ public class Robot extends BaseAppState {
 			leadScrew.setLocalTranslation(leadScrew.getLocalTranslation().x, leadScrewPosition,
 					leadScrew.getLocalTranslation().z);
 		}
-			
+
+		if(pickUpHatch.value == 1) {
+			if(hatchLogic.getHatch() == null){
+				hatchLogic.pickupHatch();
+			} else{
+				hatchLogic.dropHatch();
+			}
+		}
 		hatchLogic.update(tpf);
 	}
-	
+
 	private void setEncoders(boolean notFirstRun) {
 		Vector3f currentLeftLocation = robotControl.getPhysicsLocation();
 		Vector3f currentRightLocation = robotControl.getPhysicsLocation();
@@ -280,10 +286,10 @@ public class Robot extends BaseAppState {
 		lastLeftLocation = currentLeftLocation;
 		lastRightLocation = currentRightLocation;
 
-	
+
 
 	}
-	
+
 
 	private float[] getOffsets(float mainOffset) {
 		float robotZRot  = robotControl.getPhysicsRotation().toAngles(null)[2] + rightAngle;
@@ -409,8 +415,8 @@ public class Robot extends BaseAppState {
 	public VehicleControl getRobotControl() {
 		return robotControl;
 	}
-	
-	
+
+
 	@Override
 	protected void onEnable() {
 
