@@ -19,7 +19,6 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
-import com.jme3.scene.shape.Cylinder;
 
 import simulator.PairedDoubleFactory.PairedDouble;
 
@@ -31,18 +30,11 @@ public class Robot extends BaseAppState {
 	private RaySensorsControl rays; 
 	private AssetManager assetManager;
 
-	private final Vector3f[] HATCH_POSITIONS = { new Vector3f(0.5686435f, -0.58888614f, 0.6995726f),
-			new Vector3f(1.0236804f, -0.58888614f, 0.6995726f), new Vector3f(1.5357443f, -0.58888614f, 0.6995726f),
-			new Vector3f(-0.568f, -0.58888614f, 0.6995726f), new Vector3f(-1.023f, -0.58888614f, 0.6995726f),
-			new Vector3f(-1.53f, -0.58888614f, 0.6995726f), new Vector3f(1.568f, 1f, 0.7f), };
-
 	private Spatial habLifter1;
 	private Spatial habLifter2;
 	private Spatial leadScrew;
 	private VehicleControl robotControl;
 	private CollisionShape robotShape;
-	private CollisionShape lifterShape;
-	private CollisionShape screwShape;
 	private final float Z_GRAVITY = -9.81f;
 	private PairedDouble accelerationValueLeft = PairedDoubleFactory.getInstance().createPairedDouble("leftSideDrives", true, 0.0);
 	private PairedDouble accelerationValueRight = PairedDoubleFactory.getInstance().createPairedDouble("rightSideDrives", true, 0.0);
@@ -83,7 +75,14 @@ public class Robot extends BaseAppState {
 			} else if (name.indexOf("rightDrives") != -1 && !pressed) {
 				accelerationValueRight.value = 0;
 			}
-
+			else if(name.equals("close") && pressed) {
+				accelerationValueRight.value = 900f;
+				accelerationValueLeft.value = 900f;
+			}
+			else if(name.equals("open") && pressed) {
+				accelerationValueRight.value = 0f;
+				accelerationValueLeft.value = 0f;
+			}
 			else if (name.equals("pause") && pressed) {
 				if (app.isPaused()) {
 					app.resume();
@@ -140,8 +139,7 @@ public class Robot extends BaseAppState {
 		robotBase.scale(.5f);
 		robotShape = new CompoundCollisionShape();
 		Geometry robot_geo = (Geometry)((Node)((Node)((Node)robotBase).getChild(0)).getChild(0)).getChild(0);
-		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2), new Vector3f(-.2f, 0f, 0f));
-		//new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
+		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2), new Vector3f(-.2f, 0f, 0f));//new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
 		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2), new Vector3f(.2f, 0f, 0f));
 		robot_geo.setLocalRotation(new Quaternion(1, 0, 0, 1));
 		robotControl = new VehicleControl(robotShape, 60);
@@ -350,7 +348,7 @@ public class Robot extends BaseAppState {
 		manager.addMapping("rightDrivesBackward", new KeyTrigger(KeyInput.KEY_D));
 		manager.addMapping("pause", new KeyTrigger(KeyInput.KEY_P));
 		manager.addMapping("reset", new KeyTrigger(KeyInput.KEY_R));
-		manager.addMapping("printInfo", new KeyTrigger(KeyInput.KEY_I));
+		manager.addMapping("printInfo", new KeyTrigger(KeyInput.KEY_Z));
 		manager.addMapping("lifterDown", new KeyTrigger(KeyInput.KEY_Z));
 		manager.addMapping("lifterUp", new KeyTrigger(KeyInput.KEY_X));
 		manager.addMapping("leadScrewDown", new KeyTrigger(KeyInput.KEY_C));
