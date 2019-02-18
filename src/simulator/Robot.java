@@ -142,7 +142,9 @@ public class Robot extends BaseAppState {
 		robotBase.scale(.5f);
 		robotShape = new CompoundCollisionShape();
 		Geometry robot_geo = (Geometry)((Node)((Node)((Node)robotBase).getChild(0)).getChild(0)).getChild(0);
-		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2), new Vector3f(-.2f, 0f, 0f));//new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
+		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2),
+				new Vector3f(-.2f, 0f, 0f));
+		//new BoxCollisionShape(new Vector3f(.3302f, .09355f, .3302f)), new Vector3f(0f, 0f, 0f));
 		((CompoundCollisionShape)robotShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 2), new Vector3f(.2f, 0f, 0f));
 		robot_geo.setLocalRotation(new Quaternion(1, 0, 0, 1));
 		robotControl = new VehicleControl(robotShape, 60);
@@ -278,6 +280,7 @@ public class Robot extends BaseAppState {
 		}
 		hatchLogic.update(tpf);
 	}
+
 
 	private void setEncoders(boolean notFirstRun) {
 		Vector3f currentLeftLocation = robotControl.getPhysicsLocation();
