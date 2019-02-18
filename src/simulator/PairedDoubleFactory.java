@@ -16,7 +16,7 @@ public class PairedDoubleFactory {
 	private Set<String> connectionNames;
 	private Properties prop;
 	private String propertiesLocation;
-	private static final String DEFAULTLOCATION = "data" + File.separator + "properties.xml";
+	private static final String DEFAULTLOCATION = "data" + File.separator + "tablesProperties.xml";
 	private RobotCodeCommunication robotComm;
 
 	public static PairedDoubleFactory getInstance() {
@@ -49,10 +49,20 @@ public class PairedDoubleFactory {
 		if(file.exists()) {
 			try {
 				prop.loadFromXML(new FileInputStream(propertiesLocation));
+				if(RobotCodeCommunication.getInstance().isStarted()) {
+					Set<String> possibleConnections = RobotCodeCommunication.getInstance().keys();
+					for(PairedDouble pairedVar : doubles) {
+						String connection = prop.getProperty(pairedVar.getName());
+						if(connection != null && possibleConnections.contains(connection)) {
+							pairedVar.setConnection(connection);
+						}
+					}
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		} else {
+			System.out.println("Clearing");
 			prop.clear();
 		}
 
@@ -82,7 +92,7 @@ public class PairedDoubleFactory {
 		}
 		return null;
 	}
-	
+
 	public PairedDouble createPairedDouble(String name, boolean updateFromTable) {
 		return createPairedDouble(name, updateFromTable, 0);
 	}
