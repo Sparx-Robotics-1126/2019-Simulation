@@ -3,9 +3,11 @@ package simulator;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
+import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
@@ -19,6 +21,7 @@ import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
+import com.jme3.scene.shape.Cylinder;
 
 import simulator.PairedDoubleFactory.PairedDouble;
 
@@ -156,12 +159,24 @@ public class Robot extends BaseAppState {
 		habLifter1.setLocalTranslation(0.25f, 0, .31f);
 		habLifter1.rotate(FastMath.HALF_PI * 2, 0, FastMath.HALF_PI * 2);
 		habClimberNode.attachChild(habLifter1);
+		RigidBodyControl habLifter1Ctrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f()), 3f);
+		habLifter1.addControl(habLifter1Ctrl);
+		habLifter1Ctrl.setPhysicsLocation(new Vector3f(-6.75f, 2f, 8f));
+		habLifter1Ctrl.setPhysicsRotation(new Quaternion(0, .1305265f, 0, .9914448f));
+		app.getPhysicsSpace().add(habLifter1Ctrl);
+		rootNode.attachChild(habLifter1);
 
 		habLifter2 = assetManager.loadModel("Models/RobotBase/habLifter1.blend");
 		habLifter2.scale(0.15f);
 		habLifter2.setLocalTranslation(-0.25f, 0f, .31f);
 		habLifter2.rotate(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2);
 		habClimberNode.attachChild(habLifter2);
+		RigidBodyControl habLifter2Ctrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f()), 3f);
+		habLifter2.addControl(habLifter2Ctrl);
+		habLifter2Ctrl.setPhysicsLocation(new Vector3f(-5.75f, 0f, .15f));
+		habLifter2Ctrl.setPhysicsRotation(new Quaternion(0, .1305265f, 0, .9914448f));
+		app.getPhysicsSpace().add(habLifter2Ctrl);
+		rootNode.attachChild(habLifter2);
 
 		leadScrew = assetManager.loadModel("Models/RobotBase/leadScrew.blend");
 		leadScrew.setLocalTranslation(0f, leadScrewPosition, -0.2f);
@@ -419,6 +434,9 @@ public class Robot extends BaseAppState {
 	protected void onEnable() {
 
 	}
+
+
+
 }
 
 
