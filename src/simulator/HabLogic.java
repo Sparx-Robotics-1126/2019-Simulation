@@ -9,12 +9,13 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.math.FastMath;
 import com.jme3.math.Vector3f;
 
 public class HabLogic extends BaseAppState{
 	
 	private SimMain app;
-	private final float HAB_HEIGHT = 1.5668f;
+	private final float HAB_HEIGHT = 1f;
 	private Robot robot;
 	private VehicleControl robotControl;
 	private boolean climbing = false;
@@ -40,29 +41,29 @@ public class HabLogic extends BaseAppState{
 	@Override
 	public void update(float tpf) {
 		if(climbing) {
+			robotControl.setGravity(new Vector3f(0f, 0f, 0f));
 			climb();
+		} else {
+			robotControl.setGravity(new Vector3f(0f, 0f, -9.81f));
 		}
 		
 	}
 
 	public void climb() {
-		if(!robotIsInStartingPosition()) {
+		if(!robotIsInStartingPosition() || !isRightAngleToClimb()) {
 			//maybe there's a better way to do this...
-			System.out.println("robot not in the right position");
+			System.out.println("LINE THE ROBOT UP");
 			climbing = false;
-			return;
 		} else {
 			if(robotControl.getPhysicsLocation().getZ() >= HAB_HEIGHT) {
 				translateRobotForward();
 				if(robotControl.getPhysicsLocation().getX() > 7.2f) {
 					climbing = false;
-					return;
 				}
 			} else {
 				translateRobotUpwards();
 			}
 		}
-		
 	}
 	
 	public boolean robotIsInStartingPosition() {
@@ -73,15 +74,23 @@ public class HabLogic extends BaseAppState{
 		return true;
 	}
 	
+	public boolean isRightAngleToClimb() {
+		float robotZRot = robotControl.getPhysicsRotation().toAngles(null)[2];
+		if(robotZRot > (FastMath.PI / 4)) {
+			return true;
+		}
+		return false;
+	}
+	
 	public void translateRobotUpwards() {
 		Vector3f loc = robotControl.getPhysicsLocation();
-		loc.setZ(loc.getZ() + 0.05f);
+		loc.setZ(loc.getZ() + 0.001f);
 		robotControl.setPhysicsLocation(loc);
 	}
 	
 	public void translateRobotForward() {
 		Vector3f loc = robotControl.getPhysicsLocation();
-		loc.setX(loc.getX() + 0.05f);
+		loc.setX(loc.getX() + 0.001f);
 		robotControl.setPhysicsLocation(loc);
 	}
 	
