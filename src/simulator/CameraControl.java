@@ -16,10 +16,13 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.Camera;
 
+import strongdk.jme.appstate.console.ConsoleAppState;
+
 public class CameraControl extends BaseAppState {
 	boolean camMode1;
 	boolean camMode2;
 	boolean camMode3;
+	private SimpleApplication app;
 	private Camera cam;
 	private boolean leftPressed = false;
 	Vector3f center = new Vector3f(0, 0, 0);
@@ -45,7 +48,7 @@ public class CameraControl extends BaseAppState {
 
 	@Override
 	protected void initialize(Application _app) {
-		SimpleApplication app = (SimpleApplication) _app;
+		app = (SimpleApplication) _app;
 		cam = app.getCamera();
 		cam.setLocation(new Vector3f(5, -15, 10));
 		cam.lookAt(center, Vector3f.UNIT_Z);
@@ -87,22 +90,23 @@ public class CameraControl extends BaseAppState {
 		@Override
 
 		public void onAction(String name, boolean keyPressed, float tpf) {
-			if (name.equals("number1")) {
-				camMode1 = true;
-				camMode2 = false;
-				camMode3 = false;
-				cam.lookAt(center, Vector3f.UNIT_Z);
-			} else if (name.equals("number2")) {
-				camMode2 = true;
-				camMode1 = false;
-				camMode3 = false;
-			} else if (name.equals("number3")) {
-				camMode3 = true;
-				camMode1 = false;
-				camMode2 = false;
-				center.set(robot.getRobotBase().getWorldTranslation().add(0f, 0f, 1f));
-				cam.lookAt(center, Vector3f.UNIT_Z);
-			}
+			if(!app.getStateManager().getState(ConsoleAppState.class).isVisible())
+				if (name.equals("number1")) {
+					camMode1 = true;
+					camMode2 = false;
+					camMode3 = false;
+					cam.lookAt(center, Vector3f.UNIT_Z);
+				} else if (name.equals("number2")) {
+					camMode2 = true;
+					camMode1 = false;
+					camMode3 = false;
+				} else if (name.equals("number3")) {
+					camMode3 = true;
+					camMode1 = false;
+					camMode2 = false;
+					center.set(robot.getRobotBase().getWorldTranslation().add(0f, 0f, 1f));
+					cam.lookAt(center, Vector3f.UNIT_Z);
+				}
 		}
 	};
 
