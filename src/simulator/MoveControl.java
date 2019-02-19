@@ -5,6 +5,7 @@ import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
 import com.jme3.input.controls.KeyTrigger;
+import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -23,6 +24,8 @@ public class MoveControl extends AbstractControl{
 		manager.addMapping("objBkwd", new KeyTrigger(KeyInput.KEY_DOWN));
 		manager.addMapping("objUp", new KeyTrigger(KeyInput.KEY_Z));
 		manager.addMapping("objDown", new KeyTrigger(KeyInput.KEY_X));
+		manager.addMapping("objRotF", new KeyTrigger(KeyInput.KEY_Y));
+		manager.addMapping("objRotR", new KeyTrigger(KeyInput.KEY_U));
 		manager.addMapping("printPlace", new KeyTrigger(KeyInput.KEY_S));
 		
 		manager.addListener(new ActionListener(){
@@ -46,13 +49,19 @@ public class MoveControl extends AbstractControl{
 				}
 				else if(key.equals("objDown") && pressed) {
 					objCtrl.setPhysicsLocation(objCtrl.getPhysicsLocation().add(new Vector3f(0, 0, -speed)));
+				} 
+				else if(key.equals("objRotR") && pressed) {
+					objCtrl.setPhysicsRotation(objCtrl.getPhysicsRotation().add(new Quaternion(0, 0, speed, 0)));
+				}
+				else if(key.equals("objRotF") && pressed) {
+					objCtrl.setPhysicsRotation(objCtrl.getPhysicsRotation().add(new Quaternion(0, 0, -speed, 0)));
 				}
 				else if(key.equals("printPlace")) {
-					System.out.println(objCtrl.getPhysicsLocation());
+					System.out.println(objCtrl.getPhysicsLocation() + " " + objCtrl.getPhysicsRotation());
 				}
 			}
 
-		}, "objFwd", "objBkwd", "objRight", "objLeft", "objUp", "objDown", "printPlace");
+		}, "objFwd", "objBkwd", "objRight", "objLeft", "objUp", "objDown", "objRotF", "objRotR", "printPlace");
 	}
 	
 	@Override
