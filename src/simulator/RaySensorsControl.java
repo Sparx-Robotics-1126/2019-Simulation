@@ -107,7 +107,7 @@ public class RaySensorsControl extends AbstractControl{
 		
 		field.getField().collideWith(testRay, collisionList);
 		closestCollision = collisionList.getClosestCollision();
-		if(closestCollision != null) {
+		if(closestCollision != null && closestCollision.getDistance() > 1.5) {
 			valueStore.value = closestCollision.getDistance() * 39.3701;
 		} else{
 			valueStore.value = -1.0;
