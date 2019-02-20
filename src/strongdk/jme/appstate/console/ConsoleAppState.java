@@ -1103,7 +1103,7 @@ public class ConsoleAppState implements AppState {
 	@Override
 	public void postRender() {
 	}
-
+	
 	/**
 	 * Shows or hides the console on the screen.
 	 *
@@ -1115,7 +1115,6 @@ public class ConsoleAppState implements AppState {
 	 */
 	public final void setVisible(boolean setVisible) {
 		visible = setVisible;
-
 		if (isInitialized()) {
 			app.enqueue(setVisibleCallable);
 		}

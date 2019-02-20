@@ -180,7 +180,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 					} else{
 						console.appendConsoleError(simObjectParameter + " is not a valid SimObject from the list found in listObjects.");
 					}
-				} else if(evt.getCommand().equals("loadProperies")){
+				} else if(evt.getCommand().equals("loadProperties")){
 					pairedDoubleCreator.loadProperties();
 				} else if(evt.getCommand().equals("saveProperties")) {
 					pairedDoubleCreator.saveProperties();

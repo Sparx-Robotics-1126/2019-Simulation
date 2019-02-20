@@ -3,12 +3,11 @@ package simulator;
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.asset.AssetManager;
-import com.jme3.bullet.collision.shapes.BoxCollisionShape;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
-import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
+import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
@@ -27,6 +26,7 @@ import com.jme3.scene.shape.Cylinder;
 import simulator.PairedDoubleFactory.PairedDouble;
 
 public class Robot extends BaseAppState {
+	protected static final PhysicsRigidBody habLifter1Ctrl = null;
 	private SimMain app;
 	private Node robotNode;
 	private Node habClimberNode;
@@ -100,23 +100,25 @@ public class Robot extends BaseAppState {
 			else if (name.equals("reset") && pressed) {
 				robotControl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
 				robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
+				
 				accelerationValueRight.value = 0;
 				accelerationValueLeft.value = 0;
-				leadScrew.setLocalTranslation(0f, -0.75f, -0.2f);
+				leadScrew.setLocalTranslation(0f, 2f, -0.2f);
 				hatchLogic.dropHatch();
-				leadScrewPosition = 2f;
-				habLifter.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
+//				leadScrewPosition = 2f;
+				habLifter1.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
 				hatchLogic.dropHatch();
 			} else if (name.equals("pickupHatch") && pressed) {
 				hatchLogic.pickupHatch();
 			} else if (name.equals("dropHatch") && pressed) {
 				hatchLogic.dropHatch();
 			}
-
-			else if (name.equals("printInfo") && pressed) {
+			else if(name.equals("pickupArm") && pressed) {
+				
+			}
+			else if(name.equals("printInfo") && pressed) {
 				System.out.println(SimUtilities.quaternionToString(robotControl.getPhysicsRotation()));
-				System.out.println("Hatch location: " + (hatchLogic.getHatch() == null ? " no attached hatch"
-						: hatchLogic.getHatch().getPhysicsLocation().toString()));
+				System.out.println("Hatch location: " + (hatchLogic.getHatch() == null ? " no attached hatch": hatchLogic.getHatch().getPhysicsLocation().toString()));
 
 			}
 		}
@@ -250,7 +252,7 @@ public class Robot extends BaseAppState {
 
 	@Override
 	public void update(float tpf) {
-		robotAcceleration = (float) (gearShifter.value * 150 + 150);
+		robotAcceleration = (float)(gearShifter.value * 150 + 150);
 		robotControl.accelerate(0, (float) (robotAcceleration * accelerationValueLeft.value));
 		robotControl.accelerate(2, (float) (robotAcceleration * accelerationValueLeft.value));
 		robotControl.accelerate(1, (float) (robotAcceleration * accelerationValueRight.value));

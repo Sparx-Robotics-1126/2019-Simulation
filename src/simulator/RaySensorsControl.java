@@ -107,10 +107,10 @@ public class RaySensorsControl extends AbstractControl{
 		
 		field.getField().collideWith(testRay, collisionList);
 		closestCollision = collisionList.getClosestCollision();
-		if(closestCollision != null) {
-			valueStore.value = closestCollision.getDistance() < 4 ? (4 - closestCollision.getDistance())/4 : 0;
+		if(closestCollision != null && closestCollision.getDistance() < 2) {
+			valueStore.value = closestCollision.getDistance() * 39.3701;
 		} else{
-			valueStore.value = 0.0;
+			valueStore.value = -1.0;
 		}
 		
 	}
@@ -158,28 +158,29 @@ public class RaySensorsControl extends AbstractControl{
 	}
 
 	private void createRays(){
-		Vector3f rayOrigin = getRayOrigin(.11f);
-		centerLeftSensor = new Ray(rayOrigin, new Vector3f(0, 0, -1));
-		rayOrigin = getRayOrigin(-.11f);
-		centerRightSensor = new Ray(rayOrigin, new Vector3f(0, 0, -1));
-		rayOrigin = getRayOrigin(FastMath.HALF_PI);
-		leftSensor = new Ray(rayOrigin, new Vector3f(0, 0, -1));
-		rayOrigin = getRayOrigin(-FastMath.HALF_PI);
-		rightSensor = new Ray(rayOrigin, new Vector3f(0, 0, -1));
-		rayOrigin = getRayOrigin(.7854f);
-		upperLeftPerpendicularSensor = new Ray(rayOrigin, SimUtilities.getPerpendicularDirection(robotControl, true));
-		rayOrigin = getRayOrigin(-.7854f);
-		upperRightPerpendicularSensor = new Ray(rayOrigin, SimUtilities.getPerpendicularDirection(robotControl, false));		
-		rayOrigin = getRayOrigin(2.356f);	
-		rearLeftPerpendicularSensor = new Ray(rayOrigin, SimUtilities.getPerpendicularDirection(robotControl, true));
-		rayOrigin = getRayOrigin(-2.356f);
-		rearRightPerpendicularSensor = new Ray(rayOrigin, SimUtilities.getPerpendicularDirection(robotControl, false));
+		centerLeftSensor = new Ray(getDownwardCenterRayOrigin(.4f), new Vector3f(0, 0, -1));
+		centerRightSensor = new Ray(getDownwardCenterRayOrigin(-.4f), new Vector3f(0, 0, -1));
+		leftSensor = new Ray(getDownwardEdgeRayOrigin(FastMath.HALF_PI), new Vector3f(0, 0, -1));
+		rightSensor = new Ray(getDownwardEdgeRayOrigin(-FastMath.HALF_PI), new Vector3f(0, 0, -1));
+		
+		upperLeftPerpendicularSensor = new Ray(getPerpendicularRayOrigin(.7854f), SimUtilities.getPerpendicularDirection(robotControl, true));
+		upperRightPerpendicularSensor = new Ray(getPerpendicularRayOrigin(-.7854f), SimUtilities.getPerpendicularDirection(robotControl, false));		
+		rearLeftPerpendicularSensor = new Ray(getPerpendicularRayOrigin(2.356f), SimUtilities.getPerpendicularDirection(robotControl, true));
+		rearRightPerpendicularSensor = new Ray(getPerpendicularRayOrigin(-2.356f), SimUtilities.getPerpendicularDirection(robotControl, false));
 	}
 
-	private Vector3f getRayOrigin(float angle) {
-		return SimUtilities.Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), angle, .25f, 0);
+	private Vector3f getPerpendicularRayOrigin(float angle) {
+		return SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), angle, .25f, -.15f);
 	}
 
+	private Vector3f getDownwardEdgeRayOrigin(float angle) {
+		return SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), angle, .3f, 0f);
+	}
+	
+	private Vector3f getDownwardCenterRayOrigin(float angle) {
+		return SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), angle, .15f, 0f);
+	}
+	
 	@Override
 	protected void controlRender(RenderManager arg0, ViewPort arg1) {
 
