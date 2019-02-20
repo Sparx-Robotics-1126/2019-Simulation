@@ -130,7 +130,7 @@ public class HatchLogic extends BaseAppState {
 	private boolean robotIsFacingHatch(RigidBodyControl hatch) {
 		float distanceInFront = 1f;
 		while(distanceInFront < HATCH_PICKUP_RANGE) {
-			if(SimUtilities.distanceTo(hatch.getPhysicsLocation(), SimUtilities.Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0f, distanceInFront, 0.4826f)) < 1f) {
+			if(SimUtilities.distanceTo(hatch.getPhysicsLocation(), SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0f, distanceInFront, 0.4826f)) < 1f) {
 				return true;
 			}
 			distanceInFront += 0.1;
@@ -208,7 +208,7 @@ public class HatchLogic extends BaseAppState {
 	}
 
 	private Vector3f createItemTranslationVector(VehicleControl robot, RigidBodyControl item) {
-		Vector3f hatchHoldingPosition = SimUtilities.Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0, HATCH_HOLDING_DISTANCE, .20f);//0.4826f);
+		Vector3f hatchHoldingPosition = SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0, HATCH_HOLDING_DISTANCE, .20f);//0.4826f);
 		Vector3f ret = new Vector3f();
 		Vector3f itemLoc = item.getPhysicsLocation();
 		ret.setX(hatchHoldingPosition.getX() - itemLoc.getX());

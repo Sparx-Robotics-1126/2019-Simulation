@@ -24,6 +24,12 @@ public class SimUtilities {
 		return resp;
 	}
 	
+	/**
+	 * Gets the vector representing a DIRECTION that is perpendicular to the robot, ***NOT A LOCATION***
+	 * @param robotControl - The vehicle control that the vector is found around
+	 * @param rightSide - Whether you want the direction off the right side or off the left side
+	 * @return - the vector of 3 floats representing the perpendicular direction
+	 */
 	public static Vector3f getPerpendicularDirection(VehicleControl robotControl, boolean rightSide) {
 		float itemZRot  = robotControl.getPhysicsRotation().toAngles(null)[2];
 		float itemXRot = robotControl.getPhysicsRotation().toAngles(null)[0];
@@ -75,7 +81,7 @@ public class SimUtilities {
 	 * @param height - the height at which the vector will be pointing to relative to objectsLoc
 	 * @return - Vector3f a certain distance at the angle specified
 	 */
-	public static Vector3f Griebel_DeweyMethod(Vector3f objectLoc, Quaternion objectRot, float angleChange, float offset, float height) {
+	public static Vector3f getPointAtAngleAndOffsetOfObject(Vector3f objectLoc, Quaternion objectRot, float angleChange, float offset, float height) {
 		float itemZRot  = objectRot.toAngles(null)[2];
 		float itemXRot = objectRot.toAngles(null)[0];
 		float xOffset = 0;

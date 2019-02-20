@@ -1,7 +1,5 @@
 package simulator;
 
-import java.util.Vector;
-
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.bullet.control.VehicleControl;
@@ -105,20 +103,17 @@ public class HabLogic extends BaseAppState{
 
 	@Override
 	protected void onDisable() {
-		// TODO Auto-generated method stub
 		//guess who's also not doing these
 	}
 
 	@Override
 	protected void onEnable() {
-		// TODO Auto-generated method stub
 		//guess who's also not doing these
 	}
 
 
 	@Override
 	protected void cleanup(Application arg0) {
-		// TODO Auto-generated method stub
 		//guess who's also not doing these
 	}
 }

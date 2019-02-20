@@ -43,7 +43,7 @@ public class FieldAppState extends BaseAppState {
 	private final float HAB_WIDTH = 1.625f;
 	private Spatial field;
 	private Node tapeTargets;
-	
+
 	@Override
 	protected void initialize(Application _app) {
 		app = (SimMain) _app;
@@ -97,50 +97,123 @@ public class FieldAppState extends BaseAppState {
 		tapeMaterial.setBoolean("UseMaterialColors", true);
 		tapeMaterial.setColor("Diffuse", ColorRGBA.White);
 		tapeTargets = new Node();
-		
+
 		for(int i = 0; i < 3; i++) { //Left and right in name scheme of geometry are of perspective of blue alliance wall
-			Geometry visionTarget = new Geometry("Vision Target Blue Left " + i, new Box(.05f, .4064f, .0001f));
-			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.05f, .4064f, .0001f)), 0);
+			Geometry visionTarget = new Geometry("Vision Target Blue Left " + i, new Box(.0381f, .4572f, .0001f));
+			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
 			visionTarget.addControl(visionCtrl);
 			visionTarget.setMaterial(tapeMaterial);
 			visionCtrl.setPhysicsLocation(new Vector3f((float)(.535*i-1.54), 1.2f, .06f));
 			app.getPhysicsSpace().add(visionCtrl);
 			tapeTargets.attachChild(visionTarget);
 		}
-		
+
 		for(int i = 0; i < 3; i++) {
-			Geometry visionTarget = new Geometry("Vision Target Blue Right " + i, new Box(.05f, .4064f, .0001f));
-			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.05f, .4064f, .0001f)), 0);
+			Geometry visionTarget = new Geometry("Vision Target Blue Right " + i, new Box(.0381f, .4572f, .0001f));
+			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
 			visionTarget.addControl(visionCtrl);
 			visionTarget.setMaterial(tapeMaterial);
 			visionCtrl.setPhysicsLocation(new Vector3f((float)(.535*i-1.54), -.93f, .06f));
 			app.getPhysicsSpace().add(visionCtrl);
 			tapeTargets.attachChild(visionTarget);
 		}
-		
+
 		for(int i = 0; i < 3; i++) {
-			Geometry visionTarget = new Geometry("Vision Target Red Left " + i, new Box(.05f, .4064f, .0001f));
-			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.05f, .4064f, .0001f)), 0);
+			Geometry visionTarget = new Geometry("Vision Target Red Left " + i, new Box(.0381f, .4572f, .0001f));
+			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
 			visionTarget.addControl(visionCtrl);
 			visionTarget.setMaterial(tapeMaterial);
 			visionCtrl.setPhysicsLocation(new Vector3f((float)(-.535*i+1.62), 1.28f, .06f));
 			app.getPhysicsSpace().add(visionCtrl);
 			tapeTargets.attachChild(visionTarget);
 		}
-		
+
 		for(int i = 0; i < 3; i++) {
-			Geometry visionTarget = new Geometry("Vision Target Red Right " + i, new Box(.05f, .4064f, .0001f));
-			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.05f, .4064f, .0001f)), 0);
+			Geometry visionTarget = new Geometry("Vision Target Red Right " + i, new Box(.0381f, .4572f, .0001f));
+			RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
 			visionTarget.addControl(visionCtrl);
 			visionTarget.setMaterial(tapeMaterial);
 			visionCtrl.setPhysicsLocation(new Vector3f((float)(-.535*i+1.62), -.93f, .06f));
 			app.getPhysicsSpace().add(visionCtrl);
 			tapeTargets.attachChild(visionTarget);
 		}
+
+		Geometry visionTarget = new Geometry("Vision Target Right Red Rocket 0", new Box(.0381f, .4572f, .0001f));
+		RigidBodyControl visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
+		visionTarget.addControl(visionCtrl);
+		visionTarget.setMaterial(tapeMaterial);
+		visionCtrl.setPhysicsLocation(new Vector3f(1.64f, -3.1f, .06f));
+		visionCtrl.setPhysicsRotation(new Quaternion(0f, 0f, 0.5639837f, 0.8257859f));
+		app.getPhysicsSpace().add(visionCtrl);
+		tapeTargets.attachChild(visionTarget);
+
+		visionTarget = new Geometry("Vision Target Right Red Rocket 1", new Box(.0381f, .4572f, .0001f));
+		visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
+		visionTarget.addControl(visionCtrl);
+		visionTarget.setMaterial(tapeMaterial);
+		visionCtrl.setPhysicsLocation(new Vector3f(3.1099997f, -3.0699902f, 0.06f));
+		visionCtrl.setPhysicsRotation(new Quaternion(0.0f, 0.0f, -0.50245297f, 0.86460453f));
+		app.getPhysicsSpace().add(visionCtrl);
+		tapeTargets.attachChild(visionTarget);
+		
+		visionTarget = new Geometry("Vision Target Right Blue Rocket 0", new Box(.0381f, .4572f, .0001f));
+		visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
+		visionTarget.addControl(visionCtrl);
+		visionTarget.setMaterial(tapeMaterial);
+		visionCtrl.setPhysicsLocation(new Vector3f(-3.0899992f, -3.0699902f, 0.06f));
+		visionCtrl.setPhysicsRotation(new Quaternion(0f, 0f, 0.52111036f, 0.8534893f));
+		app.getPhysicsSpace().add(visionCtrl);
+		tapeTargets.attachChild(visionTarget);		
+		
+		visionTarget = new Geometry("Vision Target Right Blue Rocket 1", new Box(.0381f, .4572f, .0001f));
+		visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
+		visionTarget.addControl(visionCtrl);
+		visionTarget.setMaterial(tapeMaterial);
+		visionCtrl.setPhysicsLocation(new Vector3f(-1.5899998f, -3.16999f, 0.06f));
+		visionCtrl.setPhysicsRotation(new Quaternion(0.0f, 0.0f, -0.5794044f, 0.81504023f));
+		app.getPhysicsSpace().add(visionCtrl);
+		tapeTargets.attachChild(visionTarget);		
+		
+		visionTarget = new Geometry("Vision Target Left Blue Rocket 0", new Box(.0381f, .4572f, .0001f));
+		visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
+		visionTarget.addControl(visionCtrl);
+		visionTarget.setMaterial(tapeMaterial);
+		visionCtrl.setPhysicsLocation(new Vector3f(-3.0799992f, 3.37001f, 0.06f));
+		visionCtrl.setPhysicsRotation(new Quaternion(0.0f, 0.0f, 0.8571108f, 0.5151319f));
+		app.getPhysicsSpace().add(visionCtrl);
+		tapeTargets.attachChild(visionTarget);		
+		
+		visionTarget = new Geometry("Vision Target Left Blue Rocket 1", new Box(.0381f, .4572f, .0001f));
+		visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
+		visionTarget.addControl(visionCtrl);
+		visionTarget.setMaterial(tapeMaterial);
+		visionCtrl.setPhysicsLocation(new Vector3f(-1.5899998f, 3.530008f, 0.06f));
+		visionCtrl.setPhysicsRotation(new Quaternion(0.0f, 0.0f, 0.57754177f, 0.8163611f));
+		app.getPhysicsSpace().add(visionCtrl);
+		tapeTargets.attachChild(visionTarget);		
+		
+		visionTarget = new Geometry("Vision Target Left Red Rocket 0", new Box(.0381f, .4572f, .0001f));
+		visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
+		visionTarget.addControl(visionCtrl);
+		visionTarget.setMaterial(tapeMaterial);
+		visionCtrl.setPhysicsLocation(new Vector3f(1.6000007f, 3.4400082f, 0.06f));
+		visionCtrl.setPhysicsRotation(new Quaternion(0.0f, 0.0f, -0.54787135f, 0.83656263f));
+		app.getPhysicsSpace().add(visionCtrl);
+		tapeTargets.attachChild(visionTarget);
+		
+		visionTarget = new Geometry("Vision Target Left Red Rocket 1", new Box(.0381f, .4572f, .0001f));
+		visionCtrl = new RigidBodyControl(new BoxCollisionShape(new Vector3f(.0381f, .4572f, .0001f)), 0);
+		visionTarget.addControl(visionCtrl);
+		visionTarget.setMaterial(tapeMaterial);
+		visionCtrl.setPhysicsLocation(new Vector3f(3.1099997f, 3.4300082f, 0.06f));
+		visionCtrl.setPhysicsRotation(new Quaternion(0f, 0f, 0.52111036f, 0.8534893f));
+		app.getPhysicsSpace().add(visionCtrl);
+		tapeTargets.attachChild(visionTarget);		
 		
 		rootNode.attachChild(tapeTargets);
+
 	}
-	
+
 	public Spatial getField() {
 		return field;
 	}	
@@ -148,7 +221,7 @@ public class FieldAppState extends BaseAppState {
 	public Node getTapeMarks() {
 		return tapeTargets;
 	}
-	
+
 	@Override
 	protected void cleanup(Application _app) {
 
@@ -310,10 +383,10 @@ public class FieldAppState extends BaseAppState {
 		cargoCtrl.setFriction(0.1f);
 		cargoCtrl.setDamping(0.01f, 0.01f);
 
-		
+
 	}
 
-	
+
 	private void createHatch(float x, float y, float z) {
 		hatch = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
 		hatch.scale(.5f);
