@@ -6,6 +6,7 @@ import com.jme3.asset.AssetManager;
 import com.jme3.bullet.collision.shapes.CapsuleCollisionShape;
 import com.jme3.bullet.collision.shapes.CollisionShape;
 import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
+import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.objects.PhysicsRigidBody;
 import com.jme3.bullet.joints.HingeJoint;
@@ -106,7 +107,7 @@ public class Robot extends BaseAppState {
 				leadScrew.setLocalTranslation(0f, 2f, -0.2f);
 				hatchLogic.dropHatch();
 //				leadScrewPosition = 2f;
-				habLifter1.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
+				habLifter.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
 				hatchLogic.dropHatch();
 			} else if (name.equals("pickupHatch") && pressed) {
 				hatchLogic.pickupHatch();
@@ -176,7 +177,7 @@ public class Robot extends BaseAppState {
 		app.getPhysicsSpace().add(habLifterCtrl);
 		rootNode.attachChild(habLifter);
 		habClimberNode.attachChild(habLifter);
-		habLifterCtrl.setPhysicsLocation(SimUtilities.Griebel_DeweyMethod(robotControl.getPhysicsLocation(),
+		habLifterCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(),
 				robotControl.getPhysicsRotation(), 0f, 0.65f, 0.47f));
 		
         joint = new HingeJoint(robotControl, habLifterCtrl, new Vector3f(robotControl.getPhysicsLocation()), 
