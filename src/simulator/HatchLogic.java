@@ -1,7 +1,6 @@
 package simulator;
 
 import java.util.ArrayList;
-
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
 import com.jme3.bullet.control.RigidBodyControl;
@@ -16,7 +15,7 @@ import com.jme3.math.Vector3f;
 
 //WHAT DOESN'T WORK:
 //Sometimes when the hatch attaches to a wall it wiggles or comes off
-//Probably a bunch of other stuff but thats all i could find lmk if other stuff doesn't work
+//Probably a bunch of other stuff but thats all i could find lmk if you find anything
 //Sincerely- the bug exterminator
 public class HatchLogic extends BaseAppState {
 	private SimMain app;
@@ -30,7 +29,7 @@ public class HatchLogic extends BaseAppState {
 			new Vector3f(-1.023f, -0.58888614f, 0.4826f),
 			new Vector3f(-1.53f, -0.58888614f, 0.4826f), 
 
-			//supposed to be right side
+			//hatch positions on right side
 			new Vector3f(1.6084193f, 0.9f, 0.4826f),
 			new Vector3f(1.0872313f, 0.9f, 0.4826f),
 			new Vector3f(0.54335785f, 0.9f, 0.4826f),
@@ -130,7 +129,6 @@ public class HatchLogic extends BaseAppState {
 
 	private boolean robotIsFacingHatch(RigidBodyControl hatch) {
 		float distanceInFront = 1f;
-		//		Vector3f rotCol = robotControl.getPhysicsRotation().getRotationColumn(2);
 		while(distanceInFront < HATCH_PICKUP_RANGE) {
 			if(SimUtilities.distanceTo(hatch.getPhysicsLocation(), SimUtilities.Griebel_DeweyMethod(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0f, distanceInFront, 0.4826f)) < 1f) {
 				return true;
@@ -189,7 +187,7 @@ public class HatchLogic extends BaseAppState {
 		linkedHatch.setPhysicsRotation(translateQuat);
 		if(linkedHatch.getPhysicsLocation().getZ() > 1f) {
 			//Every once and a while the hatch goes too high
-			//idk why but this fixes is so don't remove it!
+			//idk why but this fixes it so don't remove it!
 			translatingHatch = false;
 		}
 	}
