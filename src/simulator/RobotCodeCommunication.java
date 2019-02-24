@@ -9,7 +9,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import simulator.PairedDoubleFactory.PairedDouble;
 
 public class RobotCodeCommunication extends Thread{
-	private final NetworkTable  table = NetworkTableInstance.getDefault().getTable("CommsTable");
+	private final NetworkTable table = NetworkTableInstance.getDefault().getTable("CommsTable");
 	private boolean running = false;
 	private static RobotCodeCommunication instance;
 
@@ -78,6 +78,14 @@ public class RobotCodeCommunication extends Thread{
 	 */
 	public boolean isStarted() {
 		return running;
+	}
+	
+	public void close() {
+		if(running) {
+			running = !running;
+			NetworkTableInstance.getDefault().stopClient();
+		}
+		this.interrupt();
 	}
 
 	public void run() {  

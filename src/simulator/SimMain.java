@@ -60,6 +60,14 @@ public class SimMain extends SimpleApplication {
 		return bulletAppState.getSpeed() == 0f;
 	}
 	
+	public void destroy() {
+		super.destroy();
+		RobotCodeCommunication connection = RobotCodeCommunication.getInstance();
+		if(connection.isStarted()) {
+			connection.close();
+		}
+	}
+	
 	public static void main(String[] args) {
 		SimMain app = new SimMain();
 		app.start();
