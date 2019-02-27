@@ -55,7 +55,14 @@ public class FieldAppState extends BaseAppState {
 		createVisionTargets();
 		createHabs();
 		createCargoPieces();
-		createHatch(1f, -2f, 0.5f);
+		
+		createInitialHatch(-7.945072f, -3.1896896f, 0.5169704f);
+		createInitialHatch(-7.923836f, 3.497839f, 0.5325684f);
+		createInitialHatch(7.945072f, -3.1896896f, 0.5169704f);
+		createInitialHatch(7.923836f, 3.497839f, 0.5325684f);
+		
+		createHatch(-2f, -2f, 0.5f);
+		
 		addLight();
 	}
 
@@ -399,6 +406,22 @@ public class FieldAppState extends BaseAppState {
 		app.getPhysicsSpace().add(hatch);
 		hatchCtrl.setFriction(0.1f);
 		hatchCtrl.setDamping(0.01f, 0.01f);
+		hatchCtrlList.add(hatchCtrl);
+	}
+	
+	private void createInitialHatch(float x, float y, float z) {
+		hatch = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
+		hatch.scale(.5f);
+		rootNode.attachChild(hatch);
+		hatch.move(x,y,z);
+		hatch.rotate(0, 0, FastMath.PI / 2);
+		CollisionShape hatchShape = CollisionShapeFactory.createDynamicMeshShape(hatch);
+		hatchCtrl = new RigidBodyControl(hatchShape, 1f);
+		hatch.addControl(hatchCtrl);
+		app.getPhysicsSpace().add(hatch);
+		hatchCtrl.setFriction(0.1f);
+		hatchCtrl.setDamping(0.01f, 0.01f);
+		hatchCtrl.setGravity(new Vector3f(0f, 0f, 0f));
 		hatchCtrlList.add(hatchCtrl);
 	}
 

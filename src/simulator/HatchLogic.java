@@ -14,7 +14,7 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
 //WHAT DOESN'T WORK:
-//Sometimes when the hatch attaches to a wall it wiggles or comes off
+//When you hit the hatch while it's on a wall it wiggles
 //Probably a bunch of other stuff but thats all i could find lmk if you find anything
 //Sincerely- the bug exterminator
 public class HatchLogic extends BaseAppState {
@@ -84,15 +84,10 @@ public class HatchLogic extends BaseAppState {
 	@Override
 	public void update(float tpf) {
 		if(linkedHatch != null) {
-			
 			moveHatch();
 			if(translatingHatch) {
 				translatingHatch = shouldTranslate();
 			}
-			//			this condition never got triggered so I removed it for efficiency, we might need to add it back but idk sooo
-			//			if(utilities.distanceTo(robotControl.getPhysicsLocation(), linkedHatch.getPhysicsLocation()) > HATCH_PICKUP_RANGE) {
-			//				unlinkHatch();
-			//			}
 		}
 	}
 
@@ -123,6 +118,7 @@ public class HatchLogic extends BaseAppState {
 		}
 		if(operatingCtrl != null) {
 			linkedHatch = operatingCtrl;
+			linkedHatch.setKinematic(false);
 			linkedHatch.setGravity(new Vector3f(0, 0, 0));
 		}
 	}
@@ -143,14 +139,15 @@ public class HatchLogic extends BaseAppState {
 	private void unlinkHatch() {
 		if(linkedHatch != null) {
 			Vector3f dropoffPos = closestHatchDropoffPosition();
+			linkedHatch.setLinearVelocity(new Vector3f(0f, 0f, 0f));
+			linkedHatch.setAngularVelocity(new Vector3f(0f, 0f, 0f));
 			if(dropoffPos == null) {
 				linkedHatch.setGravity(new Vector3f(0, 0, Z_GRAVITY));
 			} else {
 				linkedHatch.setPhysicsLocation(dropoffPos);
 				linkedHatch.setPhysicsRotation(hatchDropoffRotation());
 			}
-			linkedHatch.setLinearVelocity(new Vector3f(0f, 0f, 0f));
-			linkedHatch = null;
+			linkedHatch	= null;
 			translatingHatch = true;
 		}
 	}
@@ -195,7 +192,7 @@ public class HatchLogic extends BaseAppState {
 	private boolean shouldTranslate() {
 //		System.out.println(utilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()));
 		if(SimUtilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()) < 0.75f) {
-			return false;	
+			return false;
 		} else {
 			return true;
 		}

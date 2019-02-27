@@ -10,6 +10,20 @@ public class SimUtilities {
 	 * Feel free to add to it if you have other useful stuff
 	 */
 	
+	/**
+	 * Determines whether 2 Vectors (usually position or rotation) are close to each other
+	 * @param loc1 - the first vector
+	 * @param loc2 - the second vector
+	 * @param tolerance - the maximum distance apart that they can be
+	 * @return whether or not the distance between the two vectors are in the specified tolerance
+	 */
+	public static boolean vectorsAreSortaClose(Vector3f loc1, Vector3f loc2, float tolerance) {
+		if(distanceTo(loc1, loc2) > tolerance) {
+			return false;
+		} else {
+			return true;
+		}
+	}
 	
 	/**
 	 * Gives Euler angles for a quaternion in string form (good for system.out printing)
@@ -73,7 +87,7 @@ public class SimUtilities {
 	}
 	
 	/**
-	 * Gets a position a certain distance in front of the "head" of an object
+	 * Gets a position a specified distance in front of a specified angle of an object
 	 * @param objectLoc - location of object (Vector3f)
 	 * @param objectRot - rotation of object (Quaternion)
 	 * @param angleChange - The angle you want the object to be held at along arc in radians
