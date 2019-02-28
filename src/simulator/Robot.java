@@ -105,14 +105,16 @@ public class Robot extends BaseAppState {
 				accelerationValueRight.value = 0;
 				accelerationValueLeft.value = 0;
 				leadScrew.setLocalTranslation(0f, 2f, -0.2f);
-				hatchLogic.dropHatch();
 //				leadScrewPosition = 2f;
 				habLifter.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
 				hatchLogic.dropHatch();
 			} else if (name.equals("pickupHatch") && pressed) {
-				hatchLogic.pickupHatch();
-			} else if (name.equals("dropHatch") && pressed) {
-				hatchLogic.dropHatch();
+				if(hatchLogic.getHatch() == null) {
+					hatchLogic.pickupHatch();
+				} else {
+					hatchLogic.dropHatch();
+				}
+				
 			}
 			else if(name.equals("pickupArm") && pressed) {
 				
@@ -369,9 +371,11 @@ public class Robot extends BaseAppState {
 		manager.addMapping("lifterUp", new KeyTrigger(KeyInput.KEY_X));
 		manager.addMapping("leadScrewDown", new KeyTrigger(KeyInput.KEY_C));
 		manager.addMapping("leadScrewUp", new KeyTrigger(KeyInput.KEY_V));
+		manager.addMapping("pickupHatch", new KeyTrigger(KeyInput.KEY_W));
+
 
 		manager.addListener(actionListener, "leftDrivesForward", "leftDrivesBackward", "rightDrivesForward",
-				"rightDrivesBackward", "pause", "reset", "pickupHatch", "dropHatch", "printInfo", "lifterDown", "lifterUp", "leadScrewUp", "leadScrewDown");
+				"rightDrivesBackward", "pause", "reset", "pickupHatch", "printInfo", "lifterDown", "lifterUp", "leadScrewUp", "leadScrewDown");
 		manager.addListener(keyListener, "lifterDown", "lifterUp", "leadScrewUp", "leadScrewDown");
 	}
 
