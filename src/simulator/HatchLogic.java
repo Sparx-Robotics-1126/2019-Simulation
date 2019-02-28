@@ -125,6 +125,7 @@ public class HatchLogic extends BaseAppState {
 			} else {
 				linkedHatch.setPhysicsLocation(dropoffPos);
 				linkedHatch.setPhysicsRotation(hatchDropoffRotation());
+				app.getPhysicsSpace().remove(linkedHatch);
 			}
 			linkedHatch	= null;
 			translatingHatch = true;
