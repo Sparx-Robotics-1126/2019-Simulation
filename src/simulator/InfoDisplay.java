@@ -68,7 +68,7 @@ public class InfoDisplay extends BaseAppState {
 		Vector3f newPosition = robot.getRobotBase().getWorldTranslation();
 		timePast += tpf;
 		totalSeconds += tpf;
-
+		
 		if (timePast > 0.5) {
 			if (lastPosition != null) {
 				float distance = newPosition.distance(lastPosition);
