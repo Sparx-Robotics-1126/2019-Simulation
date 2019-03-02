@@ -2,6 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 <entry key="rightSideDrives">12-11-10-SpeedControllerGroup</entry>
+<entry key="currentLeftEncoder">12-13_Encoder</entry>
 <entry key="centerLeftSensor">15_DigitalInput</entry>
 <entry key="forwardRightPerpendicularSensor">21_Lidar</entry>
 <entry key="centerRightSensor">16_DigitalInput</entry>
@@ -13,4 +14,5 @@
 <entry key="rearRightPerpendicularSensor">20_Lidar</entry>
 <entry key="leftSideDrives">3-2-1-SpeedControllerGroup</entry>
 <entry key="leftEncoder">12-13_Encoder</entry>
+<entry key="currentRightEncoder">10-11_Encoder</entry>
 </properties>

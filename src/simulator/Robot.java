@@ -106,7 +106,7 @@ public class Robot extends BaseAppState {
 				accelerationValueRight.value = 0;
 				accelerationValueLeft.value = 0;
 				leadScrew.setLocalTranslation(0f, 2f, -0.2f);
-//				leadScrewPosition = 2f;
+				leadScrewPosition = 2f;
 				habLifter.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
 				hatchLogic.dropHatch();
 			} else if (name.equals("pickupHatch") && pressed) {
@@ -177,9 +177,9 @@ public class Robot extends BaseAppState {
 				new Vector3f(-.2f, 0f, 0f));
 		habLifterCtrl = new RigidBodyControl(habLifterShape, 5);
 		habLifter.addControl(habLifterCtrl);
-//		app.getPhysicsSpace().add(habLifterCtrl);
-//		rootNode.attachChild(habLifter);
-//		habClimberNode.attachChild(habLifter);
+		app.getPhysicsSpace().add(habLifterCtrl);
+		rootNode.attachChild(habLifter);
+		habClimberNode.attachChild(habLifter);
 		habLifterCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(),
 				robotControl.getPhysicsRotation(), 0f, 0.65f, 0.47f));
 		
@@ -187,7 +187,7 @@ public class Robot extends BaseAppState {
         		new Vector3f(habLifterCtrl.getPhysicsLocation()), Vector3f.UNIT_X, Vector3f.UNIT_X);
    
         joint.setLimit(FastMath.HALF_PI, FastMath.PI);
-//        app.getPhysicsSpace().add(joint);
+        app.getPhysicsSpace().add(joint);
 
 		createWheels();
 
@@ -196,7 +196,7 @@ public class Robot extends BaseAppState {
 		leadScrew.scale(0.3f);
 		leadScrew.rotate(FastMath.HALF_PI * 2, 0, 0);
 		rootNode.attachChild(leadScrew);
-//		habClimberNode.attachChild(leadScrew);
+		habClimberNode.attachChild(leadScrew);
 
 		float stiffness = 800.0f;
 		float compValue = .6f;
@@ -207,7 +207,7 @@ public class Robot extends BaseAppState {
 		robotControl.setMaxSuspensionForce(1000.0f);
 
 		addWheels();
-//		robotNode.attachChild(habClimberNode);
+		robotNode.attachChild(habClimberNode);
 		rootNode.attachChild(robotNode);
 		app.getPhysicsSpace().add(robotNode);
 
