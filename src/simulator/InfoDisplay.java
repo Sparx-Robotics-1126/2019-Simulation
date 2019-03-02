@@ -53,7 +53,7 @@ public class InfoDisplay extends BaseAppState {
 		int viewPortHeight = guiViewPort.getCamera().getHeight();
 		int viewPortWidth = guiViewPort.getCamera().getWidth();
 		float infoQuadHeight = (viewPortHeight / 4);
-		float infoQuadWidth = (viewPortWidth / 7);
+		float infoQuadWidth = (viewPortWidth / 6.5f );
 
 		BitmapFont guiFont = assetManager.loadFont(enqBitmapFontAssetName);
 		scrollingBitmapText = new BitmapText(guiFont, false);

@@ -39,9 +39,11 @@ public class Robot extends BaseAppState {
 	private Spatial leadScrew;
 	private VehicleControl robotControl;
 	private RigidBodyControl habLifterCtrl;
+	@SuppressWarnings("unused")
 	private RigidBodyControl leadScrewCtrl;
 	private CollisionShape robotShape;
 	private CollisionShape habLifterShape;
+	@SuppressWarnings("unused")
 	private CollisionShape leadScrewShape;
 	private final float Z_GRAVITY = -9.81f;
 	private PairedDouble accelerationValueLeft = PairedDoubleFactory.getInstance().createPairedDouble("leftSideDrives",
@@ -56,7 +58,9 @@ public class Robot extends BaseAppState {
 	private Vector3f lastRightLocation = Vector3f.ZERO;
 	private float leadScrewPosition = -.75f;
 	private float leadScrewChange = 0.5f;
+	@SuppressWarnings("unused")
 	private boolean lifterMoveDown = false;
+	@SuppressWarnings("unused")
 	private boolean lifterMoveUp = false;
 	private boolean leadScrewDown = false;
 	private boolean leadScrewUp = false;
@@ -105,9 +109,10 @@ public class Robot extends BaseAppState {
 				
 				accelerationValueRight.value = 0;
 				accelerationValueLeft.value = 0;
-				leadScrew.setLocalTranslation(0f, 2f, -0.2f);
-//				leadScrewPosition = 2f;
+				leadScrew.setLocalTranslation(0f, -.75f, -0.2f);
+// 				leadScrewPosition = 2f;
 				habLifter.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
+				habLifter.setLocalTranslation(-.15f, -.02f, .3f);
 				hatchLogic.dropHatch();
 			} else if (name.equals("pickupHatch") && pressed) {
 				if(hatchLogic.getHatch() == null) {
@@ -177,17 +182,17 @@ public class Robot extends BaseAppState {
 				new Vector3f(-.2f, 0f, 0f));
 		habLifterCtrl = new RigidBodyControl(habLifterShape, 5);
 		habLifter.addControl(habLifterCtrl);
-//		app.getPhysicsSpace().add(habLifterCtrl);
-//		rootNode.attachChild(habLifter);
-//		habClimberNode.attachChild(habLifter);
+ 		app.getPhysicsSpace().add(habLifterCtrl);
+ 		rootNode.attachChild(habLifter);
+ 		habClimberNode.attachChild(habLifter);
 		habLifterCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(),
 				robotControl.getPhysicsRotation(), 0f, 0.65f, 0.47f));
 		
-        joint = new HingeJoint(robotControl, habLifterCtrl, new Vector3f(robotControl.getPhysicsLocation()), 
+			joint = new HingeJoint(robotControl, habLifterCtrl, new Vector3f(robotControl.getPhysicsLocation()), 
         		new Vector3f(habLifterCtrl.getPhysicsLocation()), Vector3f.UNIT_X, Vector3f.UNIT_X);
    
-        joint.setLimit(FastMath.HALF_PI, FastMath.PI);
-//        app.getPhysicsSpace().add(joint);
+			joint.setLimit(FastMath.HALF_PI * 2, FastMath.PI);
+			app.getPhysicsSpace().add(joint);
 
 		createWheels();
 
@@ -196,7 +201,7 @@ public class Robot extends BaseAppState {
 		leadScrew.scale(0.3f);
 		leadScrew.rotate(FastMath.HALF_PI * 2, 0, 0);
 		rootNode.attachChild(leadScrew);
-//		habClimberNode.attachChild(leadScrew);
+ 		habClimberNode.attachChild(leadScrew);
 
 		float stiffness = 800.0f;
 		float compValue = .6f;
@@ -207,7 +212,7 @@ public class Robot extends BaseAppState {
 		robotControl.setMaxSuspensionForce(1000.0f);
 
 		addWheels();
-//		robotNode.attachChild(habClimberNode);
+ 		robotNode.attachChild(habClimberNode);
 		rootNode.attachChild(robotNode);
 		app.getPhysicsSpace().add(robotNode);
 
@@ -396,10 +401,10 @@ public class Robot extends BaseAppState {
 				}
 			} else {
 				if (name.equals("lifterDown")) {
-//					joint.enableMotor(false, 0f, 2f);
-//					habLifterCtrl.setPhysicsRotation(habLifterCtrl.getPhysicsRotation());
+ 					joint.enableMotor(false, 0f, 2f);
+ 					habLifterCtrl.setPhysicsRotation(habLifterCtrl.getPhysicsRotation());
 				} else if (name.equals("lifterUp")) {
-//					joint.enableMotor(false, 0f, 2f);
+ 					joint.enableMotor(false, 0f, 2f);
 					
 				} else if (name.equals("leadScrewDown")) {
 					leadScrewDown = false;
