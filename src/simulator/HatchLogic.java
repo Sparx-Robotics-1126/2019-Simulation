@@ -59,26 +59,6 @@ public class HatchLogic extends BaseAppState {
 	private final float HATCH_PICKUP_RANGE = 2f;
 	private boolean translatingHatch = true;
 	Robot robot;
-	private final ActionListener actionListener = new ActionListener() {
-
-		@Override
-		public void onAction(String name, boolean pressed, float tpf) {
-			if(name.equals("reset") && pressed) {
-				if(linkedHatch != null) {
-					unlinkHatch();
-				}
-			}
-
-			else if(name.equals("pickupHatch") && pressed) {
-				detectHatch();
-			} else if(name.equals("dropHatch") && pressed) {
-				if(linkedHatch != null) {
-					unlinkHatch();
-				}
-			}
-		}
-	};
-
 
 
 	@Override
@@ -94,7 +74,6 @@ public class HatchLogic extends BaseAppState {
 	@Override
 	protected void initialize(Application _app) {
 		app = (SimMain) _app;
-		getControls();
 		robot = app.getStateManager().getState(Robot.class);
 		robotControl = robot.getRobotControl();
 	}
@@ -146,6 +125,7 @@ public class HatchLogic extends BaseAppState {
 			} else {
 				linkedHatch.setPhysicsLocation(dropoffPos);
 				linkedHatch.setPhysicsRotation(hatchDropoffRotation());
+				app.getPhysicsSpace().remove(linkedHatch);
 			}
 			linkedHatch	= null;
 			translatingHatch = true;
@@ -215,23 +195,6 @@ public class HatchLogic extends BaseAppState {
 		return ret;
 	}
 
-	private void getControls() {
-		InputManager manager = app.getInputManager();
-
-		manager.addMapping("leftDrivesForward", new KeyTrigger(KeyInput.KEY_Q));
-		manager.addMapping("leftDrivesBackward", new KeyTrigger(KeyInput.KEY_A));
-		manager.addMapping("rightDrivesForward", new KeyTrigger(KeyInput.KEY_E));
-		manager.addMapping("rightDrivesBackward", new KeyTrigger(KeyInput.KEY_D));
-		manager.addMapping("pause", new KeyTrigger(KeyInput.KEY_P));
-		manager.addMapping("reset", new KeyTrigger(KeyInput.KEY_R));
-		manager.addMapping("pickupHatch", new KeyTrigger(KeyInput.KEY_W));
-		manager.addMapping("dropHatch", new KeyTrigger(KeyInput.KEY_S));
-		manager.addMapping("printInfo", new KeyTrigger(KeyInput.KEY_Z));
-
-		manager.addListener(actionListener, "leftDrivesForward", "leftDrivesBackward",
-				"rightDrivesForward", "rightDrivesBackward", "pause", "reset", "pickupHatch",
-				"dropHatch", "printInfo");
-	}
 
 	public RigidBodyControl getHatch() {
 		return linkedHatch;
