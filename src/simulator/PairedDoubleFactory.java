@@ -115,11 +115,11 @@ public class PairedDoubleFactory {
 			doubles.add(pairedDouble);
 		}
 		if(connectionNames.contains(connectionName)) {
-			for(PairedDouble dbl: doubles) {
-				if(dbl.getConnection().equals(connectionName)) {
-					return false;
-				}
-			}
+//			for(PairedDouble dbl: doubles) {
+//				if(dbl.getConnection().equals(connectionName)) {
+//					return false;
+//				}
+//			}
 			pairedDouble.setConnection(connectionName);
 			prop.setProperty(pairedDouble.getName(), connectionName);
 			return true;
