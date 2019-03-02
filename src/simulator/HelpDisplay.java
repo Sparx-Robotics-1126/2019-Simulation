@@ -51,7 +51,7 @@ public class HelpDisplay extends BaseAppState {
 
 		int viewPortHeight = guiViewPort.getCamera().getHeight();
 		int viewPortWidth = guiViewPort.getCamera().getWidth();
-		float helpQuadHeight = (viewPortHeight / 2);
+		float helpQuadHeight = (viewPortHeight / 2.1f );
 		float helpQuadWidth = (viewPortWidth / 5);
 		float helpQuadStartX = guiViewPort.getCamera().getWidth() - helpQuadWidth;
 		float helpQuadStartY = guiViewPort.getCamera().getHeight() - helpQuadHeight;
@@ -73,7 +73,7 @@ public class HelpDisplay extends BaseAppState {
 				"zoom = middle mouse\n" + 
 				"pick up hatch = w\n" + 
 				"drop hatch = s\n" + 
-				"debug window = ` or t/n" +
+				"debug window = `\n" +
 				"lift arms down = z\n" +
 				"lift arms up = x\n" +
 				"lead screw down = c\n" +

@@ -83,13 +83,15 @@ public class HatchLogic extends BaseAppState {
 		float smallest = Float.MAX_VALUE;
 		RigidBodyControl operatingCtrl = null;
 
+		
 		for(RigidBodyControl ctrl: hatchList) {
 			float distance = SimUtilities.distanceTo(robotControl.getPhysicsLocation(), ctrl.getPhysicsLocation());
-
-			if(distance < HATCH_PICKUP_RANGE && distance < smallest && robotIsFacingHatch(ctrl)) {
+			if(distance < HATCH_PICKUP_RANGE && 
+			   distance < smallest && 
+			   robotIsFacingHatch(ctrl) &&
+			   ctrl.getPhysicsLocation().getZ() > 0.5f) {
 				smallest = distance;
 				operatingCtrl = ctrl;
-
 			}
 		}
 		if(operatingCtrl != null) {
@@ -123,6 +125,7 @@ public class HatchLogic extends BaseAppState {
 				linkedHatch.setPhysicsLocation(dropoffPos);
 				linkedHatch.setPhysicsRotation(hatchDropoffRotation());
 				app.getPhysicsSpace().remove(linkedHatch);
+				app.getStateManager().getState(FieldAppState.class).removeFromCtrlList(linkedHatch);			
 			}
 			linkedHatch	= null;
 			translatingHatch = true;
