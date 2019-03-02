@@ -22,6 +22,7 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
+import com.sun.media.jfxmedia.control.VideoDataBuffer;
 
 public class FieldAppState extends BaseAppState {
 	private SimMain app;
@@ -31,9 +32,6 @@ public class FieldAppState extends BaseAppState {
 	private Spatial hatch;
 	private ArrayList<RigidBodyControl> cargoCtrlList = new ArrayList<RigidBodyControl>();
 	private ArrayList<RigidBodyControl> hatchCtrlList = new ArrayList<RigidBodyControl>();
-	public ArrayList<RigidBodyControl> getHatchCtrlList() {
-		return hatchCtrlList;
-	}
 	private final float CARGO_VARIANCE = 0.0254f; // +- .5 inch for a total of 1 inch.
 	private final float CARGO_RADIUS  = 0.3302f/2f - CARGO_VARIANCE; // 
 	private final float CARGO_SPACING = 0.35f;
@@ -424,7 +422,14 @@ public class FieldAppState extends BaseAppState {
 		hatchCtrl.setGravity(new Vector3f(0f, 0f, 0f));
 		hatchCtrlList.add(hatchCtrl);
 	}
-
+	
+	public ArrayList<RigidBodyControl> getHatchCtrlList() {
+		return hatchCtrlList;
+	}
+	
+	public void removeFromCtrlList(RigidBodyControl ctrlToRemove) {
+		hatchCtrlList.remove(ctrlToRemove);
+	}
 
 
 	private void addLight() {
