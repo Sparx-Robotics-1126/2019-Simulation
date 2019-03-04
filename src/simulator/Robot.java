@@ -28,9 +28,9 @@ import com.jme3.scene.Geometry;
 import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Cylinder;
-
 import simulator.PairedDoubleFactory.PairedDouble;
 import sun.awt.im.InputMethodJFrame;
+
 
 public class Robot extends BaseAppState {
 	protected static final PhysicsRigidBody habLifter1Ctrl = null;
@@ -108,8 +108,8 @@ public class Robot extends BaseAppState {
 
 			else if (name.equals("reset") && pressed) {
 				robotControl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
-				robotControl.setPhysicsLocation(new Vector3f(4f, 0f, 2f));
-
+				robotControl.setPhysicsLocation(new Vector3f(4f, 0f, 1.5f));
+				
 				accelerationValueRight.value = 0;
 				accelerationValueLeft.value = 0;
 				hatchLogic.dropHatch();
@@ -151,7 +151,7 @@ public class Robot extends BaseAppState {
 
 		app = (SimMain) _app;
 		Node rootNode = app.getRootNode();
-		app.pause();
+		
 
 		app.getPhysicsSpace().setGravity(new Vector3f(0f, 0f, Z_GRAVITY));
 		assetManager = app.getAssetManager();
@@ -177,49 +177,54 @@ public class Robot extends BaseAppState {
 		rays = new RaySensorsControl(app, robotControl);
 		robotNode.addControl(rays);
 		
+		
 		habClimberNode = new Node("climbingNode");
 		habLifter = assetManager.loadModel("Models/RobotBase/habLifter1.blend");
 		habLifter.scale(0.15f);
-		CompoundCollisionShape habLifterShape = new CompoundCollisionShape();
-		//		Geometry lifter_geo = (Geometry) ((Node) ((Node) ((Node) habLifter).getChild(0)).getChild(0)).getChild(0);
 		habLifterCtrl = new RigidBodyControl();
 		habLifter.addControl(habLifterCtrl);
 		app.getPhysicsSpace().add(habLifterCtrl);
-		rootNode.attachChild(habLifter);
+		
 		habLifterCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(),
-				robotControl.getPhysicsRotation(), 0f, 0.65f, 0.47f));
-		habJoint = new HingeJoint(robotControl, habLifterCtrl, new Vector3f(robotControl.getPhysicsLocation()), 
-				new Vector3f(habLifterCtrl.getPhysicsLocation()), Vector3f.UNIT_X, Vector3f.UNIT_X);
-		app.getPhysicsSpace().add(habJoint);
-		System.out.print("Hab lifter controller rotation: " + habLifterCtrl.getPhysicsRotation().toString());
+				robotControl.getPhysicsRotation(), 0f, 0.65f, 2f));
+		//.47
+		rootNode.attachChild(habLifter);
+        habJoint = new HingeJoint(robotControl, habLifterCtrl, new Vector3f(robotControl.getPhysicsLocation()), 
+        		new Vector3f(habLifterCtrl.getPhysicsLocation()), Vector3f.UNIT_X, Vector3f.UNIT_X);
+        //habJoint.setLimit(3 * FastMath.PI/2, 3 * FastMath.PI);
+        app.getPhysicsSpace().add(habJoint);
+        
 		createWheels();
 
-		//		leadScrew = assetManager.loadModel("Models/RobotBase/leadScrew.blend");
-		//		leadScrew.setLocalTranslation(0f, leadScrewPosition, -0.2f);
-		//		leadScrew.scale(0.3f);
-		//		leadScrew.setMaterial(Yellow);
-		//		leadScrew.rotate(FastMath.HALF_PI * 2, 0, 0);
-		//		CompoundCollisionShape leadScrewShape = new CompoundCollisionShape();
-		//		Geometry leadScrew_geo = (Geometry) ((Node) ((Node) ((Node) leadScrew).getChild(0)).getChild(0)).getChild(0);
-		//		leadScrewCtrl = new RigidBodyControl();
-		//		leadScrew.addControl(leadScrewCtrl);
-		//		app.getPhysicsSpace().add(leadScrewCtrl);
-		//		rootNode.attachChild(leadScrew);
-		//		leadScrewCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(),
-		//				robotControl.getPhysicsRotation(), 0f, 0.5f, 1f));
-		////		leadScrewCtrl.setPhysicsLocation(leadScrewLocation);
-		//		leadScrewJoint = new SliderJoint(
-		//				robotControl,
-		//				leadScrewCtrl,
-		//				new Vector3f (4f,0f,0f),
-		//				new Vector3f (4f,0f,0f), 
-		//				false);
-		//		leadScrewJoint.setMaxLinMotorForce(5f);
-		//		leadScrewJoint.setMaxAngMotorForce(0);
-		//		leadScrewJoint.setLowerLinLimit(-3f);
-		//		leadScrewJoint.setUpperLinLimit(3f);
-		//		
-		//		app.getPhysicsSpace().add(leadScrewJoint);
+		leadScrew = assetManager.loadModel("Models/RobotBase/leadScrew.blend");
+		leadScrew.setLocalTranslation(0f, leadScrewPosition, -0.2f);
+		leadScrew.scale(0.3f);
+		leadScrew.setMaterial(Yellow);
+		leadScrew.rotate(FastMath.HALF_PI * 2, 0, 0);
+		CompoundCollisionShape leadScrewShape = new CompoundCollisionShape();
+		Geometry leadScrew_geo = (Geometry) ((Node) ((Node) ((Node) leadScrew).getChild(0)).getChild(0)).getChild(0);
+		//leadScrewCtrl = new RigidBodyControl();
+		
+		//leadScrew.addControl(leadScrewCtrl);
+		//app.getPhysicsSpace().add(leadScrewCtrl);
+		rootNode.attachChild(leadScrew);
+//		leadScrewCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(),
+//				leadScrewRotation(), 0f, 0.5f, 1f));
+		//leadScrewCtrl.setPhysicsLocation(new Vector3f(5f,0.5f,3f));
+//		leadScrewJoint = new SliderJoint(
+//				robotControl,
+//				leadScrewCtrl,
+//				new Vector3f (4f,0f,0f),
+//				new Vector3f (4f,0f,0f), 
+//				false);
+//		leadScrewJoint.setMaxLinMotorForce(5f);
+//		leadScrewJoint.setMaxAngMotorForce(0);
+//		leadScrewJoint.setLowerLinLimit(-3f);
+//		leadScrewJoint.setUpperLinLimit(3f);
+//		
+//		app.getPhysicsSpace().add(leadScrewJoint);
+		
+		
 
 
 
@@ -295,6 +300,13 @@ public class Robot extends BaseAppState {
 		wheelGeometry.rotate(0, FastMath.HALF_PI, 0);
 		robotNode.attachChild(wheelGeometry);
 	}
+	
+	private Quaternion leadScrewRotation() {
+		float leadScrewX = Math.abs(robotControl.getPhysicsRotation().toAngles(null)[0]);
+		leadScrewX = (leadScrewX < (FastMath.PI / 4)) ? 0f: (float)(FastMath.PI / 4);
+		return new Quaternion(new float[] {leadScrewX,
+		leadScrewCtrl.getPhysicsRotation().toAngles(null)[1], leadScrewCtrl.getPhysicsRotation().toAngles(null)[2]});
+	}
 	@Override
 	public void update(float tpf) {
 		robotAcceleration = (float)(gearShifter.value * 150 + 150);
@@ -302,8 +314,21 @@ public class Robot extends BaseAppState {
 		robotControl.accelerate(2, (float) (robotAcceleration * accelerationValueLeft.value));
 		robotControl.accelerate(1, (float) (robotAcceleration * accelerationValueRight.value));
 		robotControl.accelerate(3, (float) (robotAcceleration * accelerationValueRight.value));
+		
 
 		setEncoders(true);
+		
+		if (leadScrewDown) {
+			leadScrewPosition -= leadScrewChange * tpf;
+		}
+		if (leadScrewUp) {
+			leadScrewPosition += leadScrewChange * tpf;
+		}
+
+		if (leadScrewUp || leadScrewDown) {
+			leadScrew.setLocalTranslation(leadScrew.getLocalTranslation().x, leadScrewPosition,
+					leadScrew.getLocalTranslation().z);
+		}
 
 		if (pickUpHatch.value == 1) {
 			if (hatchLogic.getHatch() == null) {
