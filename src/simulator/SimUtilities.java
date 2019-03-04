@@ -125,4 +125,13 @@ public class SimUtilities {
 
 		return objectLoc;
 	}
+	
+	/**
+	 * Returns a vector with everything as 0
+	 * @return vector with all 0s
+	 */
+	public static Vector3f zeroVec() {
+		return new Vector3f(0f, 0f, 0f);
+	}
+	
 }
