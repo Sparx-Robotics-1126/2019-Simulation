@@ -106,7 +106,7 @@ public class Robot extends BaseAppState {
 
 			else if (name.equals("reset") && pressed) {
 				robotControl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
-				robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
+				robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .75f));
 				
 				habLifterCtrl.setPhysicsRotation(new Quaternion(.3f, 0f, 0f, .3f));
 				habLifterCtrl.setPhysicsLocation(new Vector3f(4f, -1f, .75f));
@@ -171,7 +171,7 @@ public class Robot extends BaseAppState {
 		rays = new RaySensorsControl(app, robotControl);
 		robotNode.addControl(rays);
 		robotControl.setPhysicsRotation(new Quaternion(1, 0, 0, 1));
-		robotControl.setPhysicsLocation(new Vector3f(4f, 0f, 2f));
+		robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .75f));
 
 		
 		habClimberNode = new Node("climbingNode");
