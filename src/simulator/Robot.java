@@ -10,6 +10,7 @@ import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.joints.HingeJoint;
 import com.jme3.bullet.objects.PhysicsRigidBody;
+import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
 import com.jme3.input.controls.ActionListener;
@@ -107,12 +108,14 @@ public class Robot extends BaseAppState {
 				robotControl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
 				robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
 				
+				habLifterCtrl.setPhysicsRotation(new Quaternion(.3f, 0f, 0f, .3f));
+				habLifterCtrl.setPhysicsLocation(new Vector3f(4f, -1f, .75f));
+				
 				accelerationValueRight.value = 0;
 				accelerationValueLeft.value = 0;
-				leadScrew.setLocalTranslation(0f, 2f, -0.2f);
+//				leadScrewCtrl.setPhysicsLocation(new Vector3f(0f, 2f, -0.2f));
 				leadScrewPosition = 2f;
-				habLifter.setLocalRotation(new Quaternion().fromAngles(FastMath.HALF_PI * 2, 0f, FastMath.HALF_PI * 2));
-				habLifter.setLocalTranslation(-.15f, -.02f, .3f);
+				
 				hatchLogic.dropHatch();
 			} else if (name.equals("pickupHatch") && pressed) {
 				if(hatchLogic.getHatch() == null) {
@@ -174,12 +177,8 @@ public class Robot extends BaseAppState {
 		habClimberNode = new Node("climbingNode");
 		habLifter = assetManager.loadModel("Models/RobotBase/habLifter1.blend");
 		habLifter.scale(0.15f);
-		habLifter.setLocalTranslation(-.15f, -.02f, .3f);
-		habLifter.rotate(FastMath.HALF_PI * 2, 0, FastMath.HALF_PI * 2);
 		habLifter.setMaterial(Yellow);
-		habLifterShape = new CompoundCollisionShape();
-		((CompoundCollisionShape) habLifterShape).addChildShape(new CapsuleCollisionShape(.18f, .33f, 1),
-				new Vector3f(-.2f, 0f, 0f));
+		habLifterShape = CollisionShapeFactory.createDynamicMeshShape(habLifter);
 		habLifterCtrl = new RigidBodyControl(habLifterShape, 5);
 		habLifter.addControl(habLifterCtrl);
 		app.getPhysicsSpace().add(habLifterCtrl);
@@ -188,10 +187,8 @@ public class Robot extends BaseAppState {
 		habLifterCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(),
 				robotControl.getPhysicsRotation(), 0f, 0.65f, 0.47f));
 		
-			joint = new HingeJoint(robotControl, habLifterCtrl, new Vector3f(robotControl.getPhysicsLocation()), 
-        		new Vector3f(habLifterCtrl.getPhysicsLocation()), Vector3f.UNIT_X, Vector3f.UNIT_X);
+		joint = new HingeJoint(robotControl, habLifterCtrl, new Vector3f(0f, .2f, .5f), new Vector3f(0f, .15f, .4f), Vector3f.UNIT_X, Vector3f.UNIT_X);
    
-        joint.setLimit(FastMath.HALF_PI, FastMath.PI);
         app.getPhysicsSpace().add(joint);
 
 		createWheels();
