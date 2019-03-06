@@ -24,6 +24,9 @@ public class Runner {
 		try {
 			runner.setUpApplication();
 			testingControlsRunner = Runtime.getRuntime().exec("java -jar resources/TestingControls.jar");
+			if(!testingControlsRunner.isAlive()) {
+				testingControlsRunner = Runtime.getRuntime().exec("C:/Users/Public/frc2019/jdk/bin/java.exe -jar resources/TestingControls.jar");
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			System.exit(0);
