@@ -1,6 +1,7 @@
 package simulator;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
@@ -9,6 +10,7 @@ import com.jme3.bullet.control.VehicleControl;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
+import com.sun.xml.internal.ws.dump.LoggingDumpTube.Position;
 
 //WHAT DOESN'T WORK:
 //Probably a bunch of other stuff but thats all i could find lmk if you find anything
@@ -126,6 +128,11 @@ public class HatchLogic extends BaseAppState {
 				app.getPhysicsSpace().remove(linkedHatch.getControl());
 				app.getStateManager().getState(FieldAppState.class).removeFromCtrlList(linkedHatch);			
 			}
+			FieldAppState field = app.getStateManager().getState(FieldAppState.class);
+			Vector3f inititalLocation = linkedHatch.getInitialLocation();
+			if(!SimUtilities.vectorsAreSortaClose(inititalLocation, linkedHatch.getLocation(), 0.1f)) {
+				field.createInitialHatch(inititalLocation);
+			}		
 			linkedHatch	= null;
 			translatingHatch = true;
 		}

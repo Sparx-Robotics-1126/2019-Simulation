@@ -10,11 +10,13 @@ public class Hatch {
 	private RigidBodyControl control;
 	private Spatial spatial;
 	private boolean pickupable;
+	private Vector3f initialLocation;
 
 	
 	public Hatch(RigidBodyControl control, Spatial spatial) {
 		this.control = control; 
 		this.spatial = spatial;
+		initialLocation = control.getPhysicsLocation();
 	}
 	
 	public void setPickupable(boolean pickupable) {
@@ -50,4 +52,8 @@ public class Hatch {
 	public void setKinematic(boolean freeMoving) {
 		control.setKinematic(freeMoving);
 	}
+	public Vector3f getInitialLocation() {
+		return initialLocation;
+	}
+		
 }

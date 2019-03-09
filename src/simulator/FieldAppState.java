@@ -3,6 +3,7 @@ package simulator;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Vector;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
@@ -40,6 +41,12 @@ public class FieldAppState extends BaseAppState {
 	private final float HAB_WIDTH = 1.625f;
 	private Spatial field;
 	private Node tapeTargets;
+	private Vector3f[] initialHatchPositions = {
+			new Vector3f(-7.945072f, -3.1896896f, 0.5169704f),
+			new Vector3f(-7.923836f, 3.497839f, 0.5325684f),
+			new Vector3f(7.945072f, -3.1896896f, 0.5169704f),
+			new Vector3f(7.923836f, 3.497839f, 0.5325684f),
+	};
 
 	@Override
 	protected void initialize(Application _app) {
@@ -53,17 +60,13 @@ public class FieldAppState extends BaseAppState {
 		createHabs();
 		createCargoPieces();
 		
-		createInitialHatch(-7.945072f, -3.1896896f, 0.5169704f);
-		createInitialHatch(-7.923836f, 3.497839f, 0.5325684f);
-		createInitialHatch(7.945072f, -3.1896896f, 0.5169704f);
-		createInitialHatch(7.923836f, 3.497839f, 0.5325684f);
+		createInitialHatches();
 		
 		createHatch(-2f, -2f, 0.5f);
 		
 		addLight();
 	}
-
-
+	
 	@Override
 	public void update(float tpf) {
 		for (RigidBodyControl cargoCtrl : cargoCtrlList)
@@ -96,6 +99,12 @@ public class FieldAppState extends BaseAppState {
 		}
 	}
 
+	private void createInitialHatches() {
+		for(Vector3f position: initialHatchPositions) {
+			createInitialHatch(position);
+		}
+	}
+	
 	private void createVisionTargets() {
 		Material tapeMaterial = new Material(assetManager, "Common/MatDefs/Light/Lighting.j3md");
 		tapeMaterial.setBoolean("UseMaterialColors", true);
@@ -408,11 +417,28 @@ public class FieldAppState extends BaseAppState {
 		hatchObjectList.add(hatch);
 	}
 	
-	private void createInitialHatch(float x, float y, float z) {
+	public void createInitialHatch(float x, float y, float z) {
 		hatchSpatial = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
 		hatchSpatial.scale(.5f);
 		rootNode.attachChild(hatchSpatial);
 		hatchSpatial.move(x,y,z);
+		hatchSpatial.rotate(0, 0, FastMath.PI / 2);
+		CollisionShape hatchShape = CollisionShapeFactory.createDynamicMeshShape(hatchSpatial);
+		hatchCtrl = new RigidBodyControl(hatchShape, 1f);
+		hatchSpatial.addControl(hatchCtrl);
+		app.getPhysicsSpace().add(hatchSpatial);
+		hatchCtrl.setFriction(0.1f);
+		hatchCtrl.setDamping(0.01f, 0.01f);
+		hatchCtrl.setGravity(new Vector3f(0f, 0f, 0f));
+		Hatch hatch = new Hatch(hatchCtrl, hatchSpatial);
+		hatchObjectList.add(hatch);
+	}
+	
+	public void createInitialHatch(Vector3f position) {
+		hatchSpatial = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
+		hatchSpatial.scale(.5f);
+		rootNode.attachChild(hatchSpatial);
+		hatchSpatial.move(position);
 		hatchSpatial.rotate(0, 0, FastMath.PI / 2);
 		CollisionShape hatchShape = CollisionShapeFactory.createDynamicMeshShape(hatchSpatial);
 		hatchCtrl = new RigidBodyControl(hatchShape, 1f);
