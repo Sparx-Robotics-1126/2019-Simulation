@@ -22,10 +22,12 @@ public class CameraControl extends BaseAppState {
 	boolean camMode1;
 	boolean camMode2;
 	boolean camMode3;
+	boolean camMode4;
 	private SimpleApplication app;
 	private Camera cam;
 	private boolean leftPressed = false;
 	Vector3f center = new Vector3f(0, 0, 0);
+	Vector3f cam4location = new Vector3f(9f, 0f , 1.5f);
 	Robot robot;
 
 	@Override
@@ -38,7 +40,10 @@ public class CameraControl extends BaseAppState {
 		} else if (camMode3 == true) {
 			center.set(robot.getRobotBase().getWorldTranslation().add(0f, 0f, 1f));
 			cam.lookAt(center, Vector3f.UNIT_Z);
-		}
+		} else if (camMode4 == true) {
+			cam.setLocation(cam4location);
+			cam.lookAt(robot.getRobotBase().getWorldTranslation(), Vector3f.UNIT_X);
+			}
 	}
 
 	@Override
@@ -71,10 +76,11 @@ public class CameraControl extends BaseAppState {
 		manager.addMapping("number1", new KeyTrigger(KeyInput.KEY_1));
 		manager.addMapping("number2", new KeyTrigger(KeyInput.KEY_2));
 		manager.addMapping("number3", new KeyTrigger(KeyInput.KEY_3));
+		manager.addMapping("number4", new KeyTrigger(KeyInput.KEY_4));
 
 		manager.addListener(analogListener, "upMouse", "downMouse", "rightMouse", "leftMouse", "wheelUp", "wheelDown");
 		manager.addListener(actionListener, "leftButtonMouse");
-		manager.addListener(keyListener, "number1", "number2", "number3");
+		manager.addListener(keyListener, "number1", "number2", "number3","number4");
 	}
 
 	private final ActionListener actionListener = new ActionListener() {
@@ -95,17 +101,27 @@ public class CameraControl extends BaseAppState {
 					camMode1 = true;
 					camMode2 = false;
 					camMode3 = false;
+					camMode4 = false;
 					cam.lookAt(center, Vector3f.UNIT_Z);
 				} else if (name.equals("number2")) {
 					camMode2 = true;
 					camMode1 = false;
 					camMode3 = false;
+					camMode4 = false;
 				} else if (name.equals("number3")) {
 					camMode3 = true;
 					camMode1 = false;
 					camMode2 = false;
+					camMode4 = false;
 					center.set(robot.getRobotBase().getWorldTranslation().add(0f, 0f, 1f));
 					cam.lookAt(center, Vector3f.UNIT_Z);
+				}else if (name.equals("number4")) {
+					camMode4 = true;
+					camMode1 = false;
+					camMode2 = false;
+					camMode3 = false;
+					cam.setLocation(cam4location);
+					cam.lookAt(robot.getRobotBase().getWorldTranslation(), Vector3f.UNIT_X);
 				}
 		}
 	};

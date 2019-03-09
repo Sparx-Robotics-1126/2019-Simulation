@@ -14,7 +14,8 @@ import strongdk.jme.appstate.console.ConsoleAppState;
 
 public class SimMain extends SimpleApplication {
 	private BulletAppState bulletAppState;
-	
+	private static Process testingControlsRunner;
+
 	public SimMain() {
 		super(	new Robot(),
 				new FieldAppState(), 
@@ -60,16 +61,16 @@ public class SimMain extends SimpleApplication {
 		return bulletAppState.getSpeed() == 0f;
 	}
 	
+	public void setControlsProcess(Process testingControlsProcess) {
+		testingControlsRunner = testingControlsProcess;
+	}
+	
 	public void destroy() {
 		super.destroy();
 		RobotCodeCommunication connection = RobotCodeCommunication.getInstance();
 		if(connection.isStarted()) {
 			connection.close();
 		}
-	}
-	
-	public static void main(String[] args) {
-		SimMain app = new SimMain();
-		app.start();
+		testingControlsRunner.destroy();
 	}
 }

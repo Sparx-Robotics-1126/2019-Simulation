@@ -22,7 +22,6 @@ import com.jme3.scene.Node;
 import com.jme3.scene.Spatial;
 import com.jme3.scene.shape.Box;
 import com.jme3.scene.shape.Sphere;
-import com.sun.media.jfxmedia.control.VideoDataBuffer;
 
 public class FieldAppState extends BaseAppState {
 	private SimMain app;

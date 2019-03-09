@@ -1,0 +1,26 @@
+plugins {
+	id 'java'
+}
+
+jar {
+	manifest {
+		attributes 'Implementation-Title': 'Robot Simulation',
+		           'Implementation-Version': '0',
+		           'Main-Class': 'frc.robot.Main'
+		
+	}
+}
+
+sourceSets {
+	main {
+		java {
+			srcDirs = [project.getProperty("srcDir")]
+		}
+	}
+}
+
+dependencies {
+	compile fileTree(dir: 'libs', include: ['*.jar'])
+}
+
+//classpath files('')
