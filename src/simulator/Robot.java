@@ -105,7 +105,18 @@ public class Robot extends BaseAppState {
 			}
 
 			else if (name.equals("reset") && pressed) {
-				reset();
+				robotControl.setPhysicsRotation(new Quaternion(3, 0, 0, 3));
+				robotControl.setPhysicsLocation(new Vector3f(4f, 0f, 2f));
+				
+				habLifterCtrl.setPhysicsRotation(new Quaternion(.3f, 0f, 0f, .3f));
+				habLifterCtrl.setPhysicsLocation(new Vector3f(4f, -1f, .75f));
+				
+				accelerationValueRight.value = 0;
+				accelerationValueLeft.value = 0;
+//				leadScrewCtrl.setPhysicsLocation(new Vector3f(0f, 2f, -0.2f));
+				leadScrewPosition = 2f;
+				
+				hatchLogic.dropHatch();
 			} else if (name.equals("pickupHatch") && pressed) {
 				if(hatchLogic.getHatch() == null) {
 					hatchLogic.pickupHatch();
@@ -119,7 +130,7 @@ public class Robot extends BaseAppState {
 			}
 			else if(name.equals("printInfo") && pressed) {
 				System.out.println(SimUtilities.quaternionToString(robotControl.getPhysicsRotation()));
-				System.out.println("Hatch location: " + (hatchLogic.getHatch() == null ? " no attached hatch": hatchLogic.getHatch().getPhysicsLocation().toString()));
+				System.out.println("Hatch location: " + (hatchLogic.getHatch() == null ? " no attached hatch": hatchLogic.getHatch().getLocation().toString()));
 
 			}
 		}
@@ -172,6 +183,10 @@ public class Robot extends BaseAppState {
 		habClimberNode.attachChild(habLifter);
 		habLifterCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(),
 				robotControl.getPhysicsRotation(), 0f, 0.65f, 0.47f));
+		
+		joint = new HingeJoint(robotControl, habLifterCtrl, new Vector3f(0f, .2f, .1f), new Vector3f(0f, .15f, .4f), Vector3f.UNIT_X, Vector3f.UNIT_X);
+   
+        app.getPhysicsSpace().add(joint);
 
 		armHinge = new HingeJoint(robotControl, habLifterCtrl, new Vector3f(0f, .2f, .5f), new Vector3f(0f, .15f, .4f), Vector3f.UNIT_X, Vector3f.UNIT_X);
 

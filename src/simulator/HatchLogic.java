@@ -11,7 +11,6 @@ import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 
 //WHAT DOESN'T WORK:
-//When you hit the hatch while it's on a wall it wiggles
 //Probably a bunch of other stuff but thats all i could find lmk if you find anything
 //Sincerely- the bug exterminator
 public class HatchLogic extends BaseAppState {
@@ -52,7 +51,7 @@ public class HatchLogic extends BaseAppState {
 	private float HATCH_HOLDING_DISTANCE = .35f;//0.5f;
 	private VehicleControl robotControl;
 	private final float Z_GRAVITY = -9.81f;
-	private RigidBodyControl linkedHatch = null;
+	private Hatch linkedHatch = null;
 	private final float HATCH_PICKUP_RANGE = 2f;
 	private boolean translatingHatch = true;
 	Robot robot;
@@ -78,26 +77,26 @@ public class HatchLogic extends BaseAppState {
 
 	private void detectHatch() {
 		FieldAppState field = app.getStateManager().getState(FieldAppState.class);
-		ArrayList<RigidBodyControl> hatchList = field.getHatchCtrlList();
+		ArrayList<Hatch> hatchList = field.getHatchObjectList();
 
 		float smallest = Float.MAX_VALUE;
-		RigidBodyControl operatingCtrl = null;
+		Hatch operatingHatch = null;
 
 		
-		for(RigidBodyControl ctrl: hatchList) {
-			float distance = SimUtilities.distanceTo(robotControl.getPhysicsLocation(), ctrl.getPhysicsLocation());
+		for(Hatch hatch: hatchList) {
+			float distance = SimUtilities.distanceTo(robotControl.getPhysicsLocation(), hatch.getLocation());
 			if(distance < HATCH_PICKUP_RANGE && 
 			   distance < smallest && 
-			   robotIsFacingHatch(ctrl) &&
-			   ctrl.getPhysicsLocation().getZ() > 0.5f) {
+			   robotIsFacingHatch(hatch.getControl()) &&
+			   hatch.getControl().getPhysicsLocation().getZ() > 0.5f) {
 				smallest = distance;
-				operatingCtrl = ctrl;
+				operatingHatch = hatch;
 			}
 		}
-		if(operatingCtrl != null) {
-			linkedHatch = operatingCtrl;
+		if(operatingHatch != null) {
+			linkedHatch = operatingHatch;
 			linkedHatch.setKinematic(false);
-			linkedHatch.setGravity(new Vector3f(0, 0, 0));
+			linkedHatch.getControl().setGravity(new Vector3f(0, 0, 0));
 		}
 	}
 
@@ -117,14 +116,14 @@ public class HatchLogic extends BaseAppState {
 	private void unlinkHatch() {
 		if(linkedHatch != null) {
 			Vector3f dropoffPos = closestHatchDropoffPosition();
-			linkedHatch.setLinearVelocity(new Vector3f(0f, 0f, 0f));
-			linkedHatch.setAngularVelocity(new Vector3f(0f, 0f, 0f));
+			linkedHatch.getControl().setLinearVelocity(new Vector3f(0f, 0f, 0f));
+			linkedHatch.getControl().setAngularVelocity(new Vector3f(0f, 0f, 0f));
 			if(dropoffPos == null) {
-				linkedHatch.setGravity(new Vector3f(0, 0, Z_GRAVITY));
+				linkedHatch.getControl().setGravity(new Vector3f(0, 0, Z_GRAVITY));
 			} else {
-				linkedHatch.setPhysicsLocation(dropoffPos);
-				linkedHatch.setPhysicsRotation(hatchDropoffRotation());
-				app.getPhysicsSpace().remove(linkedHatch);
+				linkedHatch.getControl().setPhysicsLocation(dropoffPos);
+				linkedHatch.getControl().setPhysicsRotation(hatchDropoffRotation());
+				app.getPhysicsSpace().remove(linkedHatch.getControl());
 				app.getStateManager().getState(FieldAppState.class).removeFromCtrlList(linkedHatch);			
 			}
 			linkedHatch	= null;
@@ -133,7 +132,7 @@ public class HatchLogic extends BaseAppState {
 	}
 
 	private Vector3f closestHatchDropoffPosition() {
-		Vector3f hatchLocation = linkedHatch.getPhysicsLocation();
+		Vector3f hatchLocation = linkedHatch.getLocation();
 		float lowest = Float.MAX_VALUE;
 		Vector3f bestPoss = null;
 		for(Vector3f dropoffPos: HATCH_POSITIONS) {
@@ -149,20 +148,20 @@ public class HatchLogic extends BaseAppState {
 	private Quaternion hatchDropoffRotation() {
 		float hatchZRot = Math.abs(robotControl.getPhysicsRotation().toAngles(null)[2]);
 		hatchZRot = (hatchZRot < (FastMath.PI / 4)) ? 0f: (float)(FastMath.PI / 2);
-		return new Quaternion(new float[] {Math.abs(linkedHatch.getPhysicsRotation().toAngles(null)[0]), linkedHatch.getPhysicsRotation().toAngles(null)[1], hatchZRot});
+		return new Quaternion(new float[] {Math.abs(linkedHatch.getRotation().toAngles(null)[0]), linkedHatch.getRotation().toAngles(null)[1], hatchZRot});
 	}
 
 
 	private void moveHatch() {
-		Vector3f translateVector = createItemTranslationVector(robotControl, linkedHatch);
-		Quaternion translateQuat = createItemRotationQuaternion(robotControl, linkedHatch);
+		Vector3f translateVector = createItemTranslationVector(robotControl, linkedHatch.getControl());
+		Quaternion translateQuat = createItemRotationQuaternion(robotControl, linkedHatch.getControl());
 		if(translatingHatch) {
-			linkedHatch.setPhysicsLocation(linkedHatch.getPhysicsLocation().add(translateVector.mult(0.05f)));
+			linkedHatch.getControl().setPhysicsLocation(linkedHatch.getLocation().add(translateVector.mult(0.05f)));
 		} else {
-			linkedHatch.setPhysicsLocation(linkedHatch.getPhysicsLocation().add(translateVector));
+			linkedHatch.getControl().setPhysicsLocation(linkedHatch.getLocation().add(translateVector));
 		}
-		linkedHatch.setPhysicsRotation(translateQuat);
-		if(linkedHatch.getPhysicsLocation().getZ() > 1f) {
+		linkedHatch.setRotation(translateQuat);
+		if(linkedHatch.getLocation().getZ() > 1f) {
 			//Every once and a while the hatch goes too high
 			//idk why but this fixes it so don't remove it!
 			translatingHatch = false;
@@ -171,7 +170,7 @@ public class HatchLogic extends BaseAppState {
 
 	private boolean shouldTranslate() {
 //		System.out.println(utilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()));
-		if(SimUtilities.distanceTo(linkedHatch.getPhysicsLocation(), robotControl.getPhysicsLocation()) < 0.75f) {
+		if(SimUtilities.distanceTo(linkedHatch.getLocation(), robotControl.getPhysicsLocation()) < 0.75f) {
 			return false;
 		} else {
 			return true;
@@ -196,7 +195,7 @@ public class HatchLogic extends BaseAppState {
 	}
 
 
-	public RigidBodyControl getHatch() {
+	public Hatch getHatch() {
 		return linkedHatch;
 	}
 

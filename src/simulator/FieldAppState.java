@@ -28,9 +28,9 @@ public class FieldAppState extends BaseAppState {
 	private AssetManager assetManager;
 	private Node rootNode;
 	private RigidBodyControl hatchCtrl;
-	private Spatial hatch;
+	private Spatial hatchSpatial;
 	private ArrayList<RigidBodyControl> cargoCtrlList = new ArrayList<RigidBodyControl>();
-	private ArrayList<RigidBodyControl> hatchCtrlList = new ArrayList<RigidBodyControl>();
+	private ArrayList<Hatch> hatchObjectList = new ArrayList<>();
 	private final float CARGO_VARIANCE = 0.0254f; // +- .5 inch for a total of 1 inch.
 	private final float CARGO_RADIUS  = 0.3302f/2f - CARGO_VARIANCE; // 
 	private final float CARGO_SPACING = 0.35f;
@@ -392,42 +392,45 @@ public class FieldAppState extends BaseAppState {
 
 
 	private void createHatch(float x, float y, float z) {
-		hatch = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
-		hatch.scale(.5f);
-		rootNode.attachChild(hatch);
-		hatch.move(x,y,z);
-		hatch.rotate(0, 0, FastMath.PI / 2);
-		CollisionShape hatchShape = CollisionShapeFactory.createDynamicMeshShape(hatch);
+		
+		hatchSpatial = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
+		hatchSpatial.scale(.5f);
+		rootNode.attachChild(hatchSpatial);
+		hatchSpatial.move(x,y,z);
+		hatchSpatial.rotate(0, 0, FastMath.PI / 2);
+		CollisionShape hatchShape = CollisionShapeFactory.createDynamicMeshShape(hatchSpatial);
 		hatchCtrl = new RigidBodyControl(hatchShape, 1f);
-		hatch.addControl(hatchCtrl);
-		app.getPhysicsSpace().add(hatch);
+		hatchSpatial.addControl(hatchCtrl);
+		app.getPhysicsSpace().add(hatchSpatial);
 		hatchCtrl.setFriction(0.1f);
 		hatchCtrl.setDamping(0.01f, 0.01f);
-		hatchCtrlList.add(hatchCtrl);
+		Hatch hatch = new Hatch(hatchCtrl, hatchSpatial);
+		hatchObjectList.add(hatch);
 	}
 	
 	private void createInitialHatch(float x, float y, float z) {
-		hatch = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
-		hatch.scale(.5f);
-		rootNode.attachChild(hatch);
-		hatch.move(x,y,z);
-		hatch.rotate(0, 0, FastMath.PI / 2);
-		CollisionShape hatchShape = CollisionShapeFactory.createDynamicMeshShape(hatch);
+		hatchSpatial = assetManager.loadModel("Models/RobotBase/Hatch/Hatch.blend");
+		hatchSpatial.scale(.5f);
+		rootNode.attachChild(hatchSpatial);
+		hatchSpatial.move(x,y,z);
+		hatchSpatial.rotate(0, 0, FastMath.PI / 2);
+		CollisionShape hatchShape = CollisionShapeFactory.createDynamicMeshShape(hatchSpatial);
 		hatchCtrl = new RigidBodyControl(hatchShape, 1f);
-		hatch.addControl(hatchCtrl);
-		app.getPhysicsSpace().add(hatch);
+		hatchSpatial.addControl(hatchCtrl);
+		app.getPhysicsSpace().add(hatchSpatial);
 		hatchCtrl.setFriction(0.1f);
 		hatchCtrl.setDamping(0.01f, 0.01f);
 		hatchCtrl.setGravity(new Vector3f(0f, 0f, 0f));
-		hatchCtrlList.add(hatchCtrl);
+		Hatch hatch = new Hatch(hatchCtrl, hatchSpatial);
+		hatchObjectList.add(hatch);
 	}
 	
-	public ArrayList<RigidBodyControl> getHatchCtrlList() {
-		return hatchCtrlList;
+	public ArrayList<Hatch> getHatchObjectList() {
+		return hatchObjectList;
 	}
 	
-	public void removeFromCtrlList(RigidBodyControl ctrlToRemove) {
-		hatchCtrlList.remove(ctrlToRemove);
+	public void removeFromCtrlList(Hatch hatchToRemove) {
+		hatchObjectList.remove(hatchToRemove);
 	}
 
 
