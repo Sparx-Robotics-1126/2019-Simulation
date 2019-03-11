@@ -1,7 +1,6 @@
 package simulator;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
@@ -10,7 +9,6 @@ import com.jme3.bullet.control.VehicleControl;
 import com.jme3.math.FastMath;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
-import com.sun.xml.internal.ws.dump.LoggingDumpTube.Position;
 
 //WHAT DOESN'T WORK:
 //Probably a bunch of other stuff but thats all i could find lmk if you find anything
