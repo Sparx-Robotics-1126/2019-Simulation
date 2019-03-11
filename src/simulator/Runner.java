@@ -24,10 +24,11 @@ public class Runner {
 		try {
 			runner.setUpApplication();
 			testingControlsRunner = Runtime.getRuntime().exec("java -jar resources/TestingControls.jar");
+			Thread.sleep(2000);
 			if(!testingControlsRunner.isAlive()) {
 				testingControlsRunner = Runtime.getRuntime().exec("C:/Users/Public/frc2019/jdk/bin/java.exe -jar resources/TestingControls.jar");
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(0);
 		}
