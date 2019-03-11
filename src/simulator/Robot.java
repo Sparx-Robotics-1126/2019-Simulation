@@ -471,11 +471,9 @@ public class Robot extends BaseAppState {
 					habJoint.enableMotor(false, 0f, 2f);
 
 				} else if (name.equals("leadScrewDown")) {
-					leadScrewJoint.setMotor(0f);
-//					leadScrewJoint.enableMotor(false, 0.0f, 0.0f);
+					leadScrewDown = false;
 				} else if (name.equals("leadScrewUp")) {
-					leadScrewJoint.setMotor(0f);
-//					leadScrewJoint.enableMotor(false, 0.0f, 0.0f);
+					leadScrewUp = false;
 				}
 			}
 
