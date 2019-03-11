@@ -3,7 +3,6 @@ package simulator;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Vector;
 
 import com.jme3.app.Application;
 import com.jme3.app.state.BaseAppState;
