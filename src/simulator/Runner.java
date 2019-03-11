@@ -26,7 +26,12 @@ public class Runner {
 			testingControlsRunner = Runtime.getRuntime().exec("java -jar resources/TestingControls.jar");
 			Thread.sleep(2000);
 			if(!testingControlsRunner.isAlive()) {
-				testingControlsRunner = Runtime.getRuntime().exec("C:/Users/Public/frc2019/jdk/bin/java.exe -jar resources/TestingControls.jar");
+				File jre = new File("C:/Users/Public/frc2019/jdk/bin/java.exe");
+				if(jre.exists())
+					testingControlsRunner = Runtime.getRuntime().exec("C:/Users/Public/frc2019/jdk/bin/java.exe -jar resources/TestingControls.jar");
+				else {
+					System.out.println("Java 11 and FRC Wpilib not Installed!!");
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
