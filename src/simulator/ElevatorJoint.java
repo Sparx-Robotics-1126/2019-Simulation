@@ -2,6 +2,7 @@ package simulator;
 
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
+import com.jme3.bullet.joints.SixDofJoint;
 import com.jme3.math.Vector3f;
 import com.jme3.renderer.RenderManager;
 import com.jme3.renderer.ViewPort;
@@ -11,6 +12,7 @@ import com.jme3.scene.control.AbstractControl;
 public class ElevatorJoint extends AbstractControl{
 	private VehicleControl baseControl;
 	private RigidBodyControl ctrl;
+	private SixDofJoint constraints;
 	private float height;
 	private float force;
 	private float mtrPwr;
@@ -35,6 +37,11 @@ public class ElevatorJoint extends AbstractControl{
 		ctrl.setPhysicsRotation(baseControl.getPhysicsRotation());
 		ctrl.setMass(0f);
 		ctrl.setAngularDamping(100000000f);
+		constraints = new SixDofJoint(baseControl, ctrl, new Vector3f(0f, 1f, 0f), new Vector3f(0f, 1f, 0f), false);
+		constraints.getRotationalLimitMotor(0).setEnableMotor(false);
+		constraints.getRotationalLimitMotor(1).setEnableMotor(false);
+		constraints.getRotationalLimitMotor(2).setEnableMotor(false);
+//		constraints.getTranslationalLimitMotor()
 	}
 
 	public void setHeight(float height) {
