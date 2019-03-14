@@ -50,8 +50,11 @@ public class Robot extends BaseAppState {
 	private PairedDouble rightEncoder = PairedDoubleFactory.getInstance().createPairedDouble("rightEncoder", false, 0.0);
 	private PairedDouble currentLeftEncoder = PairedDoubleFactory.getInstance().createPairedDouble("currentLeftEncoder", true);
 	private PairedDouble currentRightEncoder = PairedDoubleFactory.getInstance().createPairedDouble("currentRightEncoder", true);
+	private PairedDouble gyro = PairedDoubleFactory.getInstance().createPairedDouble("gyro", false, 0.0);
+	private PairedDouble currentGyro = PairedDoubleFactory.getInstance().createPairedDouble("currentGyro", true);	
 	private Vector3f lastLeftLocation = Vector3f.ZERO;
 	private Vector3f lastRightLocation = Vector3f.ZERO;
+	private Quaternion lastAngle = Quaternion.ZERO;
 	private HatchLogic hatchLogic;
 	private PairedDouble pickUpHatch = PairedDoubleFactory.getInstance().createPairedDouble("hatchFlipper", true, 0.0);
 	private PairedDouble gearShifter = PairedDoubleFactory.getInstance().createPairedDouble("gearShift", true, 0.0);
@@ -197,7 +200,7 @@ public class Robot extends BaseAppState {
 
 		setUpKeyControls();
 		hatchLogic = app.getStateManager().getState(HatchLogic.class);
-		setEncoders(false);
+		setEncodersAndGyro(false);
 		reset();
 	}
 
@@ -251,7 +254,7 @@ public class Robot extends BaseAppState {
 		robotControl.accelerate(1, (float) (robotAcceleration * accelerationValueRight.value));
 		robotControl.accelerate(3, (float) (robotAcceleration * accelerationValueRight.value));
 
-		setEncoders(true);
+		setEncodersAndGyro(true);
 
 		if (pickUpHatch.value == 1) {
 			if (hatchLogic.getHatch() == null) {
@@ -263,7 +266,7 @@ public class Robot extends BaseAppState {
 		hatchLogic.update(tpf);
 	}
 
-	private void setEncoders(boolean notFirstRun) {
+	private void setEncodersAndGyro(boolean notFirstRun) {
 		Vector3f currentLeftLocation = robotControl.getPhysicsLocation();
 		Vector3f currentRightLocation = robotControl.getPhysicsLocation();
 		float[] offsets = getOffsets(.25f);
@@ -282,9 +285,17 @@ public class Robot extends BaseAppState {
 
 		lastLeftLocation = currentLeftLocation;
 		lastRightLocation = currentRightLocation;
-
+		
+		Quaternion roboRot = robotControl.getPhysicsRotation();
+		if(notFirstRun) {
+			double angleChange = SimUtilities.getZAngle(roboRot) - SimUtilities.getZAngle(lastAngle);
+			gyro.value = currentGyro.value + angleChange;
+		}
+		lastAngle = roboRot;
+		
+		
 	}
-
+	
 	private float[] getOffsets(float mainOffset) {
 		float robotZRot = robotControl.getPhysicsRotation().toAngles(null)[2] + rightAngle;
 		float xOffset = 0;

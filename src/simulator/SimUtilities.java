@@ -25,6 +25,19 @@ public class SimUtilities {
 		}
 	}
 	
+	public static double getZAngle(Quaternion q) {
+		float[] angles = q.toAngles(null);
+		double z = 90*angles[2]/FastMath.HALF_PI;
+		double x = angles[0];
+		double robotAngle = 0;
+		if(z <= 0 && x <= 0) {
+			robotAngle = 90+z;
+		} else if(x > 0) {
+			robotAngle = 270 - z;
+		}
+		return robotAngle;
+	}
+	
 	/**
 	 * Gives Euler angles for a quaternion in string form (good for system.out printing)
 	 * @param quat - Quaternion to print
