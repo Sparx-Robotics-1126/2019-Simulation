@@ -32,7 +32,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 		console.registerCommand("help", commandListener);
 		console.registerCommand("cam", commandListener);
 		console.registerCommand("hide", commandListener);
-		console.registerCommand("h", commandListener);
+		console.registerCommand("phyDebug", commandListener);
 		console.registerCommand("displayDouble", commandListener);
 		console.registerCommand("hideDouble", commandListener);
 		console.registerCommand("debugLines", commandListener);
@@ -89,7 +89,7 @@ public class ConsoleDebugWindowAppState extends BaseAppState {
 				String info = "location " + cam.getLocation().toString();
 				info += " direction " + cam.getDirection().toString();
 				console.appendConsole("Cam: " + info);
-			} else if (evt.getCommand().equals("h")) {
+			} else if (evt.getCommand().equals("phyDebug")) {
 				BulletAppState physics = app.getStateManager().getState(BulletAppState.class);
 				String value = parser.get(0);
 				if (value != null && value.equals("true")) {

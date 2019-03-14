@@ -171,7 +171,6 @@ public class Robot extends BaseAppState {
 		leadScrew = assetManager.loadModel("Models/RobotBase/leadScrew.blend");
 		leadScrew.scale(0.3f);
 		leadScrew.setMaterial(Yellow);
-		leadScrew.setLocalTranslation(0, -1, 0);
 		leadScrewCtrl = new RigidBodyControl(CollisionShapeFactory.createDynamicMeshShape(leadScrew), 5f);
 		leadScrew.addControl(leadScrewCtrl);
 		leadScrewJoint = new ElevatorJoint(robotControl, 3f);
@@ -233,7 +232,7 @@ public class Robot extends BaseAppState {
 		robotControl.setPhysicsRotation(new Quaternion(1f, 0, 0f, 1f));
 		robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
 
-		leadScrewCtrl.setPhysicsRotation(new Quaternion(1f, 0f, 0f, 1f));		
+		leadScrewCtrl.setPhysicsRotation(new Quaternion(0f, 0f, 0f, 0f));		
 		leadScrewCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 3.14f, 0.1f, 2f));
 
 		habLifterCtrl.setPhysicsRotation(robotControl.getPhysicsRotation().mult(new Quaternion(3f, 0f, 0f, 3f)));
