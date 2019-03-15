@@ -9,6 +9,7 @@ import com.jme3.bullet.collision.shapes.CompoundCollisionShape;
 import com.jme3.bullet.control.RigidBodyControl;
 import com.jme3.bullet.control.VehicleControl;
 import com.jme3.bullet.joints.HingeJoint;
+import com.jme3.bullet.joints.SliderJoint;
 import com.jme3.bullet.util.CollisionShapeFactory;
 import com.jme3.input.InputManager;
 import com.jme3.input.KeyInput;
@@ -17,6 +18,7 @@ import com.jme3.input.controls.KeyTrigger;
 import com.jme3.material.Material;
 import com.jme3.math.ColorRGBA;
 import com.jme3.math.FastMath;
+import com.jme3.math.Matrix3f;
 import com.jme3.math.Quaternion;
 import com.jme3.math.Vector3f;
 import com.jme3.scene.Geometry;
@@ -61,7 +63,7 @@ public class Robot extends BaseAppState {
 	private float rightAngle = FastMath.HALF_PI;
 	private float robotAcceleration = 150f;
 	private HingeJoint armHinge;
-	private ElevatorJoint leadScrewJoint;
+	private SliderJoint leadScrewJoint;
 
 	private final ActionListener actionListener = new ActionListener() {
 
@@ -88,14 +90,14 @@ public class Robot extends BaseAppState {
 				accelerationValueRight.value = 0f;
 				accelerationValueLeft.value = 0f;
 			} else if (name.equals("pause") && pressed) {
-				if (app.isPaused()) {
+				if (app.isPaused() || app.isSlow()) {
 					app.resume();
 				} else {
 					app.pause();
 				}
-			}
-
-			else if (name.equals("reset") && pressed) {
+			} else if(name.equals("slow")) {
+				app.slow();
+			} else if (name.equals("reset") && pressed) {
 				reset();
 			} else if (name.equals("pickupHatch") && pressed) {
 				if(hatchLogic.getHatch() == null) {
@@ -109,7 +111,7 @@ public class Robot extends BaseAppState {
 
 			}
 			else if(name.equals("printInfo") && pressed) {
-				System.out.println(armHinge.getHingeAngle());
+				System.out.println(robotControl.getPhysicsLocation() + "   :   " + robotControl.getPhysicsRotation() );
 			}
 		}
 	};
@@ -171,12 +173,29 @@ public class Robot extends BaseAppState {
 		leadScrew = assetManager.loadModel("Models/RobotBase/leadScrew.blend");
 		leadScrew.scale(0.3f);
 		leadScrew.setMaterial(Yellow);
-		leadScrewCtrl = new RigidBodyControl(CollisionShapeFactory.createDynamicMeshShape(leadScrew), 5f);
+		leadScrewCtrl = new RigidBodyControl(CollisionShapeFactory.createDynamicMeshShape(leadScrew), 0f);
 		leadScrew.addControl(leadScrewCtrl);
-		leadScrewJoint = new ElevatorJoint(robotControl, 3f);
-		leadScrew.addControl(leadScrewJoint);
 		app.getPhysicsSpace().add(leadScrewCtrl);
 		rootNode.attachChild(leadScrew);
+
+		leadScrewJoint = new SliderJoint(
+				robotControl,
+				leadScrewCtrl,
+				new Vector3f (0.0f, 1f, 0.0f),
+				new Vector3f (0.0f, -1.0f, 0.0f), 
+				new Matrix3f( 1f,  0f,  0f, 
+							  0f,  0f, -1f, 
+				 			  0f,  1f,  0f), 
+				new Matrix3f( 1f,  0f,  0f,
+							  0f, -1f,  0f,
+							  0f,  0f, -1f), 
+				false);
+
+		leadScrewJoint.setMaxLinMotorForce(10f);
+		leadScrewJoint.setLowerLinLimit(-2f);
+		leadScrewJoint.setUpperLinLimit(8f);
+
+		app.getPhysicsSpace().add(leadScrewJoint);
 		
 				
 		float stiffness = 800.0f;
@@ -233,7 +252,14 @@ public class Robot extends BaseAppState {
 		robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
 
 		leadScrewCtrl.setPhysicsRotation(new Quaternion(0f, 0f, 0f, 0f));		
-		leadScrewCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 3.14f, 0.1f, 2f));
+		leadScrewCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 3.14f, 0.1f, 4f));
+
+		
+//		robotControl.setPhysicsRotation(new Quaternion(-.5f, .5f, .5f, -.5f));
+//		robotControl.setPhysicsLocation(new Vector3f(6.4f, -1.2f, .5f));
+//
+//		leadScrewCtrl.setPhysicsRotation(new Quaternion(0f, 0f, 0f, 0f));		
+//		leadScrewCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 3.14f, 1f, 2f));
 
 		habLifterCtrl.setPhysicsRotation(robotControl.getPhysicsRotation().mult(new Quaternion(3f, 0f, 0f, 3f)));
 		habLifterCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 0f, .4f, .65f));
@@ -353,6 +379,7 @@ public class Robot extends BaseAppState {
 		manager.addMapping("rightDrivesForward", new KeyTrigger(KeyInput.KEY_E));
 		manager.addMapping("rightDrivesBackward", new KeyTrigger(KeyInput.KEY_D));
 		manager.addMapping("pause", new KeyTrigger(KeyInput.KEY_P));
+		manager.addMapping("slow", new KeyTrigger(KeyInput.KEY_O));
 		manager.addMapping("reset", new KeyTrigger(KeyInput.KEY_R));
 		manager.addMapping("printInfo", new KeyTrigger(KeyInput.KEY_S));
 		manager.addMapping("lifterDown", new KeyTrigger(KeyInput.KEY_Z));
@@ -363,7 +390,7 @@ public class Robot extends BaseAppState {
 
 
 		manager.addListener(actionListener, "leftDrivesForward", "leftDrivesBackward", "rightDrivesForward",
-				"rightDrivesBackward", "pause", "reset", "pickupHatch", "printInfo", "lifterDown", "lifterUp", "leadScrewUp", "leadScrewDown");
+				"rightDrivesBackward", "pause", "reset", "slow", "pickupHatch", "printInfo", "lifterDown", "lifterUp", "leadScrewUp", "leadScrewDown");
 		manager.addListener(keyListener, "lifterDown", "lifterUp", "leadScrewUp", "leadScrewDown");
 	}
 
@@ -378,11 +405,9 @@ public class Robot extends BaseAppState {
 				} else if (name.equals("lifterUp")) {
 					armHinge.enableMotor(true, -2f, 0.25f);
 				} else if (name.equals("leadScrewDown")){
-					leadScrewJoint.setMotor(-.2f);
-//					leadScrewJoint.enableMotor(true, -.5f, 2f);
+					leadScrewJoint.setTargetLinMotorVelocity(-5f);
 				} else if (name.equals("leadScrewUp")) {
-					leadScrewJoint.setMotor(.2f);
-//					leadScrewJoint.enableMotor(true, .5f, 2f);
+					leadScrewJoint.setTargetLinMotorVelocity(5f);
 				}
 			} else {
 				if (name.equals("lifterDown")) {
@@ -390,11 +415,9 @@ public class Robot extends BaseAppState {
 				} else if (name.equals("lifterUp")) {
 					armHinge.enableMotor(false, 0f, 2f);
 				} else if (name.equals("leadScrewDown")) {
-					leadScrewJoint.setMotor(0f);
-//					leadScrewJoint.enableMotor(false, 0.0f, 0.0f);
+					leadScrewJoint.setTargetLinMotorVelocity(0f);
 				} else if (name.equals("leadScrewUp")) {
-					leadScrewJoint.setMotor(0f);
-//					leadScrewJoint.enableMotor(false, 0.0f, 0.0f);
+					leadScrewJoint.setTargetLinMotorVelocity(0f);
 				}
 			}
 

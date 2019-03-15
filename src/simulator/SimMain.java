@@ -34,6 +34,7 @@ public class SimMain extends SimpleApplication {
 		bulletAppState.getPhysicsSpace().setWorldMax(new Vector3f(16f, 16f, 16f));
 		bulletAppState.getPhysicsSpace().setWorldMin(new Vector3f(-16f, -16f, -16f));
 		bulletAppState.getPhysicsSpace().setAccuracy(1f/300f);
+		setPauseOnLostFocus(false);
 	}
 
 	@Override
@@ -54,7 +55,15 @@ public class SimMain extends SimpleApplication {
 	}
 	
 	public void resume() {
-		bulletAppState.setSpeed(1);
+		bulletAppState.setSpeed(1f);
+	}
+	
+	public void slow() {
+		bulletAppState.setSpeed(.1f);
+	}
+	
+	public boolean isSlow() {
+		return bulletAppState.getSpeed() == .1f;
 	}
 	
 	public boolean isPaused() {
