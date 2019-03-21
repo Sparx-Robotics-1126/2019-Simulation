@@ -145,7 +145,7 @@ public class Robot extends BaseAppState {
 		((CompoundCollisionShape) robotShape).addChildShape(new CapsuleCollisionShape(.15f, .33f, 2),
 				new Vector3f(.21f, 0f, 0f));
 		robot_geo.setLocalRotation(new Quaternion(1, 0, 0, 1));
-		robotControl = new VehicleControl(robotShape, 60);
+		robotControl = new VehicleControl(robotShape, 0); //60
 		robotNode.attachChild(robotBase);
 		robotNode.addControl(robotControl);
 		rays = new RaySensorsControl(app, robotControl);
@@ -173,7 +173,7 @@ public class Robot extends BaseAppState {
 		leadScrew = assetManager.loadModel("Models/RobotBase/leadScrew.blend");
 		leadScrew.scale(0.3f);
 		leadScrew.setMaterial(Yellow);
-		leadScrewCtrl = new RigidBodyControl(CollisionShapeFactory.createDynamicMeshShape(leadScrew), 0f);
+		leadScrewCtrl = new RigidBodyControl(CollisionShapeFactory.createDynamicMeshShape(leadScrew), 2f);
 		leadScrew.addControl(leadScrewCtrl);
 		app.getPhysicsSpace().add(leadScrewCtrl);
 		rootNode.attachChild(leadScrew);
@@ -183,15 +183,15 @@ public class Robot extends BaseAppState {
 				leadScrewCtrl,
 				new Vector3f (0.0f, 1f, 0.0f),
 				new Vector3f (0.0f, -1.0f, 0.0f), 
-				new Matrix3f( 1f,  0f,  0f, 
-							  0f,  0f, -1f, 
-				 			  0f,  1f,  0f), 
-				new Matrix3f( 1f,  0f,  0f,
-							  0f, -1f,  0f,
-							  0f,  0f, -1f), 
-				false);
+				new Matrix3f( 0f,  0f,  1f, 
+							  0f,  1f,  0f, 
+				 			 -1f,  0f,  0f), 
+				new Matrix3f( 0f,  1f,  0f,
+							 -1f,  0f,  0f,
+							  0f,  0f,  1f), 
+				true);
 
-		leadScrewJoint.setMaxLinMotorForce(10f);
+		leadScrewJoint.setMaxLinMotorForce(100f);
 		leadScrewJoint.setLowerLinLimit(-2f);
 		leadScrewJoint.setUpperLinLimit(8f);
 
@@ -248,11 +248,11 @@ public class Robot extends BaseAppState {
 	}
 
 	public void reset() {
-		robotControl.setPhysicsRotation(new Quaternion(1f, 0, 0f, 1f));
-		robotControl.setPhysicsLocation(new Vector3f(4f, 0f, .5f));
+//		robotControl.setPhysicsRotation(new Quaternion(1f, 0, 0f, 1f));
+		robotControl.setPhysicsLocation(new Vector3f(4f, 0f, 5f));
 
-		leadScrewCtrl.setPhysicsRotation(new Quaternion(0f, 0f, 0f, 0f));		
-		leadScrewCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 3.14f, 0.1f, 4f));
+//		leadScrewCtrl.setPhysicsRotation(new Quaternion(0f, 0f, 0f, 0f));		
+//		leadScrewCtrl.setPhysicsLocation(SimUtilities.getPointAtAngleAndOffsetOfObject(robotControl.getPhysicsLocation(), robotControl.getPhysicsRotation(), 3.14f, 0.1f, 2f));
 
 		
 //		robotControl.setPhysicsRotation(new Quaternion(-.5f, .5f, .5f, -.5f));
@@ -405,9 +405,9 @@ public class Robot extends BaseAppState {
 				} else if (name.equals("lifterUp")) {
 					armHinge.enableMotor(true, -2f, 0.25f);
 				} else if (name.equals("leadScrewDown")){
-					leadScrewJoint.setTargetLinMotorVelocity(-5f);
+					leadScrewJoint.setTargetLinMotorVelocity(-200f);
 				} else if (name.equals("leadScrewUp")) {
-					leadScrewJoint.setTargetLinMotorVelocity(5f);
+					leadScrewJoint.setTargetLinMotorVelocity(200);
 				}
 			} else {
 				if (name.equals("lifterDown")) {
@@ -434,7 +434,7 @@ public class Robot extends BaseAppState {
 
 	@Override
 	protected void onDisable() {
-
+ 
 	}
 
 	public void setDrivesPowerRight(float power) {
